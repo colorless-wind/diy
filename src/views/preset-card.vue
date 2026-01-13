@@ -260,7 +260,7 @@
       <h1 class="card-title">{{ cardData.title }}</h1>
       <p class="card-description">{{ cardData.description }}</p>
       
-      <div class="benefits-section" v-if="!isDIY">
+      <div class="benefits-section" v-if="cardData.details && cardData.details.benefits">
         <div class="section-title">{{ $t('presetCard.benefits') }}</div>
         <ul class="benefits-list">
           <li v-for="(benefit, index) in cardData.details.benefits" :key="index">
@@ -319,16 +319,16 @@ export default {
   },
   mounted() {
     const query = this.$route.query;
-    this.cardId = query.id;
     this.isDIY = query.type === 'diy';
     
     if (this.isDIY) {
-      // DIY类型，从localStorage获取图片
+      // DIY类型，从localStorage获取图片和card id
       this.diyImageUrl = localStorage.getItem('imgResult') || '';
+      this.cardId = query.id || localStorage.getItem('diyCardId') || '';
       this.loadDIYCardData();
     } else {
       // 预设卡片类型
-      this.cardId = parseInt(this.cardId);
+      this.cardId = parseInt(query.id);
       this.loadCardData();
     }
   },
@@ -403,28 +403,41 @@ export default {
       }
     },
     loadDIYCardData() {
-      // 为DIY卡片创建数据
-      const locale = this.$i18n.locale;
-      const isZh = locale === 'zh-CN';
+      // 根据card id从预设卡片数据中读取对应的产品信息
+      const presetCardsData = this.getPresetCardsData();
+      const cardId = parseInt(this.cardId);
+      const baseCardData = presetCardsData.find(card => card.id === cardId);
       
-      this.cardData = {
-        id: 'diy',
-        category: isZh ? 'DIY' : 'DIY',
-        title: isZh ? 'DIY定制信用卡' : 'DIY Custom Credit Card',
-        description: isZh ? '您的专属定制卡片' : 'Your exclusive custom card',
-        image: this.diyImageUrl || require('../assets/images/img/photo.png'),
-        details: {
-          benefits: isZh ? [
-            '个性化设计',
-            '专属定制体验',
-            '独特纪念价值'
-          ] : [
-            'Personalized design',
-            'Exclusive customization experience',
-            'Unique commemorative value'
-          ]
-        }
-      };
+      if (baseCardData) {
+        // 使用基础卡片信息，但替换图片为DIY图片
+        this.cardData = {
+          ...baseCardData,
+          image: this.diyImageUrl || baseCardData.image
+        };
+      } else {
+        // 如果找不到对应的卡片，使用默认DIY数据
+        const locale = this.$i18n.locale;
+        const isZh = locale === 'zh-CN';
+        
+        this.cardData = {
+          id: 'diy',
+          category: isZh ? 'DIY' : 'DIY',
+          title: isZh ? 'DIY定制信用卡' : 'DIY Custom Credit Card',
+          description: isZh ? '您的专属定制卡片' : 'Your exclusive custom card',
+          image: this.diyImageUrl || require('../assets/images/img/photo.png'),
+          details: {
+            benefits: isZh ? [
+              '个性化设计',
+              '专属定制体验',
+              '独特纪念价值'
+            ] : [
+              'Personalized design',
+              'Exclusive customization experience',
+              'Unique commemorative value'
+            ]
+          }
+        };
+      }
     },
     goBack() {
       this.$router.back();

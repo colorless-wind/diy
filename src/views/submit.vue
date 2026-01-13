@@ -203,12 +203,13 @@ export default {
       }).then(res=>{
         console.log('申请结果',res)
         if(res.data.code=='200'){
-          // DIY类型跳转到preset-card页面
+          // DIY类型跳转到preset-card页面，传递card id
+          const diyCardId = localStorage.getItem('diyCardId') || '';
           this.$router.push({
             path:'/preset-card',
             query: {
               type: 'diy',
-              cardId: 'diy'
+              id: diyCardId
             }
           })
         }else{

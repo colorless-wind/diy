@@ -162,8 +162,12 @@ export default {
     mounted() {
     var channelName = this.$route.query.channelName?this.$route.query.channelName:''
     var openid = this.$route.query.openid?this.$route.query.openid:''
+    var cardId = this.$route.query.id?this.$route.query.id:''
     localStorage.setItem('channelName',channelName)
     localStorage.setItem('openid',openid)
+    if(cardId) {
+      localStorage.setItem('diyCardId', cardId)
+    }
     document.addEventListener('click', this.handleClickOutside);
   },
   methods: {
