@@ -6,6 +6,38 @@ export default {
     startCreating: '开始制作',
     language: '语言'
   },
+  cardSelection: {
+    diyBannerTitle: 'DIY个性定制',
+    diyBannerDesc: '上传您的照片，创建独一无二的信用卡',
+    presetCardsTitle: '精选信用卡',
+    apply: '申请'
+  },
+  presetCard: {
+    title: '卡片详情',
+    benefits: '卡片权益',
+    applicationForm: '申请表单',
+    fullName: '姓名',
+    fullNamePlaceholder: '请输入您的全名',
+    email: '邮箱',
+    emailPlaceholder: '请输入您的邮箱地址',
+    phone: '电话',
+    phonePlaceholder: '请输入您的电话号码',
+    idNumber: '身份证号',
+    idNumberPlaceholder: '请输入您的身份证号',
+    address: '地址',
+    addressPlaceholder: '请输入您的地址（选填）',
+    submit: '提交申请',
+    submitting: '提交中...',
+    submitError: '提交失败，请稍后重试',
+    errors: {
+      fullNameRequired: '请输入您的姓名',
+      emailRequired: '请输入您的邮箱',
+      emailInvalid: '请输入有效的邮箱地址',
+      phoneRequired: '请输入您的电话号码',
+      phoneInvalid: '请输入有效的电话号码',
+      idNumberRequired: '请输入您的身份证号'
+    }
+  },
     diy:{
       clickUpload:'点击上传',
       imageSize:'图片上传大小：不大于20M',

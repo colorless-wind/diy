@@ -5,6 +5,38 @@ export default {
     startCreating: 'Start Creating',
     language: 'Language'
   },
+  cardSelection: {
+    diyBannerTitle: 'DIY Customization',
+    diyBannerDesc: 'Upload your photos to create a unique credit card',
+    presetCardsTitle: 'Featured Credit Cards',
+    apply: 'Apply'
+  },
+  presetCard: {
+    title: 'Card Details',
+    benefits: 'Card Benefits',
+    applicationForm: 'Application Form',
+    fullName: 'Full Name',
+    fullNamePlaceholder: 'Please enter your full name',
+    email: 'Email',
+    emailPlaceholder: 'Please enter your email address',
+    phone: 'Phone',
+    phonePlaceholder: 'Please enter your phone number',
+    idNumber: 'ID Number',
+    idNumberPlaceholder: 'Please enter your ID number',
+    address: 'Address',
+    addressPlaceholder: 'Please enter your address (optional)',
+    submit: 'Submit Application',
+    submitting: 'Submitting...',
+    submitError: 'Submission failed, please try again later',
+    errors: {
+      fullNameRequired: 'Please enter your full name',
+      emailRequired: 'Please enter your email',
+      emailInvalid: 'Please enter a valid email address',
+      phoneRequired: 'Please enter your phone number',
+      phoneInvalid: 'Please enter a valid phone number',
+      idNumberRequired: 'Please enter your ID number'
+    }
+  },
   diy:{
     clickUpload : 'Click to Upload',
     imageSize: 'Image upload size: no larger than 20MB',

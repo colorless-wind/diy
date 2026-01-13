@@ -6,6 +6,8 @@ import home from './views/home.vue'
 import DIY from './views/diy.vue'
 import submit from './views/submit.vue'
 import result from './views/result.vue'
+import cardSelection from './views/card-selection.vue'
+import presetCard from './views/preset-card.vue'
 
 import components from './components/' // 加载公共组件
 
@@ -24,12 +26,28 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      redirect: '/home',
+      redirect: '/card-selection',
       meta: {
         auth: false,
-        title: '专属纪念卡'
+        title: 'Credit Card Application'
       },
       children: []
+    },
+    {
+      path: '/card-selection',
+      meta: {
+        auth: false,
+        title: 'Credit Card Application'
+      },
+      component: cardSelection
+    },
+    {
+      path: '/preset-card',
+      meta: {
+        auth: false,
+        title: 'Card Details & Application'
+      },
+      component: presetCard
     },
     {
       path: '/home',
