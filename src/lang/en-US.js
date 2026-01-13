@@ -1,0 +1,41 @@
+export default {
+  home: {
+    title: 'Upload Color Photos to Keep Memories',
+    title_2: 'DIY Personalized Card Customization',
+    startCreating: 'Start Creating',
+    language: 'Language'
+  },
+  diy:{
+    clickUpload : 'Click to Upload',
+    imageSize: 'Image upload size: no larger than 20MB',
+    imageDimensions: 'Image upload dimensions: greater than 1051*673',
+    contentGuidelines: 'Please ensure that the uploaded content does not infringe on portrait rights',
+    emojiSticker: 'Emoji Stickers',
+    textSticker: 'Text Stickers',
+    moodSticker: 'Mood Stickers',
+    reUpload: 'Re-upload',
+    nextStep: 'Next Step',
+    imageNotFull: 'Image not fully filled!',
+    pleaseAddCardImage: 'Please add a card image first',
+    elementLimit: 'The maximum number of elements cannot exceed 4',
+    zombieTip: 'Tip: High image scaling may affect clarity',
+    cropperTip: 'The cropping area cannot have blank spaces, please adjust the image position again',
+    loading: 'Uploading',
+    uploadWithTip: 'Image width is less than 1051 pixels, please re-upload',
+    uploadHeightTip: 'Image height is less than 673 pixels, please re-upload',
+    uploadSizeTip: 'The image size exceeds 20M, please re-upload',
+    uploadSuccess: 'Upload successful!',
+    uploadFail: 'Upload failed!',
+    pleaseContactStaff: 'Please contact on-site staff to receive the card',
+    backToHome: 'Return to Home',
+    work: 'Work',
+    enterWork: 'Please enter the work name',
+    author: 'Author',
+    enterAuthor: 'Please enter the author name',
+    copyright: 'Copyright Notice',
+    copyrightTips:'Ensure uploaded images have proper IP authorization and permit legal use by this product.',
+    uploadSubmit: 'Confirm Upload',
+    clickReUpload: 'Click to Re-upload',
+    imageFormatNotSupport: 'Image format not supported'
+  }
+}

@@ -1,0 +1,25 @@
+@font-face {font-family: "iconfont";
+  src: url('iconfont.eot?t=1555481637319'); /* IE9 */
+  src: url('iconfont.eot?t=1555481637319#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('data:application/x-font-woff2;charset=utf-8;base64,d09GMgABAAAAAAPgAAsAAAAAB+wAAAOUAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHEIGVgCDBgqDTIMbATYCJAMMCwgABCAFhG0HPxvqBsiemjwJrD64ZQG9b2sZCONoRFCtVVndPXMIDwgK0BJQ+D35RM6wkATCsH69k3OZH4PPvRoR22LScnppOnAEjo1gSwoAFJ6f2sE1PyII/onTcgGct+nwi8Zp04EOpDDa3zZxs5Z4mzhag+NoLuzSOl+YwfqxbINm/z+Hi1vi87ctl7kGRr0A44ACHXMfyR2dHZDfMHZBS9xMoN1EGXybmjoGQJjC7BWIS5oigLCMVmkoDK1CXTGxiEdIpTXdxg54GPx8/LM0GJIqM7fadqZRBjU/y58/uPyDQ7mBNKYzg00jYz6gEEcqrfsERtH5ArWr0qDmzFoR0lSBf5OAq8nrjf7jJaJm5neC2TCW+AkOg+DnIybh+n9LjVY8wLsJDiCr+ub1dYqd42KA12tDXi2rua0gd5Fm6q22SGqPkZrj7pSI9hyxg1BqVDzf4EPRDqjSDqzrKNLz5yXhkdqKKIc/dfD6Vt4+6sdPf/+Gr0/N9+2b/nZSkx4PnJ+J8RtzdsK7z8b7WXu4aB7V61F5PbELvj/0j5f6dlMqf689zmr84MOsxR1S8ZE5UI276a06YcNOznb2BXN1XGz7psAiNQiXzJ55IlP7ckcPYX9tE10ym11ntaG32mbrkt3AGjbahskZjgg6uTpaLKj6UaAZm1z8x0zGUrGYueHOKQGkndiydKDZvJbO+/+aJ5+k3uiuHX2Pi7N49ITtvRn/s7sWzMHk55VpXGNCg97fDJphVsTKsApf9KwlL15O6VaX0J6JZNbvA3O3JmJ/j7IMrAPQ3MvXzPzGvzH/aknx0dhV/1s7Cvh++dBBl+Z4QXIDofUmbcFP43WsKZoClhWF63CNRLZZ8CthQzaX+VXF0O9ruHyocz6h1VACSYsJkLWajiiY+VDpsBxqrdZCu3map3cYQAWK0oa5ZgCEXruQdHsLWa87RMF8QmXYH9R6A4d2e2JgwQ4zox+xkSKBIRmKY1CTiI1tA4sIC/uQ4pkCTQsC7BCirhaAuQsX5xPNyEZ0iiHusJLHGIaYEgs2ge2QaRLoUKIjiWWpjDll2YvOVL0pSyIWiLARhQgYRAaJxkAaCWHDXmMmovD9fRCFxySgDVVV5iEI5dJah3JlyemAaJbanapu5RrXMEUehsEgjCIsUBMwI6YVJSCnup0OkTBZ1AFhR5lsVA93lWYtL7febxO0M1fOkSJHUZ+3ZTSaGxWLxGOey92CBgA=') format('woff2'),
+  url('iconfont.woff?t=1555481637319') format('woff'),
+  url('iconfont.ttf?t=1555481637319') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
+  url('iconfont.svg?t=1555481637319#iconfont') format('svg'); /* iOS 4.1- */
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 44px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-index1:before {
+  content: "\e680";
+}
+
+.icon-aboutus_icon:before {
+  content: "\e6e7";
+}
+
