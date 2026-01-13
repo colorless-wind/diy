@@ -53,7 +53,7 @@ export default {
   applicationComplete: {
     title: '申请信用卡',
     success: '成功',
-    successMessage: '尊敬的客户，您的申请已成功提交，请您耐心等待我行审核通知！您可通过手机银行"信用卡-申请进度"查询办卡进度。',
+    successMessage: '尊敬的客户，您的申请已成功提交，请您耐心等待审核通知！',
     applicationNumber: '申请单号',
     cardProduct: '信用卡产品',
     mailingAddress: '邮寄地址',

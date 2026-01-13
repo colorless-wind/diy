@@ -53,13 +53,13 @@
 }
 
 .success-section {
-  padding: 40px 16px 30px;
+  padding: 20px 16px 10px;
   text-align: center;
   
   .success-icon-wrapper {
     position: relative;
     display: inline-block;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     
     .elephant-icon {
       width: 120px;
@@ -104,7 +104,7 @@
     font-size: 24px;
     font-weight: 600;
     color: #4caf50;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
   }
   
   .success-message {
@@ -113,22 +113,22 @@
     line-height: 1.8;
     text-align: left;
     padding: 0 20px;
-    margin-bottom: 30px;
+    // margin-bottom: 30px;
   }
 }
 
 .application-details {
-  margin: 0 16px 30px;
+  margin: 0 16px 10px;
   background: #fff;
   border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 0 20px;
+  // box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   
   .detail-item {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    padding: 12px 0;
+    padding: 5px 0;
     border-bottom: 1px solid #f0f0f0;
     
     &:last-child {
@@ -157,8 +157,8 @@
   margin: 0 16px 30px;
   background: #fff;
   border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 4px;
+  // box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   text-align: center;
   
   .qrcode-title {
@@ -291,7 +291,7 @@
     </div>
 
     <div class="qrcode-section">
-      <div class="qrcode-title">{{ $t('applicationComplete.qrcodeTitle') }}</div>
+      <!-- <div class="qrcode-title">{{ $t('applicationComplete.qrcodeTitle') }}</div> -->
       <div class="qrcode-wrapper">
         <div id="qrcode"></div>
       </div>
@@ -421,7 +421,7 @@ export default {
       // 二维码内容可以是卡面图片的URL或卡面信息的JSON字符串
       const qrcodeData = {
         type: 'cardInfo',
-        cardImage: this.cardImageUrl,
+        // cardImage: this.cardImageUrl,
         cardProduct: this.cardProduct,
         applicationNumber: this.applicationNumber,
         timestamp: Date.now()
@@ -437,9 +437,12 @@ export default {
         const qrcodeElement = document.getElementById('qrcode');
         if (qrcodeElement) {
           qrcodeElement.innerHTML = '';
+          console.log(qrcodeContent,'qrcodeContent')
+          console.log(this.qrcode,'this.qrcode')
+          console.log(qrcodeElement,'qrcodeElement')
           try {
             this.qrcode = new QRCode(qrcodeElement, {
-              text: qrcodeContent,
+              text: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
               width: 200,
               height: 200,
               colorDark: '#000000',
@@ -460,11 +463,11 @@ export default {
     checkProgress() {
       // 跳转到查询办卡进度页面
       // 这里可以跳转到一个新的进度查询页面，或者显示提示
-      this.$toasted.show(this.$t('applicationComplete.progressTip'), {
-        theme: 'toasted-primary',
-        position: 'center',
-        duration: 2000
-      });
+      // this.$toasted.show(this.$t('applicationComplete.progressTip'), {
+      //   theme: 'toasted-primary',
+      //   position: 'center',
+      //   duration: 2000
+      // });
       // 或者跳转到进度查询页面
       // this.$router.push('/application-progress');
     },
