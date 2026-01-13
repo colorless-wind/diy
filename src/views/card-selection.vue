@@ -26,7 +26,7 @@
   
   .language-switch {
     position: absolute;
-    top: 20px;
+    top: 15px;
     right: 20px;
     z-index: 100;
   }
@@ -277,7 +277,7 @@
     </div>
 
     <!-- DIY Banner -->
-    <div class="diy-banner" @click="goToDIY">
+    <!-- <div class="diy-banner" @click="goToDIY">
       <div class="banner-content">
         <div class="banner-left">
           <div class="banner-title">{{ $t('cardSelection.diyBannerTitle') }}</div>
@@ -285,11 +285,11 @@
         </div>
         <div class="banner-icon">🎨</div>
       </div>
-    </div>
+    </div> -->
 
     <!-- Preset Cards Section -->
     <div class="preset-cards-section">
-      <div class="section-title">{{ $t('cardSelection.presetCardsTitle') }}</div>
+      <!-- <div class="section-title">{{ $t('cardSelection.presetCardsTitle') }}</div> -->
       <div class="cards-list">
         <div 
           v-for="(card, index) in presetCards" 
@@ -297,7 +297,8 @@
           class="card-item"
         >
           <div class="card-header">
-            <span class="category-tag">{{ card.category }}</span>
+            <span class="category-tag" v-if="card.category">{{ card.category }}</span>
+            <span class="category-tag" v-if="card.category2">{{ card.category2 }}</span>
           </div>
           <div class="card-content">
             <img :src="card.image" :alt="card.title" class="card-image">
@@ -368,8 +369,8 @@ export default {
       this.presetCards = [
         {
           id: 1,
-          category: isZh ? '畅行欧洲' : 'Travel Europe',
-          title: isZh ? '工银欧洲旅行信用卡' : 'ICBC Europe Travel Credit Card',
+          category: isZh ? 'DIY' : 'DIY',
+          title: isZh ? '欧洲旅行信用卡' : 'ICBC Europe Travel Credit Card',
           description: isZh ? '欧洲消费1.5%返现无上限' : '1.5% cashback on European spending, no upper limit',
           image: require('../assets/images/img/banner.png'),
           details: {
@@ -395,7 +396,7 @@ export default {
         },
         {
           id: 2,
-          category: isZh ? '十二生肖' : 'Chinese Zodiac',
+          category: isZh ? '' : '',
           title: isZh ? '生肖卡' : 'Zodiac Card',
           description: isZh ? '铭刻文化,彰显自信' : 'Engrave culture, show confidence',
           image: require('../assets/images/img/banner1.png'),
@@ -422,7 +423,8 @@ export default {
         },
         {
           id: 3,
-          category: isZh ? '普惠让利' : 'Inclusive Benefits',
+          category: isZh ? 'DIY' : 'DIY',
+          category2: isZh ? 'AIGC' : 'AIGC',
           title: isZh ? '牡丹超惠龙' : 'Peony Super Benefit Dragon Card',
           description: isZh ? '硬核超惠,真情回馈' : 'Hardcore super benefits, genuine rewards',
           image: require('../assets/images/img/banner2.png'),
