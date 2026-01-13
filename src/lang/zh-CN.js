@@ -38,6 +38,17 @@ export default {
       idNumberRequired: '请输入您的身份证号'
     }
   },
+  userApply: {
+    idPhoto: '证件照片',
+    idPhotoTip: '请上传清晰的证件照片',
+    clickToUpload: '点击上传证件照片',
+    uploadFormat: '支持 JPG、PNG 格式，最大 5MB',
+    errors: {
+      idPhotoRequired: '请上传证件照片',
+      invalidFormat: '图片格式不支持，请上传 JPG 或 PNG 格式',
+      fileTooLarge: '图片大小超过 5MB，请重新选择'
+    }
+  },
     diy:{
       clickUpload:'点击上传',
       imageSize:'图片上传大小：不大于20M',

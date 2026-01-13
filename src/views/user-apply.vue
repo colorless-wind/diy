@@ -152,7 +152,11 @@
     }
 
     .form-group {
-        margin-bottom: 20px;
+        margin: 0 16px 20px;
+        background: #fff;
+        padding: 16px;
+        border-radius: 12px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 
         label {
             display: block;
@@ -195,13 +199,137 @@
             resize: vertical;
         }
 
-        .error-message {
-            color: #e53935;
-            font-size: 12px;
-            margin-top: 4px;
-        }
+    .error-message {
+      color: #e53935;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+  }
+
+  .id-upload-section {
+    margin: 20px 16px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+    .upload-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 12px;
+
+      .required {
+        color: #e53935;
+        margin-left: 4px;
+      }
+
+      .upload-tip {
+        font-size: 12px;
+        color: #999;
+        font-weight: normal;
+        margin-left: 8px;
+      }
     }
 
+    .upload-area {
+      position: relative;
+      width: 100%;
+      min-height: 180px;
+      border: 2px dashed #ddd;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fafafa;
+      transition: all 0.3s;
+      cursor: pointer;
+
+      &:active {
+        border-color: #409EFF;
+        background: #f0f7ff;
+      }
+
+      &.has-image {
+        border: none;
+        background: transparent;
+        min-height: auto;
+        padding: 0;
+      }
+
+      .upload-placeholder {
+        text-align: center;
+        color: #999;
+
+        .upload-icon {
+          width: 48px;
+          height: 48px;
+          margin: 0 auto 12px;
+          background: #e8e8e8;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 24px;
+        }
+
+        .upload-text {
+          font-size: 14px;
+          margin-bottom: 4px;
+        }
+
+        .upload-hint {
+          font-size: 12px;
+          color: #999;
+        }
+      }
+
+      .image-preview {
+        position: relative;
+        width: 100%;
+        border-radius: 12px;
+        overflow: hidden;
+
+        img {
+          width: 100%;
+          height: auto;
+          display: block;
+        }
+
+        .remove-btn {
+          position: absolute;
+          top: 8px;
+          right: 8px;
+          width: 32px;
+          height: 32px;
+          background: rgba(0, 0, 0, 0.6);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: background 0.3s;
+
+          &:active {
+            background: rgba(0, 0, 0, 0.8);
+          }
+
+          svg {
+            width: 18px;
+            height: 18px;
+            fill: #fff;
+          }
+        }
+      }
+    }
+
+    .error-message {
+      color: #e53935;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+  }
 
 }
 
@@ -254,6 +382,44 @@
                 </div>
                 <div class="header-title">{{ $t('presetCard.applicationForm') }}</div>
             </div>
+
+        <!-- 证件图片上传 -->
+        <div class="id-upload-section">
+            <label class="upload-label">
+                <span class="required">*</span>
+                {{ $t('userApply.idPhoto') }}
+                <span class="upload-tip">{{ $t('userApply.idPhotoTip') }}</span>
+            </label>
+            <div 
+                class="upload-area" 
+                :class="{ 'has-image': idPhotoUrl }"
+                @click="triggerFileInput"
+            >
+                <div v-if="!idPhotoUrl" class="upload-placeholder">
+                    <div class="upload-icon">📷</div>
+                    <div class="upload-text">{{ $t('userApply.clickToUpload') }}</div>
+                    <div class="upload-hint">{{ $t('userApply.uploadFormat') }}</div>
+                </div>
+                <div v-else class="image-preview">
+                    <img :src="idPhotoUrl" alt="ID Photo">
+                    <div class="remove-btn" @click.stop="removeIdPhoto">
+                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M512 512m-255.737 0a 255.737 255.737 0 1 0 511.475 0 a 255.737 255.737 0 1 0 -511.475 0 Z" fill="#ffffff"/>
+                            <path d="M 637.311 422.492 L 419.935 639.868 c -10.2294 10.2294 -25.5737 10.2294 -35.8032 0 c -10.2294 -10.2294 -10.2294 -25.5737 0 -35.8032 l 217.378 -217.378 c 10.2294 -10.2294 25.5737 -10.2294 35.8032 0 c 10.2294 7.67216 10.2294 25.5737 0 35.8032 Z" fill="#3e424b"/>
+                            <path d="M 386.689 422.492 l 217.378 217.378 c 10.2294 10.2294 25.5737 10.2294 35.8032 0 c 10.2294 -10.2294 10.2294 -25.5737 0 -35.8032 L 422.492 386.689 c -10.2294 -10.2294 -25.5737 -10.2294 -35.8032 0 c -10.2294 7.67216 -10.2294 25.5737 0 35.8032 Z" fill="#3e424b"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <input 
+                type="file" 
+                ref="fileInput" 
+                accept="image/*" 
+                style="display: none"
+                @change="handleFileUpload"
+            >
+            <div v-if="errors.idPhoto" class="error-message">{{ errors.idPhoto }}</div>
+        </div>
     
         <div class="form-group">
             <label>
@@ -288,9 +454,9 @@
         <div class="form-group">
             <label>
                 <span class="required">*</span>
-                {{ '证件号码' }}
+                {{ $t('presetCard.idNumber') }}
             </label>
-            <input type="text" v-model="formData.idNumber" placeholder="请输入您的证件号码"
+            <input type="text" v-model="formData.idNumber" :placeholder="$t('presetCard.idNumberPlaceholder')"
                 @blur="validateField('idNumber')">
             <div v-if="errors.idNumber" class="error-message">{{ errors.idNumber }}</div>
         </div>
@@ -301,6 +467,7 @@
                 {{ $t('presetCard.address') }}
             </label>
             <textarea v-model="formData.address" :placeholder="$t('presetCard.addressPlaceholder')"></textarea>
+            <div v-if="errors.address" class="error-message">{{ errors.address }}</div>
         </div>
     
         <button class="submit-btn" @click="submitApplication" :disabled="!isFormValid || isSubmitting">
@@ -323,7 +490,9 @@ export default {
             },
             errors: {},
             isSubmitting: false,
-            cardId: null
+            cardId: null,
+            idPhotoUrl: '',
+            idPhotoFile: null
         };
     },
     computed: {
@@ -332,11 +501,13 @@ export default {
                 this.formData.email &&
                 this.formData.phone &&
                 this.formData.idNumber &&
+                this.idPhotoUrl &&
                 !this.errors.fullName &&
                 !this.errors.email &&
                 !this.errors.phone &&
                 !this.errors.idNumber &&
-                !this.errors.address;
+                !this.errors.address &&
+                !this.errors.idPhoto;
         }
     },
     watch: {
@@ -423,6 +594,47 @@ export default {
         goBack() {
             this.$router.back();
         },
+        triggerFileInput() {
+            this.$refs.fileInput.click();
+        },
+        handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // 验证文件类型
+            if (!/^image\/(jpeg|jpg|png|webp)$/i.test(file.type)) {
+                this.errors.idPhoto = this.$t('userApply.errors.invalidFormat');
+                this.$refs.fileInput.value = '';
+                return;
+            }
+
+            // 验证文件大小 (最大5MB)
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            if (file.size > maxSize) {
+                this.errors.idPhoto = this.$t('userApply.errors.fileTooLarge');
+                this.$refs.fileInput.value = '';
+                return;
+            }
+
+            // 清除错误
+            this.errors.idPhoto = '';
+
+            // 读取文件并显示预览
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                this.idPhotoUrl = e.target.result;
+                this.idPhotoFile = file;
+            };
+            reader.readAsDataURL(file);
+        },
+        removeIdPhoto() {
+            this.idPhotoUrl = '';
+            this.idPhotoFile = null;
+            this.errors.idPhoto = '';
+            if (this.$refs.fileInput) {
+                this.$refs.fileInput.value = '';
+            }
+        },
         validateField(fieldName) {
             this.errors[fieldName] = '';
 
@@ -463,6 +675,13 @@ export default {
             ['fullName', 'email', 'phone', 'idNumber', 'address'].forEach(field => {
                 this.validateField(field);
             });
+
+            // 验证证件照片
+            if (!this.idPhotoUrl) {
+                this.errors.idPhoto = this.$t('userApply.errors.idPhotoRequired');
+            } else {
+                this.errors.idPhoto = '';
+            }
 
             if (!this.isFormValid) {
                 return;

@@ -37,6 +37,17 @@ export default {
       idNumberRequired: 'Please enter your ID number'
     }
   },
+  userApply: {
+    idPhoto: 'ID Photo',
+    idPhotoTip: 'Please upload a clear ID photo',
+    clickToUpload: 'Click to upload ID photo',
+    uploadFormat: 'Supports JPG, PNG format, max 5MB',
+    errors: {
+      idPhotoRequired: 'Please upload ID photo',
+      invalidFormat: 'Image format not supported, please upload JPG or PNG format',
+      fileTooLarge: 'Image size exceeds 5MB, please select another file'
+    }
+  },
   diy:{
     clickUpload : 'Click to Upload',
     imageSize: 'Image upload size: no larger than 20MB',
