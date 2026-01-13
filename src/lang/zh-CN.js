@@ -50,6 +50,21 @@ export default {
       tooManyPhotos: '最多只能上传 {max} 张照片，当前已有 {current} 张，还可上传 {remaining} 张'
     }
   },
+  applicationComplete: {
+    title: '申请信用卡',
+    success: '成功',
+    successMessage: '尊敬的客户，您的申请已成功提交，请您耐心等待我行审核通知！您可通过手机银行"信用卡-申请进度"查询办卡进度。',
+    applicationNumber: '申请单号',
+    cardProduct: '信用卡产品',
+    mailingAddress: '邮寄地址',
+    defaultAddress: '北京市北京市朝阳区北京阳光上东双子座西塔*层北京当当科文电子商务有限公司',
+    qrcodeTitle: '卡面信息二维码',
+    qrcodeTip: '扫描二维码查看卡面信息',
+    return: '返回',
+    checkProgress: '查询办卡进度',
+    progressTip: '您可通过手机银行"信用卡-申请进度"查询办卡进度',
+    customerServiceTip: '客服功能开发中'
+  },
     diy:{
       clickUpload:'点击上传',
       imageSize:'图片上传大小：不大于20M',

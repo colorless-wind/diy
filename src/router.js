@@ -9,6 +9,7 @@ import result from './views/result.vue'
 import cardSelection from './views/card-selection.vue'
 import presetCard from './views/preset-card.vue'
 import userApply from './views/user-apply.vue'
+import applicationComplete from './views/application-complete.vue'
 
 import components from './components/' // 加载公共组件
 
@@ -89,6 +90,14 @@ const router = new Router({
         title: '申请信用卡'
       },
       component: userApply
+    },
+    {
+      path: '/application-complete',
+      meta: {
+        auth: false,
+        title: '申请完成'
+      },
+      component: applicationComplete
     }
   ]
 })

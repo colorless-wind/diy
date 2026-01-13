@@ -49,6 +49,21 @@ export default {
       tooManyPhotos: 'Maximum {max} photos allowed. You have {current} photo(s), can upload {remaining} more'
     }
   },
+  applicationComplete: {
+    title: 'Credit Card Application',
+    success: 'Success',
+    successMessage: 'Dear customer, your application has been successfully submitted. Please wait patiently for our bank\'s review notification! You can check the application progress through "Credit Card - Application Progress" in mobile banking.',
+    applicationNumber: 'Application Number',
+    cardProduct: 'Credit Card Product',
+    mailingAddress: 'Mailing Address',
+    defaultAddress: 'Beijing City, Beijing City, Chaoyang District, Beijing Sunshine Upper East Gemini Tower * Floor, Beijing Dangdang Culture and Education E-commerce Co., Ltd.',
+    qrcodeTitle: 'Card Information QR Code',
+    qrcodeTip: 'Scan QR code to view card information',
+    return: 'Return',
+    checkProgress: 'Check Application Progress',
+    progressTip: 'You can check the application progress through "Credit Card - Application Progress" in mobile banking',
+    customerServiceTip: 'Customer service feature under development'
+  },
   diy:{
     clickUpload : 'Click to Upload',
     imageSize: 'Image upload size: no larger than 20MB',

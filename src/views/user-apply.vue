@@ -768,15 +768,20 @@ export default {
                 // 这里可以调用实际的API
                 // await http.post('/api/card-application', this.formData);
 
+                // 保存表单数据到localStorage，供完成页面使用
+                localStorage.setItem('applicationFormData', JSON.stringify(this.formData));
+
                 // 模拟API调用
                 await new Promise(resolve => setTimeout(resolve, 1500));
 
-                // 跳转到结果页面
+                // 跳转到完成页面
+                const queryType = this.$route.query.type === 'diy' ? 'diy' : 'preset';
                 this.$router.push({
-                    path: '/result',
+                    path: '/application-complete',
                     query: {
-                        type: 'preset',
-                        cardId: this.cardId
+                        type: queryType,
+                        cardId: this.cardId,
+                        address: this.formData.address
                     }
                 });
             } catch (error) {
