@@ -142,7 +142,7 @@
     // border-radius: 16px;
     // padding: 24px;
     // box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-
+background: #f5f7fa;
     .form-title {
         font-size: 18px;
         font-weight: 600;

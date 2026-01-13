@@ -458,12 +458,23 @@ export default {
       });
     },
     goToPresetCard(card) {
-      this.$router.push({
-        path: '/preset-card',
-        query: {
-          id: card.id
-        }
-      });
+      console.log(card);
+      if(card.category == 'DIY') {
+        this.$router.push({
+          path: '/home',
+          query: {
+            id: card.id
+          }
+        });
+      } else {
+        
+        this.$router.push({
+          path: '/preset-card',
+          query: {
+            id: card.id
+          }
+        });
+      }
     }
   }
 };

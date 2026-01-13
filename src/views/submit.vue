@@ -203,8 +203,13 @@ export default {
       }).then(res=>{
         console.log('申请结果',res)
         if(res.data.code=='200'){
+          // DIY类型跳转到preset-card页面
           this.$router.push({
-            path:'/result'
+            path:'/preset-card',
+            query: {
+              type: 'diy',
+              cardId: 'diy'
+            }
           })
         }else{
           that.tc_show = false
@@ -217,7 +222,11 @@ export default {
         }
       });
       this.$router.push({
-        path:'/result'
+        path: '/preset-card',
+        query: {
+          type: 'diy',
+          cardId: 'diy'
+        }
       })
     },1000)
   },

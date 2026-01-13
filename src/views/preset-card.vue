@@ -255,12 +255,12 @@
     </div>
 
     <div v-if="cardData" class="card-detail-section">
-      <span class="category-tag">{{ cardData.category }}</span>
-      <img :src="cardData.image" :alt="cardData.title" class="card-image-large">
+      <!-- <span class="category-tag">{{ cardData.category }}</span> -->
+      <img :src="cardData.image" :alt="cardData.title" class="card-image-large" :onerror="handleImageError">
       <h1 class="card-title">{{ cardData.title }}</h1>
       <p class="card-description">{{ cardData.description }}</p>
       
-      <div class="benefits-section">
+      <div class="benefits-section" v-if="!isDIY">
         <div class="section-title">{{ $t('presetCard.benefits') }}</div>
         <ul class="benefits-list">
           <li v-for="(benefit, index) in cardData.details.benefits" :key="index">
@@ -291,7 +291,9 @@ export default {
       },
       errors: {},
       isSubmitting: false,
-      cardId: null
+      cardId: null,
+      isDIY: false,
+      diyImageUrl: ''
     };
   },
   computed: {
@@ -308,14 +310,27 @@ export default {
   },
   watch: {
     '$i18n.locale'() {
-      if (this.cardId) {
+      if (this.isDIY) {
+        this.loadDIYCardData();
+      } else if (this.cardId) {
         this.loadCardData();
       }
     }
   },
   mounted() {
-    this.cardId = parseInt(this.$route.query.id);
-    this.loadCardData();
+    const query = this.$route.query;
+    this.cardId = query.id;
+    this.isDIY = query.type === 'diy';
+    
+    if (this.isDIY) {
+      // DIY类型，从localStorage获取图片
+      this.diyImageUrl = localStorage.getItem('imgResult') || '';
+      this.loadDIYCardData();
+    } else {
+      // 预设卡片类型
+      this.cardId = parseInt(this.cardId);
+      this.loadCardData();
+    }
   },
   methods: {
     getPresetCardsData() {
@@ -387,6 +402,30 @@ export default {
         this.$router.push('/card-selection');
       }
     },
+    loadDIYCardData() {
+      // 为DIY卡片创建数据
+      const locale = this.$i18n.locale;
+      const isZh = locale === 'zh-CN';
+      
+      this.cardData = {
+        id: 'diy',
+        category: isZh ? 'DIY' : 'DIY',
+        title: isZh ? 'DIY定制信用卡' : 'DIY Custom Credit Card',
+        description: isZh ? '您的专属定制卡片' : 'Your exclusive custom card',
+        image: this.diyImageUrl || require('../assets/images/img/photo.png'),
+        details: {
+          benefits: isZh ? [
+            '个性化设计',
+            '专属定制体验',
+            '独特纪念价值'
+          ] : [
+            'Personalized design',
+            'Exclusive customization experience',
+            'Unique commemorative value'
+          ]
+        }
+      };
+    },
     goBack() {
       this.$router.back();
     },
@@ -420,6 +459,10 @@ export default {
           break;
       }
     },
+    handleImageError(event) {
+      // 图片加载失败时使用默认图片
+      event.target.src = require('../assets/images/img/photo.png');
+    },
     async submitApplication() {
       
       this.isSubmitting = true;
@@ -431,12 +474,12 @@ export default {
         // 模拟API调用
         await new Promise(resolve => setTimeout(resolve, 1500));
         
-        // 跳转到结果页面
+        // 跳转到申请页面，保持流程一致
         this.$router.push({
           path: '/user-apply',
           query: {
-            type: 'preset',
-            cardId: this.cardData.id
+            type: this.isDIY ? 'diy' : 'preset',
+            cardId: this.isDIY ? 'diy' : this.cardData.id
           }
         });
       } catch (error) {
