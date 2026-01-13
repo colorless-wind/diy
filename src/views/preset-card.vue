@@ -200,31 +200,34 @@
     }
   }
   
-  .submit-btn {
-    width: 100%;
-    padding: 14px;
-    background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    margin-top: 8px;
-    box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
-    
-    &:active {
-      transform: scale(0.98);
-    }
-    
-    &:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-  }
+
 }
+
+    .submit-btn {
+      width: 90%;
+      padding: 14px;
+      background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 8px;
+      margin-left: 5%;
+      box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
+  
+      &:active {
+        transform: scale(0.98);
+      }
+  
+      &:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+    }
 
 @media (min-width: 768px) {
   .preset-card-page {
@@ -266,84 +269,10 @@
         </ul>
       </div>
     </div>
-
-    <div class="application-form">
-      <div class="form-title">{{ $t('presetCard.applicationForm') }}</div>
-      
-      <div class="form-group">
-        <label>
-          {{ $t('presetCard.fullName') }}
-          <span class="required">*</span>
-        </label>
-        <input 
-          type="text" 
-          v-model="formData.fullName"
-          :placeholder="$t('presetCard.fullNamePlaceholder')"
-          @blur="validateField('fullName')"
-        >
-        <div v-if="errors.fullName" class="error-message">{{ errors.fullName }}</div>
-      </div>
-      
-      <div class="form-group">
-        <label>
-          {{ $t('presetCard.email') }}
-          <span class="required">*</span>
-        </label>
-        <input 
-          type="email" 
-          v-model="formData.email"
-          :placeholder="$t('presetCard.emailPlaceholder')"
-          @blur="validateField('email')"
-        >
-        <div v-if="errors.email" class="error-message">{{ errors.email }}</div>
-      </div>
-      
-      <div class="form-group">
-        <label>
-          {{ $t('presetCard.phone') }}
-          <span class="required">*</span>
-        </label>
-        <input 
-          type="tel" 
-          v-model="formData.phone"
-          :placeholder="$t('presetCard.phonePlaceholder')"
-          @blur="validateField('phone')"
-        >
-        <div v-if="errors.phone" class="error-message">{{ errors.phone }}</div>
-      </div>
-      
-      <div class="form-group">
-        <label>
-          {{ $t('presetCard.idNumber') }}
-          <span class="required">*</span>
-        </label>
-        <input 
-          type="text" 
-          v-model="formData.idNumber"
-          :placeholder="$t('presetCard.idNumberPlaceholder')"
-          @blur="validateField('idNumber')"
-        >
-        <div v-if="errors.idNumber" class="error-message">{{ errors.idNumber }}</div>
-      </div>
-      
-      <div class="form-group">
-        <label>
-          {{ $t('presetCard.address') }}
-        </label>
-        <textarea 
-          v-model="formData.address"
-          :placeholder="$t('presetCard.addressPlaceholder')"
-        ></textarea>
-      </div>
-      
-      <button 
-        class="submit-btn" 
-        @click="submitApplication"
-        :disabled="!isFormValid || isSubmitting"
-      >
-        {{ isSubmitting ? $t('presetCard.submitting') : $t('presetCard.submit') }}
-      </button>
-    </div>
+<button class="submit-btn" @click="submitApplication" :disabled="isSubmitting">
+  {{ isSubmitting ? $t('presetCard.submitting') : $t('presetCard.submit') }}
+</button>
+ 
   </div>
 </template>
 
@@ -492,14 +421,6 @@ export default {
       }
     },
     async submitApplication() {
-      // 验证所有字段
-      ['fullName', 'email', 'phone', 'idNumber'].forEach(field => {
-        this.validateField(field);
-      });
-      
-      if (!this.isFormValid) {
-        return;
-      }
       
       this.isSubmitting = true;
       
@@ -512,7 +433,7 @@ export default {
         
         // 跳转到结果页面
         this.$router.push({
-          path: '/result',
+          path: '/user-apply',
           query: {
             type: 'preset',
             cardId: this.cardData.id

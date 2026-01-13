@@ -8,6 +8,7 @@ import submit from './views/submit.vue'
 import result from './views/result.vue'
 import cardSelection from './views/card-selection.vue'
 import presetCard from './views/preset-card.vue'
+import userApply from './views/user-apply.vue'
 
 import components from './components/' // 加载公共组件
 
@@ -80,6 +81,14 @@ const router = new Router({
         title: '专属纪念卡'
       },
       component: submit
+    },
+    {
+      path: '/user-apply',
+      meta: {
+        auth: false,
+        title: '申请信用卡'
+      },
+      component: userApply
     }
   ]
 })

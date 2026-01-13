@@ -24,7 +24,7 @@ export default {
     idNumber: 'ID Number',
     idNumberPlaceholder: 'Please enter your ID number',
     address: 'Address',
-    addressPlaceholder: 'Please enter your address (optional)',
+    addressPlaceholder: 'Please enter your address',
     submit: 'Submit Application',
     submitting: 'Submitting...',
     submitError: 'Submission failed, please try again later',

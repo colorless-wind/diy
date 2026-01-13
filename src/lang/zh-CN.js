@@ -25,7 +25,7 @@ export default {
     idNumber: '身份证号',
     idNumberPlaceholder: '请输入您的身份证号',
     address: '地址',
-    addressPlaceholder: '请输入您的地址（选填）',
+    addressPlaceholder: '请输入您的地址',
     submit: '提交申请',
     submitting: '提交中...',
     submitError: '提交失败，请稍后重试',
