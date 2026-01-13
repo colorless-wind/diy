@@ -198,12 +198,13 @@
       gap: 16px;
       
       .card-image {
-        width: 120px;
+        width: 80px;
         height: 76px;
         border-radius: 8px;
         object-fit: cover;
         flex-shrink: 0;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border: 1px solid #dfdfdf;
       }
       
       .card-info {
@@ -370,7 +371,7 @@ export default {
         {
           id: 1,
           category: isZh ? 'DIY' : 'DIY',
-          title: isZh ? '欧洲旅行信用卡' : 'ICBC Europe Travel Credit Card',
+          title: isZh ? '欧洲旅行信用卡' : 'Europe Travel Credit Card',
           description: isZh ? '欧洲消费1.5%返现无上限' : '1.5% cashback on European spending, no upper limit',
           image: require('../assets/images/img/banner.png'),
           details: {

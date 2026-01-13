@@ -39,13 +39,14 @@ export default {
   },
   userApply: {
     idPhoto: 'ID Photo',
-    idPhotoTip: 'Please upload a clear ID photo',
-    clickToUpload: 'Click to upload ID photo',
-    uploadFormat: 'Supports JPG, PNG format, max 5MB',
+    idPhotoTip: 'Please upload clear ID photos (max 9)',
+    clickToUpload: 'Click to upload ID photos',
+    uploadFormat: 'Supports JPG, PNG format, max 5MB per photo',
     errors: {
-      idPhotoRequired: 'Please upload ID photo',
+      idPhotoRequired: 'Please upload at least one ID photo',
       invalidFormat: 'Image format not supported, please upload JPG or PNG format',
-      fileTooLarge: 'Image size exceeds 5MB, please select another file'
+      fileTooLarge: 'Image size exceeds 5MB, please select another file',
+      tooManyPhotos: 'Maximum {max} photos allowed. You have {current} photo(s), can upload {remaining} more'
     }
   },
   diy:{

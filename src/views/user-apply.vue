@@ -139,10 +139,9 @@
 
 .application-form {
     // margin: 20px 16px;
-    background: #f5f7fa;
-    border-radius: 16px;
+    // border-radius: 16px;
     // padding: 24px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    // box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 
     .form-title {
         font-size: 18px;
@@ -152,11 +151,11 @@
     }
 
     .form-group {
-        margin: 0 16px 20px;
-        background: #fff;
-        padding: 16px;
+        margin: 0 16px 10px;
+        // background: #fff;
+        // padding: 16px;
         border-radius: 12px;
-        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+        // box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 
         label {
             display: block;
@@ -195,141 +194,182 @@
         }
 
         textarea {
-            min-height: 100px;
+            min-height: 60px;
             resize: vertical;
         }
 
-    .error-message {
-      color: #e53935;
-      font-size: 12px;
-      margin-top: 4px;
-    }
-  }
-
-  .id-upload-section {
-    margin: 20px 16px;
-    background: #fff;
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-
-    .upload-label {
-      display: block;
-      font-size: 14px;
-      font-weight: 500;
-      color: #333;
-      margin-bottom: 12px;
-
-      .required {
-        color: #e53935;
-        margin-left: 4px;
-      }
-
-      .upload-tip {
-        font-size: 12px;
-        color: #999;
-        font-weight: normal;
-        margin-left: 8px;
-      }
+        .error-message {
+            color: #e53935;
+            font-size: 12px;
+            margin-top: 4px;
+        }
     }
 
-    .upload-area {
-      position: relative;
-      width: 100%;
-      min-height: 180px;
-      border: 2px dashed #ddd;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #fafafa;
-      transition: all 0.3s;
-      cursor: pointer;
+    .id-upload-section {
+        margin: 20px 16px;
+        background: #fff;
+        border-radius: 16px;
+        padding: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 
-      &:active {
-        border-color: #409EFF;
-        background: #f0f7ff;
-      }
+        .upload-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 12px;
 
-      &.has-image {
-        border: none;
-        background: transparent;
-        min-height: auto;
-        padding: 0;
-      }
+            .required {
+                color: #e53935;
+                margin-left: 4px;
+            }
 
-      .upload-placeholder {
-        text-align: center;
-        color: #999;
-
-        .upload-icon {
-          width: 48px;
-          height: 48px;
-          margin: 0 auto 12px;
-          background: #e8e8e8;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 24px;
+            .upload-tip {
+                font-size: 12px;
+                color: #999;
+                font-weight: normal;
+                margin-left: 8px;
+            }
         }
 
-        .upload-text {
-          font-size: 14px;
-          margin-bottom: 4px;
+        .upload-area {
+            position: relative;
+            width: 100%;
+            min-height: 170px;
+            border: 2px dashed #ddd;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fafafa;
+            transition: all 0.3s;
+            cursor: pointer;
+
+            &:active {
+                border-color: #409EFF;
+                background: #f0f7ff;
+            }
+
+            &.has-images {
+                border: none;
+                background: transparent;
+                min-height: auto;
+                padding: 0;
+            }
+
+            .upload-placeholder {
+                text-align: center;
+                color: #999;
+
+                .upload-icon {
+                    width: 48px;
+                    height: 48px;
+                    margin: 0 auto 12px;
+                    background: #e8e8e8;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 24px;
+                }
+
+                .upload-text {
+                    font-size: 14px;
+                    margin-bottom: 4px;
+                }
+
+                .upload-hint {
+                    font-size: 12px;
+                    color: #999;
+                }
+            }
+
+            .images-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 12px;
+                margin-bottom: 12px;
+                width: 300px;
+
+                .image-item {
+                    position: relative;
+                    width: 100%;
+                    padding-top: 100%; // 保持正方形
+                    border-radius: 8px;
+                    overflow: hidden;
+                    background: #f5f5f5;
+
+                    img {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                    }
+
+                    .remove-btn {
+                        position: absolute;
+                        top: 4px;
+                        right: 4px;
+                        width: 24px;
+                        height: 24px;
+                        background: rgba(0, 0, 0, 0.6);
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        cursor: pointer;
+                        transition: background 0.3s;
+
+                        &:active {
+                            background: rgba(0, 0, 0, 0.8);
+                        }
+
+                        svg {
+                            width: 14px;
+                            height: 14px;
+                            fill: #fff;
+                        }
+                    }
+                }
+
+                .add-more-btn {
+                    width: 100%;
+                    padding-top: 100%; // 保持正方形
+                    border: 2px dashed #ddd;
+                    border-radius: 8px;
+                    background: #fafafa;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                    position: relative;
+
+                    &:active {
+                        border-color: #409EFF;
+                        background: #f0f7ff;
+                    }
+
+                    .add-icon {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        font-size: 24px;
+                        color: #999;
+                    }
+                }
+            }
         }
 
-        .upload-hint {
-          font-size: 12px;
-          color: #999;
+        .error-message {
+            color: #e53935;
+            font-size: 12px;
+            margin-top: 8px;
         }
-      }
-
-      .image-preview {
-        position: relative;
-        width: 100%;
-        border-radius: 12px;
-        overflow: hidden;
-
-        img {
-          width: 100%;
-          height: auto;
-          display: block;
-        }
-
-        .remove-btn {
-          position: absolute;
-          top: 8px;
-          right: 8px;
-          width: 32px;
-          height: 32px;
-          background: rgba(0, 0, 0, 0.6);
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          transition: background 0.3s;
-
-          &:active {
-            background: rgba(0, 0, 0, 0.8);
-          }
-
-          svg {
-            width: 18px;
-            height: 18px;
-            fill: #fff;
-          }
-        }
-      }
     }
-
-    .error-message {
-      color: #e53935;
-      font-size: 12px;
-      margin-top: 8px;
-    }
-  }
 
 }
 
@@ -346,6 +386,7 @@
     transition: all 0.3s;
     margin-top: 8px;
     margin-left: 5%;
+    margin-bottom: 20px;
     box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
 
     &:active {
@@ -373,107 +414,108 @@
 }
 </style>
 <template>
-    <div class="application-form">
-            <div class="header">
-                <div class="back-btn" @click="goBack">
-                    <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M631.7 256l-256 256 256 256-60.3 60.3-316.3-316.3 316.3-316.3z" />
-                    </svg>
-                </div>
-                <div class="header-title">{{ $t('presetCard.applicationForm') }}</div>
-            </div>
+<div class="application-form">
+    <div class="header">
+        <div class="back-btn" @click="goBack">
+            <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                <path d="M631.7 256l-256 256 256 256-60.3 60.3-316.3-316.3 316.3-316.3z" />
+            </svg>
+        </div>
+        <div class="header-title">{{ $t('presetCard.applicationForm') }}</div>
+    </div>
 
-        <!-- 证件图片上传 -->
-        <div class="id-upload-section">
-            <label class="upload-label">
-                <span class="required">*</span>
-                {{ $t('userApply.idPhoto') }}
-                <span class="upload-tip">{{ $t('userApply.idPhotoTip') }}</span>
-            </label>
-            <div 
-                class="upload-area" 
-                :class="{ 'has-image': idPhotoUrl }"
-                @click="triggerFileInput"
-            >
-                <div v-if="!idPhotoUrl" class="upload-placeholder">
-                    <div class="upload-icon">📷</div>
-                    <div class="upload-text">{{ $t('userApply.clickToUpload') }}</div>
-                    <div class="upload-hint">{{ $t('userApply.uploadFormat') }}</div>
-                </div>
-                <div v-else class="image-preview">
-                    <img :src="idPhotoUrl" alt="ID Photo">
-                    <div class="remove-btn" @click.stop="removeIdPhoto">
+    <!-- 证件图片上传 -->
+    <div class="id-upload-section">
+        <label class="upload-label">
+            <span class="required">*</span>
+            {{ $t('userApply.idPhoto') }}
+            <!-- <span class="upload-tip">{{ $t('userApply.idPhotoTip') }}</span> -->
+        </label>
+        <div class="upload-area" :class="{ 'has-images': idPhotos.length > 0 }">
+            <div v-if="idPhotos.length === 0" class="upload-placeholder" @click="triggerFileInput">
+                <div class="upload-icon">📷</div>
+                <div class="upload-text">{{ $t('userApply.clickToUpload') }}</div>
+                <div class="upload-hint">{{ $t('userApply.uploadFormat') }}</div>
+            </div>
+            <div v-else class="images-grid">
+                <div v-for="(photo, index) in idPhotos" :key="index" class="image-item">
+                    <img :src="photo.url" :alt="`ID Photo ${index + 1}`">
+                    <div class="remove-btn" @click.stop="removeIdPhoto(index)">
                         <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M512 512m-255.737 0a 255.737 255.737 0 1 0 511.475 0 a 255.737 255.737 0 1 0 -511.475 0 Z" fill="#ffffff"/>
-                            <path d="M 637.311 422.492 L 419.935 639.868 c -10.2294 10.2294 -25.5737 10.2294 -35.8032 0 c -10.2294 -10.2294 -10.2294 -25.5737 0 -35.8032 l 217.378 -217.378 c 10.2294 -10.2294 25.5737 -10.2294 35.8032 0 c 10.2294 7.67216 10.2294 25.5737 0 35.8032 Z" fill="#3e424b"/>
-                            <path d="M 386.689 422.492 l 217.378 217.378 c 10.2294 10.2294 25.5737 10.2294 35.8032 0 c 10.2294 -10.2294 10.2294 -25.5737 0 -35.8032 L 422.492 386.689 c -10.2294 -10.2294 -25.5737 -10.2294 -35.8032 0 c -10.2294 7.67216 -10.2294 25.5737 0 35.8032 Z" fill="#3e424b"/>
+                            <path
+                                d="M512 512m-255.737 0a 255.737 255.737 0 1 0 511.475 0 a 255.737 255.737 0 1 0 -511.475 0 Z"
+                                fill="#ffffff" />
+                            <path
+                                d="M 637.311 422.492 L 419.935 639.868 c -10.2294 10.2294 -25.5737 10.2294 -35.8032 0 c -10.2294 -10.2294 -10.2294 -25.5737 0 -35.8032 l 217.378 -217.378 c 10.2294 -10.2294 25.5737 -10.2294 35.8032 0 c 10.2294 7.67216 10.2294 25.5737 0 35.8032 Z"
+                                fill="#3e424b" />
+                            <path
+                                d="M 386.689 422.492 l 217.378 217.378 c 10.2294 10.2294 25.5737 10.2294 35.8032 0 c 10.2294 -10.2294 10.2294 -25.5737 0 -35.8032 L 422.492 386.689 c -10.2294 -10.2294 -25.5737 -10.2294 -35.8032 0 c -10.2294 7.67216 -10.2294 25.5737 0 35.8032 Z"
+                                fill="#3e424b" />
                         </svg>
                     </div>
                 </div>
+                <div class="add-more-btn" @click="triggerFileInput" v-if="idPhotos.length < 4">
+                    <div class="add-icon">+</div>
+                </div>
             </div>
-            <input 
-                type="file" 
-                ref="fileInput" 
-                accept="image/*" 
-                style="display: none"
-                @change="handleFileUpload"
-            >
-            <div v-if="errors.idPhoto" class="error-message">{{ errors.idPhoto }}</div>
         </div>
-    
-        <div class="form-group">
-            <label>
-                <span class="required">*</span>
-                {{ $t('presetCard.fullName') }}
-            </label>
-            <input type="text" v-model="formData.fullName" :placeholder="$t('presetCard.fullNamePlaceholder')"
-                @blur="validateField('fullName')">
-            <div v-if="errors.fullName" class="error-message">{{ errors.fullName }}</div>
-        </div>
-    
-        <div class="form-group">
-            <label>
-                <span class="required">*</span>
-                {{ $t('presetCard.email') }}
-            </label>
-            <input type="email" v-model="formData.email" :placeholder="$t('presetCard.emailPlaceholder')"
-                @blur="validateField('email')">
-            <div v-if="errors.email" class="error-message">{{ errors.email }}</div>
-        </div>
-    
-        <div class="form-group">
-            <label>
-                <span class="required">*</span>
-                {{ $t('presetCard.phone') }}
-            </label>
-            <input type="tel" v-model="formData.phone" :placeholder="$t('presetCard.phonePlaceholder')"
-                @blur="validateField('phone')">
-            <div v-if="errors.phone" class="error-message">{{ errors.phone }}</div>
-        </div>
-    
-        <div class="form-group">
-            <label>
-                <span class="required">*</span>
-                {{ $t('presetCard.idNumber') }}
-            </label>
-            <input type="text" v-model="formData.idNumber" :placeholder="$t('presetCard.idNumberPlaceholder')"
-                @blur="validateField('idNumber')">
-            <div v-if="errors.idNumber" class="error-message">{{ errors.idNumber }}</div>
-        </div>
-    
-        <div class="form-group">
-            <label>
-                <span class="required">*</span>
-                {{ $t('presetCard.address') }}
-            </label>
-            <textarea v-model="formData.address" :placeholder="$t('presetCard.addressPlaceholder')"></textarea>
-            <div v-if="errors.address" class="error-message">{{ errors.address }}</div>
-        </div>
-    
-        <button class="submit-btn" @click="submitApplication" :disabled="!isFormValid || isSubmitting">
-            {{ isSubmitting ? $t('presetCard.submitting') : $t('presetCard.submit') }}
-        </button>
+        <input type="file" ref="fileInput" accept="image/*" multiple style="display: none" @change="handleFileUpload">
+        <div v-if="errors.idPhoto" class="error-message">{{ errors.idPhoto }}</div>
     </div>
+
+    <div class="form-group">
+        <label>
+            <span class="required">*</span>
+            {{ $t('presetCard.fullName') }}
+        </label>
+        <input type="text" v-model="formData.fullName" :placeholder="$t('presetCard.fullNamePlaceholder')"
+            @blur="validateField('fullName')">
+        <div v-if="errors.fullName" class="error-message">{{ errors.fullName }}</div>
+    </div>
+    <div class="form-group">
+        <label>
+            <span class="required">*</span>
+            {{ $t('presetCard.idNumber') }}
+        </label>
+        <input type="text" v-model="formData.idNumber" :placeholder="$t('presetCard.idNumberPlaceholder')"
+            @blur="validateField('idNumber')">
+        <div v-if="errors.idNumber" class="error-message">{{ errors.idNumber }}</div>
+    </div>
+
+
+    <div class="form-group">
+        <label>
+            <span class="required">*</span>
+            {{ $t('presetCard.phone') }}
+        </label>
+        <input type="tel" v-model="formData.phone" :placeholder="$t('presetCard.phonePlaceholder')"
+            @blur="validateField('phone')">
+        <div v-if="errors.phone" class="error-message">{{ errors.phone }}</div>
+    </div>
+
+    <div class="form-group">
+        <label>
+            <span class="required">*</span>
+            {{ $t('presetCard.email') }}
+        </label>
+        <input type="email" v-model="formData.email" :placeholder="$t('presetCard.emailPlaceholder')"
+            @blur="validateField('email')">
+        <div v-if="errors.email" class="error-message">{{ errors.email }}</div>
+    </div>
+
+    <div class="form-group">
+        <label>
+            <span class="required">*</span>
+            {{ $t('presetCard.address') }}
+        </label>
+        <textarea v-model="formData.address" :placeholder="$t('presetCard.addressPlaceholder')"></textarea>
+        <div v-if="errors.address" class="error-message">{{ errors.address }}</div>
+    </div>
+
+    <button class="submit-btn" @click="submitApplication" :disabled="!isFormValid || isSubmitting">
+        {{ isSubmitting ? $t('presetCard.submitting') : $t('presetCard.submit') }}
+    </button>
+</div>
 </template>
 <script>
 export default {
@@ -491,8 +533,8 @@ export default {
             errors: {},
             isSubmitting: false,
             cardId: null,
-            idPhotoUrl: '',
-            idPhotoFile: null
+            idPhotos: [], // 存储多张图片 { url: string, file: File }
+            maxPhotos: 9 // 最多上传9张
         };
     },
     computed: {
@@ -501,7 +543,8 @@ export default {
                 this.formData.email &&
                 this.formData.phone &&
                 this.formData.idNumber &&
-                this.idPhotoUrl &&
+                this.formData.address &&
+                this.idPhotos.length > 0 &&
                 !this.errors.fullName &&
                 !this.errors.email &&
                 !this.errors.phone &&
@@ -518,7 +561,7 @@ export default {
         }
     },
     mounted() {
-        this.cardId = parseInt(this.$route.query.id);
+        this.cardId = this.$route.query.id;
         // this.loadCardData();
     },
     methods: {
@@ -530,7 +573,7 @@ export default {
                 {
                     id: 1,
                     category: isZh ? '畅行欧洲' : 'Travel Europe',
-                    title: isZh ? '工银欧洲旅行信用卡' : 'ICBC Europe Travel Credit Card',
+                    title: isZh ? '欧洲旅行信用卡' : 'Europe Travel Credit Card',
                     description: isZh ? '欧洲消费1.5%返现无上限' : '1.5% cashback on European spending, no upper limit',
                     image: require('../assets/images/img/banner.png'),
                     details: {
@@ -598,20 +641,13 @@ export default {
             this.$refs.fileInput.click();
         },
         handleFileUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+            const files = Array.from(event.target.files || []);
+            if (files.length === 0) return;
 
-            // 验证文件类型
-            if (!/^image\/(jpeg|jpg|png|webp)$/i.test(file.type)) {
-                this.errors.idPhoto = this.$t('userApply.errors.invalidFormat');
-                this.$refs.fileInput.value = '';
-                return;
-            }
-
-            // 验证文件大小 (最大5MB)
-            const maxSize = 5 * 1024 * 1024; // 5MB
-            if (file.size > maxSize) {
-                this.errors.idPhoto = this.$t('userApply.errors.fileTooLarge');
+            // 检查是否超过最大数量
+            const remainingSlots = this.maxPhotos - this.idPhotos.length;
+            if (files.length > remainingSlots) {
+                this.errors.idPhoto = this.$t('userApply.errors.tooManyPhotos', { max: this.maxPhotos, current: this.idPhotos.length, remaining: remainingSlots });
                 this.$refs.fileInput.value = '';
                 return;
             }
@@ -619,17 +655,55 @@ export default {
             // 清除错误
             this.errors.idPhoto = '';
 
-            // 读取文件并显示预览
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                this.idPhotoUrl = e.target.result;
-                this.idPhotoFile = file;
-            };
-            reader.readAsDataURL(file);
+            // 处理每个文件
+            const validFiles = [];
+            files.forEach((file, index) => {
+                // 验证文件类型
+                if (!/^image\/(jpeg|jpg|png|webp)$/i.test(file.type)) {
+                    if (files.length === 1) {
+                        this.errors.idPhoto = this.$t('userApply.errors.invalidFormat');
+                    }
+                    return;
+                }
+
+                // 验证文件大小 (最大5MB)
+                const maxSize = 5 * 1024 * 1024; // 5MB
+                if (file.size > maxSize) {
+                    if (files.length === 1) {
+                        this.errors.idPhoto = this.$t('userApply.errors.fileTooLarge');
+                    }
+                    return;
+                }
+
+                validFiles.push(file);
+            });
+
+            if (validFiles.length === 0) {
+                this.$refs.fileInput.value = '';
+                return;
+            }
+
+            // 读取所有有效文件并显示预览
+            let loadedCount = 0;
+            validFiles.forEach((file) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.idPhotos.push({
+                        url: e.target.result,
+                        file: file
+                    });
+                    loadedCount++;
+
+                    // 所有文件加载完成后清除input
+                    if (loadedCount === validFiles.length) {
+                        this.$refs.fileInput.value = '';
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
         },
-        removeIdPhoto() {
-            this.idPhotoUrl = '';
-            this.idPhotoFile = null;
+        removeIdPhoto(index) {
+            this.idPhotos.splice(index, 1);
             this.errors.idPhoto = '';
             if (this.$refs.fileInput) {
                 this.$refs.fileInput.value = '';
@@ -647,9 +721,10 @@ export default {
                 case 'email':
                     if (!this.formData.email.trim()) {
                         this.errors.email = this.$t('presetCard.errors.emailRequired');
-                    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.formData.email)) {
-                        this.errors.email = this.$t('presetCard.errors.emailInvalid');
                     }
+                    // else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.formData.email)) {
+                    //     this.errors.email = this.$t('presetCard.errors.emailInvalid');
+                    // }
                     break;
                 case 'phone':
                     if (!this.formData.phone.trim()) {
@@ -677,7 +752,7 @@ export default {
             });
 
             // 验证证件照片
-            if (!this.idPhotoUrl) {
+            if (this.idPhotos.length === 0) {
                 this.errors.idPhoto = this.$t('userApply.errors.idPhotoRequired');
             } else {
                 this.errors.idPhoto = '';
@@ -701,7 +776,7 @@ export default {
                     path: '/result',
                     query: {
                         type: 'preset',
-                        cardId: this.cardData.id
+                        cardId: this.cardId
                     }
                 });
             } catch (error) {

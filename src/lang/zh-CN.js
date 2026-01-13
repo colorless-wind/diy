@@ -22,8 +22,8 @@ export default {
     emailPlaceholder: '请输入您的邮箱地址',
     phone: '电话',
     phonePlaceholder: '请输入您的电话号码',
-    idNumber: '身份证号',
-    idNumberPlaceholder: '请输入您的身份证号',
+    idNumber: '证件号码',
+    idNumberPlaceholder: '请输入您的证件号码',
     address: '地址',
     addressPlaceholder: '请输入您的地址',
     submit: '提交申请',
@@ -35,18 +35,19 @@ export default {
       emailInvalid: '请输入有效的邮箱地址',
       phoneRequired: '请输入您的电话号码',
       phoneInvalid: '请输入有效的电话号码',
-      idNumberRequired: '请输入您的身份证号'
+      idNumberRequired: '请输入您的证件号码'
     }
   },
   userApply: {
     idPhoto: '证件照片',
-    idPhotoTip: '请上传清晰的证件照片',
+    idPhotoTip: '请上传清晰的证件照片（最多9张）',
     clickToUpload: '点击上传证件照片',
-    uploadFormat: '支持 JPG、PNG 格式，最大 5MB',
+    uploadFormat: '支持 JPG、PNG 格式，每张最大 5MB',
     errors: {
-      idPhotoRequired: '请上传证件照片',
+      idPhotoRequired: '请至少上传一张证件照片',
       invalidFormat: '图片格式不支持，请上传 JPG 或 PNG 格式',
-      fileTooLarge: '图片大小超过 5MB，请重新选择'
+      fileTooLarge: '图片大小超过 5MB，请重新选择',
+      tooManyPhotos: '最多只能上传 {max} 张照片，当前已有 {current} 张，还可上传 {remaining} 张'
     }
   },
     diy:{

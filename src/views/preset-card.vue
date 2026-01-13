@@ -326,7 +326,7 @@ export default {
         {
           id: 1,
           category: isZh ? '畅行欧洲' : 'Travel Europe',
-          title: isZh ? '工银欧洲旅行信用卡' : 'ICBC Europe Travel Credit Card',
+          title: isZh ? '欧洲旅行信用卡' : 'Europe Travel Credit Card',
           description: isZh ? '欧洲消费1.5%返现无上限' : '1.5% cashback on European spending, no upper limit',
           image: require('../assets/images/img/banner.png'),
           details: {
