@@ -23,7 +23,7 @@ Object.keys(components).forEach(key => {
 Vue.use(Router)
 
 const router = new Router({
-  mode: 'history',
+  mode: 'hash',
   base: process.env.BASE_URL,
   exact: false,
   linkActiveClass: 'active',
