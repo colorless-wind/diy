@@ -183,7 +183,7 @@ export default {
             // 完成识别，跳转到完成页面
             const queryType = this.$route.query.type === 'diy' ? 'diy' : 'preset';
             this.$router.push({
-                path: '/application-complete',
+                path: '/user-apply',
                 query: {
                     type: queryType,
                     cardId: this.$route.query.cardId

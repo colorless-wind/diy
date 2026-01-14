@@ -424,46 +424,7 @@ background: #f5f7fa;
         <div class="header-title">{{ $t('presetCard.applicationForm') }}</div>
     </div>
 
-    <!-- 证件图片上传 -->
-    <div class="id-upload-section">
-        <label class="upload-label">
-            <span class="required">*</span>
-            {{ $t('userApply.idPhoto') }}
-            <!-- <span class="upload-tip">{{ $t('userApply.idPhotoTip') }}</span> -->
-        </label>
-        <div class="upload-area" :class="{ 'has-images': idPhotos.length > 0 }">
-            <div v-if="idPhotos.length === 0" class="upload-placeholder" @click="triggerFileInput">
-                <div class="upload-icon">📷</div>
-                <div class="upload-text">{{ $t('userApply.clickToUpload') }}</div>
-                <div class="upload-hint">{{ $t('userApply.uploadFormat') }}</div>
-            </div>
-            <div v-else class="images-grid">
-                <div v-for="(photo, index) in idPhotos" :key="index" class="image-item">
-                    <img :src="photo.url" :alt="`ID Photo ${index + 1}`">
-                    <div class="remove-btn" @click.stop="removeIdPhoto(index)">
-                        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M512 512m-255.737 0a 255.737 255.737 0 1 0 511.475 0 a 255.737 255.737 0 1 0 -511.475 0 Z"
-                                fill="#ffffff" />
-                            <path
-                                d="M 637.311 422.492 L 419.935 639.868 c -10.2294 10.2294 -25.5737 10.2294 -35.8032 0 c -10.2294 -10.2294 -10.2294 -25.5737 0 -35.8032 l 217.378 -217.378 c 10.2294 -10.2294 25.5737 -10.2294 35.8032 0 c 10.2294 7.67216 10.2294 25.5737 0 35.8032 Z"
-                                fill="#3e424b" />
-                            <path
-                                d="M 386.689 422.492 l 217.378 217.378 c 10.2294 10.2294 25.5737 10.2294 35.8032 0 c 10.2294 -10.2294 10.2294 -25.5737 0 -35.8032 L 422.492 386.689 c -10.2294 -10.2294 -25.5737 -10.2294 -35.8032 0 c -10.2294 7.67216 -10.2294 25.5737 0 35.8032 Z"
-                                fill="#3e424b" />
-                        </svg>
-                    </div>
-                </div>
-                <div class="add-more-btn" @click="triggerFileInput" v-if="idPhotos.length < 4">
-                    <div class="add-icon">+</div>
-                </div>
-            </div>
-        </div>
-        <input type="file" ref="fileInput" accept="image/*" multiple style="display: none" @change="handleFileUpload">
-        <div v-if="errors.idPhoto" class="error-message">{{ errors.idPhoto }}</div>
-    </div>
-
-    <div class="form-group">
+    <div class="form-group" style="margin-top: 50px;">
         <label>
             <span class="required">*</span>
             {{ $t('presetCard.fullName') }}
@@ -544,13 +505,11 @@ export default {
                 this.formData.phone &&
                 this.formData.idNumber &&
                 this.formData.address &&
-                this.idPhotos.length > 0 &&
                 !this.errors.fullName &&
                 !this.errors.email &&
                 !this.errors.phone &&
                 !this.errors.idNumber &&
-                !this.errors.address &&
-                !this.errors.idPhoto;
+                !this.errors.address;
         }
     },
     watch: {
