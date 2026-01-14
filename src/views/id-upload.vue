@@ -481,6 +481,212 @@ background: #f5f7fa;
     }
 }
 
+// 人脸识别授权弹窗
+.face-recognition-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+
+    .modal-content {
+        background: #fff;
+        border-radius: 16px;
+        width: 100%;
+        max-width: 500px;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+        padding: 24px;
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a1a1a;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-illustration {
+            width: 100%;
+            max-width: 280px;
+            margin: 0 auto 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            .illustration-wrapper {
+                position: relative;
+                // width: 180px;
+                // height: 220px;
+
+                .phone-frame {
+                    width: 100%;
+                    height: 100%;
+                    // background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+                    border-radius: 28px;
+                    padding: 16px;
+                    // box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+                    position: relative;
+
+                    .phone-screen {
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 16px;
+                        position: relative;
+                        overflow: hidden;
+
+                        .face-frame {
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            width: 75%;
+                            height: 55%;
+                            border: 4px solid #409EFF;
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            box-shadow: 0 0 20px rgba(64, 158, 255, 0.5);
+
+                            .face-icon {
+                                width: 65%;
+                                height: 65%;
+                                background: linear-gradient(135deg, #409EFF 0%, #66b1ff 100%);
+                                border-radius: 50%;
+                                position: relative;
+                                box-shadow: 0 0 15px rgba(64, 158, 255, 0.6);
+
+                                // 左眼
+                                &::before {
+                                    content: '';
+                                    position: absolute;
+                                    top: 28%;
+                                    left: 28%;
+                                    width: 14px;
+                                    height: 14px;
+                                    background: #fff;
+                                    border-radius: 50%;
+                                    box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+                                }
+
+                                // 右眼和嘴巴光晕
+                                &::after {
+                                    content: '';
+                                    position: absolute;
+                                    top: 28%;
+                                    right: 28%;
+                                    width: 14px;
+                                    height: 14px;
+                                    background: #fff;
+                                    border-radius: 50%;
+                                    box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+                                }
+                            }
+
+                            // 嘴巴区域的光晕效果（使用伪元素在face-frame上）
+                            .mouth-glow {
+                                position: absolute;
+                                bottom: 20%;
+                                left: 50%;
+                                transform: translateX(-50%);
+                                width: 30%;
+                                height: 15%;
+                                background: rgba(64, 158, 255, 0.4);
+                                border-radius: 50%;
+                                box-shadow: 0 0 10px rgba(64, 158, 255, 0.6);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .instructions-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 20px 0;
+
+            li {
+                display: flex;
+                align-items: flex-start;
+                margin-bottom: 12px;
+                font-size: 14px;
+                color: #333;
+                line-height: 1.6;
+
+                .bullet-point {
+                    width: 6px;
+                    height: 6px;
+                    background: #e53935;
+                    border-radius: 50%;
+                    margin-right: 12px;
+                    margin-top: 6px;
+                    flex-shrink: 0;
+                }
+            }
+        }
+
+        .disclaimer-text {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 12px;
+            text-align: left;
+        }
+
+        .conditional-text {
+            font-size: 13px;
+            color: #999;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+
+            .btn {
+                flex: 1;
+                padding: 14px;
+                border: none;
+                border-radius: 8px;
+                font-size: 16px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.3s;
+
+                &.btn-disagree {
+                    background: #f5f5f5;
+                    color: #333;
+
+                    &:active {
+                        background: #e0e0e0;
+                    }
+                }
+
+                &.btn-agree {
+                    background: #e53935;
+                    color: #fff;
+
+                    &:active {
+                        background: #c62828;
+                    }
+                }
+            }
+        }
+    }
+}
+
 @media (min-width: 768px) {
     .preset-card-page {
         max-width: 768px;
@@ -490,6 +696,12 @@ background: #f5f7fa;
     .card-detail-section {
         .card-image-large {
             max-width: 500px;
+        }
+    }
+
+    .face-recognition-modal {
+        .modal-content {
+            max-width: 600px;
         }
     }
 }
@@ -633,9 +845,65 @@ background: #f5f7fa;
         <div v-if="errors.verifyCode" class="error-message">{{ errors.verifyCode }}</div>
     </div>
 
-    <button v-if="idPhotos.length > 0" class="submit-btn" @click="submitApplication" :disabled="!isFormValid || isSubmitting">
+    <button v-if="idPhotos.length > 0" class="submit-btn" @click="handleNextStep" :disabled="!isFormValid || isSubmitting">
         {{ isSubmitting ? '提交中...' : '下一步' }}
     </button>
+
+    <!-- 人脸识别授权弹窗 -->
+    <div v-if="showFaceRecognitionModal" class="face-recognition-modal" @click.self="closeModal">
+        <div class="modal-content">
+            <div class="modal-title">人脸识别身份验证授权</div>
+            
+            <div class="modal-illustration">
+                <div class="illustration-wrapper">
+                    <div class="phone-frame">
+                        <div class="phone-screen">
+                            <svg t="1768384848122" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4710"
+                                width="200" height="200">
+                                <path
+                                    d="M297.3 457.3c0-4.2 3.2-7.6 7.3-8 67.1-5.6 96.4-73.5 96.6-74.2 1-2.5 3.3-4.3 5.9-4.8 2.6-0.5 5.4 0.4 7.2 2.3 122.9 128.7 300.2 77.4 302 76.9 2.4-0.7 5-0.3 7.1 1.2s3.2 3.9 3.2 6.4v53.6c10.2 1.6 19.4 6.3 26.6 13v-121c0-102.9-83.8-186.7-186.7-186.7H457.4c-102.9 0-186.7 83.8-186.7 186.7v121.2c7.2-6.8 16.4-11.4 26.6-13v-53.6zM310 654.8c-7.2-18-10.3-33.8-11.6-44.3-10.6-1.5-20.2-6.1-27.7-13.2V767c0 22.6 18.4 41 41 41h162c-125.9-59.3-153-126.5-163.7-153.2zM553.9 808h158.3c22.6 0 41-18.4 41-41V597.3c-7.2 6.8-16.4 11.4-26.6 13.1-0.7 105.8-111.4 170.1-172.7 197.6z"
+                                    fill="#A0D3F8" p-id="4711"></path>
+                                <path
+                                    d="M288 896H128V736c0-8.8-7.2-16-16-16s-16 7.2-16 16v176c0 8.8 7.2 16 16 16h176c8.8 0 16-7.2 16-16s-7.2-16-16-16zM912 720c-8.8 0-16 7.2-16 16v160H736c-8.8 0-16 7.2-16 16s7.2 16 16 16h176c8.8 0 16-7.2 16-16V736c0-8.8-7.2-16-16-16zM912 96H736c-8.8 0-16 7.2-16 16s7.2 16 16 16h160v160c0 8.8 7.2 16 16 16s16-7.2 16-16V112c0-8.8-7.2-16-16-16zM112 304c8.8 0 16-7.2 16-16V128h160c8.8 0 16-7.2 16-16s-7.2-16-16-16H112c-8.8 0-16 7.2-16 16v176c0 8.8 7.2 16 16 16zM769.3 767V402.7c0-111.8-90.9-202.7-202.7-202.7H457.4c-111.8 0-202.7 90.9-202.7 202.7V767c0 31.5 25.6 57 57 57h400.5c31.5 0 57.1-25.6 57.1-57zM270.7 402.7c0-102.9 83.8-186.7 186.7-186.7h109.2c102.9 0 186.7 83.8 186.7 186.7v121.2c-7.2-6.8-16.4-11.4-26.6-13v-53.6c0-2.5-1.2-4.9-3.2-6.4s-4.7-2-7.1-1.2c-1.8 0.5-179.1 51.8-302-76.9-1.9-2-4.6-2.9-7.2-2.3-2.6 0.5-4.9 2.3-5.9 4.8-0.3 0.7-29.5 68.6-96.6 74.2-4.1 0.3-7.3 3.8-7.3 8v53.6c-10.2 1.6-19.4 6.3-26.6 13V402.7z m482.6 157.9c0 16.3-11.4 29.9-26.6 33.5V527c15.2 3.7 26.6 17.4 26.6 33.6z m-456-33.5v67.1c-15.2-3.6-26.6-17.2-26.6-33.5s11.4-30 26.6-33.6zM311.8 808c-22.6 0-41-18.4-41-41V597.3c7.5 7 17 11.7 27.7 13.2 1.4 10.5 4.4 26.3 11.6 44.3 10.7 26.6 37.8 93.8 163.8 153.2H311.8z m13.1-159.1c-11.4-28.4-11.6-51.5-11.6-51.8V464.4c55.7-8 86.2-52.1 97.5-72.6 111.3 108.2 259.8 84.6 299.9 75.7V609.3c0 123.9-174.6 189.8-198.5 198.2-147.8-59.9-176.5-131.6-187.3-158.6zM712.2 808H553.9c61.3-27.5 172-91.8 172.8-197.6 10.2-1.6 19.4-6.3 26.6-13.1V767c0 22.6-18.4 41-41.1 41z"
+                                    fill="#108EE9" p-id="4712"></path>
+                                <path
+                                    d="M435.9 490.8c-33-13.2-65.4-0.5-66.7 0-4.1 1.6-6.1 6.3-4.5 10.4 1.2 3.1 4.3 5 7.4 5 1 0 2-0.2 3-0.6 0.3-0.1 27.7-10.9 54.9 0 4.1 1.6 8.8-0.3 10.4-4.5 1.6-4-0.4-8.6-4.5-10.3zM648.7 490.8c-33-13.2-65.4-0.5-66.7 0-4.1 1.6-6.1 6.3-4.5 10.4 1.6 4.1 6.3 6.1 10.4 4.5 0.3-0.1 27.9-10.8 54.9 0 1 0.4 2 0.6 3 0.6 3.2 0 6.2-1.9 7.4-5 1.6-4.2-0.4-8.8-4.5-10.5zM408.6 522.2c-14.5 0-26.2 11.8-26.2 26.2s11.8 26.2 26.2 26.2 26.2-11.8 26.2-26.2-11.7-26.2-26.2-26.2z m0 36.5c-5.6 0-10.2-4.6-10.2-10.2s4.6-10.2 10.2-10.2 10.2 4.6 10.2 10.2c0.1 5.6-4.5 10.2-10.2 10.2zM612.3 525.3c-14.5 0-26.2 11.8-26.2 26.2s11.8 26.2 26.2 26.2 26.2-11.8 26.2-26.2-11.7-26.2-26.2-26.2z m0 36.5c-5.6 0-10.2-4.6-10.2-10.2s4.6-10.2 10.2-10.2 10.2 4.6 10.2 10.2c0.1 5.6-4.5 10.2-10.2 10.2zM498.4 636.7h26.3c4.4 0 8-3.6 8-8s-3.6-8-8-8h-26.3c-4.4 0-8 3.6-8 8s3.5 8 8 8zM568.2 675.7c-55.3 38.7-110.1 1.6-112.4 0-3.6-2.5-8.6-1.6-11.1 2s-1.6 8.6 2 11.1c0.4 0.3 29.5 20.2 68 20.2 19.4 0 41.1-5.1 62.8-20.2 3.6-2.5 4.5-7.5 2-11.1-2.7-3.7-7.7-4.5-11.3-2z"
+                                    fill="#108EE9" p-id="4713"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <ul class="instructions-list">
+                <li>
+                    <span class="bullet-point"></span>
+                    <span>保持光线充足</span>
+                </li>
+                <li>
+                    <span class="bullet-point"></span>
+                    <span>人脸正对屏幕</span>
+                </li>
+                <li>
+                    <span class="bullet-point"></span>
+                    <span>面部位于取景框内</span>
+                </li>
+            </ul>
+
+            <div class="disclaimer-text">
+                本次申请需进行人脸识别,所收集的脸部影像信息仅用于公安系统核验是否您本人申请,如果您不同意,后续我行将采取电话或柜面等措施核验您的身份,谢谢!
+            </div>
+
+            <div class="conditional-text">
+                如您人脸检测未通过,请前往网点申请办理。
+            </div>
+
+            <div class="modal-buttons">
+                <button class="btn btn-disagree" @click="handleDisagree">不同意</button>
+                <button class="btn btn-agree" @click="handleAgree">同意</button>
+            </div>
+        </div>
+    </div>
 </div>
 </template>
 <script>
@@ -662,6 +930,7 @@ export default {
             maxPhotos: 9, // 最多上传9张
             countdown: 0, // 验证码倒计时
             verifyCodeTimer: null, // 验证码定时器
+            showFaceRecognitionModal: false, // 控制人脸识别授权弹窗显示
             // 模拟OCR识别数据组
             mockOcrData: [
                 {
@@ -1010,7 +1279,8 @@ export default {
                     break;
             }
         },
-        async submitApplication() {
+        // 点击下一步按钮
+        handleNextStep() {
             // 验证所有字段
             ['fullName', 'phone', 'idNumber', 'verifyCode'].forEach(field => {
                 this.validateField(field);
@@ -1033,6 +1303,22 @@ export default {
                 return;
             }
 
+            // 显示人脸识别授权弹窗
+            this.showFaceRecognitionModal = true;
+        },
+        // 关闭弹窗
+        closeModal() {
+            this.showFaceRecognitionModal = false;
+        },
+        // 处理不同意
+        handleDisagree() {
+            this.closeModal();
+            // 可以在这里添加不同意的处理逻辑
+            alert('您已选择不同意，后续我们将通过电话或柜面等方式核验您的身份');
+        },
+        // 处理同意
+        async handleAgree() {
+            this.closeModal();
             this.isSubmitting = true;
 
             try {
@@ -1042,7 +1328,7 @@ export default {
                 // 保存表单数据到localStorage，供完成页面使用
                 localStorage.setItem('applicationFormData', JSON.stringify(this.formData));
 
-                // 模拟API调用
+                // 模拟API调用（包括人脸识别）
                 await new Promise(resolve => setTimeout(resolve, 1500));
 
                 // 跳转到完成页面
