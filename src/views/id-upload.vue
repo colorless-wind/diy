@@ -1317,35 +1317,21 @@ export default {
             alert('您已选择不同意，后续我们将通过电话或柜面等方式核验您的身份');
         },
         // 处理同意
-        async handleAgree() {
+        handleAgree() {
             this.closeModal();
-            this.isSubmitting = true;
+            
+            // 保存表单数据到localStorage，供完成页面使用
+            localStorage.setItem('applicationFormData', JSON.stringify(this.formData));
 
-            try {
-                // 这里可以调用实际的API
-                // await http.post('/api/card-application', this.formData);
-
-                // 保存表单数据到localStorage，供完成页面使用
-                localStorage.setItem('applicationFormData', JSON.stringify(this.formData));
-
-                // 模拟API调用（包括人脸识别）
-                await new Promise(resolve => setTimeout(resolve, 1500));
-
-                // 跳转到完成页面
-                const queryType = this.$route.query.type === 'diy' ? 'diy' : 'preset';
-                this.$router.push({
-                    path: '/application-complete',
-                    query: {
-                        type: queryType,
-                        cardId: this.cardId
-                    }
-                });
-            } catch (error) {
-                console.error('提交申请失败:', error);
-                alert('提交失败，请稍后重试');
-            } finally {
-                this.isSubmitting = false;
-            }
+            // 跳转到人脸识别页面
+            const queryType = this.$route.query.type === 'diy' ? 'diy' : 'preset';
+            this.$router.push({
+                path: '/face-recognition',
+                query: {
+                    type: queryType,
+                    cardId: this.cardId
+                }
+            });
         }
     }
 };

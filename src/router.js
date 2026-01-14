@@ -13,6 +13,7 @@ import applicationComplete from './views/application-complete.vue'
 import termsOfService from './views/terms-of-service.vue'
 import privacyPolicy from './views/privacy-policy.vue'
 import idUpload from './views/id-upload.vue'
+import faceRecognition from './views/face-recognition.vue'
 import components from './components/' // 加载公共组件
 
 Object.keys(components).forEach(key => {
@@ -92,6 +93,14 @@ const router = new Router({
         title: '上传证件照片'
       },
       component: idUpload
+    },
+    {
+      path: '/face-recognition',
+      meta: {
+        auth: false,
+        title: '人脸识别'
+      },
+      component: faceRecognition
     },
     {
       path: '/user-apply',
