@@ -606,7 +606,7 @@ export default {
         
         // 跳转到申请页面，保持流程一致
         this.$router.push({
-          path: '/user-apply',
+          path: '/id-upload',
           query: {
             type: this.isDIY ? 'diy' : 'preset',
             cardId: this.isDIY ? 'diy' : this.cardData.id

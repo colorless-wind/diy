@@ -12,7 +12,7 @@ import userApply from './views/user-apply.vue'
 import applicationComplete from './views/application-complete.vue'
 import termsOfService from './views/terms-of-service.vue'
 import privacyPolicy from './views/privacy-policy.vue'
-
+import idUpload from './views/id-upload.vue'
 import components from './components/' // 加载公共组件
 
 Object.keys(components).forEach(key => {
@@ -84,6 +84,14 @@ const router = new Router({
         title: '专属纪念卡'
       },
       component: submit
+    },
+    {
+      path: '/id-upload',
+      meta: {
+        auth: false,
+        title: '上传证件照片'
+      },
+      component: idUpload
     },
     {
       path: '/user-apply',
