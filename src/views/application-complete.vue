@@ -245,19 +245,6 @@
   <div class="application-complete-page">
     <div class="header">
       <div class="header-title">{{ $t('applicationComplete.title') }}</div>
-      <div class="header-icons">
-        <div class="icon" @click="showCustomerService">
-          <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-            <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"/>
-            <path d="M464 336a48 48 0 1 0 96 0 48 48 0 1 0-96 0zm272 0a48 48 0 1 0 96 0 48 48 0 1 0-96 0zm-272 352c0-88.4 71.6-160 160-160s160 71.6 160 160H464z"/>
-          </svg>
-        </div>
-        <div class="icon" @click="showMenu">
-          <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-            <path d="M128 256h768v64H128zm0 192h768v64H128zm0 192h768v64H128z"/>
-          </svg>
-        </div>
-      </div>
     </div>
 
     <div class="success-section">
@@ -300,7 +287,7 @@
 
     <div class="action-buttons">
       <button class="btn btn-primary" @click="goBack">{{ $t('applicationComplete.return') }}</button>
-      <button class="btn btn-secondary" @click="checkProgress">{{ $t('applicationComplete.checkProgress') }}</button>
+      <!-- <button class="btn btn-secondary" @click="checkProgress">{{ $t('applicationComplete.checkProgress') }}</button> -->
     </div>
   </div>
 </template>

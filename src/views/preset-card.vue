@@ -199,8 +199,84 @@
       margin-top: 4px;
     }
   }
-  
 
+
+}
+
+.agreement-section {
+  margin: 20px 16px 0;
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  .agreement-checkbox {
+    display: flex;
+    align-items: flex-start;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1.5;
+
+    input[type="checkbox"] {
+      display: none;
+    }
+
+    .checkmark {
+      width: 18px;
+      height: 18px;
+      border: 2px solid #ddd;
+      border-radius: 4px;
+      margin-right: 12px;
+      margin-top: 2px;
+      position: relative;
+      transition: all 0.2s;
+      flex-shrink: 0;
+
+      &::after {
+        content: '';
+        position: absolute;
+        display: none;
+        left: 5px;
+        top: 2px;
+        width: 6px;
+        height: 10px;
+        border: solid #fff;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+      }
+    }
+
+    input:checked + .checkmark {
+      background: #4caf50;
+      border-color: #4caf50;
+
+      &::after {
+        display: block;
+      }
+    }
+
+    .agreement-text {
+      color: #666;
+      flex: 1;
+
+      .agreement-link {
+        color: #409EFF;
+        text-decoration: none;
+        font-weight: 500;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  .error-message {
+    color: #e53935;
+    font-size: 12px;
+    margin-top: 8px;
+    margin-left: 30px;
+  }
 }
 
     .submit-btn {
@@ -269,7 +345,29 @@
         </ul>
       </div>
     </div>
-<button class="submit-btn" @click="submitApplication" :disabled="isSubmitting">
+
+    <!-- 协议同意部分 -->
+    <div class="agreement-section">
+      <label class="agreement-checkbox">
+        <input
+          type="checkbox"
+          v-model="agreedToTerms"
+          @change="validateAgreement"
+        >
+        <span class="checkmark"></span>
+        <span class="agreement-text">
+          {{ $t('presetCard.agreementText') }}
+          <a href="#" class="agreement-link" @click.prevent="showTerms">{{ $t('presetCard.termsLink') }}</a>
+          {{ $t('presetCard.and') }}
+          <a href="#" class="agreement-link" @click.prevent="showPrivacy">{{ $t('presetCard.privacyLink') }}</a>
+        </span>
+      </label>
+      <div v-if="agreementError" class="error-message">
+        {{ $t('presetCard.agreementError') }}
+      </div>
+    </div>
+
+<button class="submit-btn" @click="submitApplication" :disabled="isSubmitting || !agreedToTerms">
   {{ isSubmitting ? $t('presetCard.submitting') : $t('presetCard.submit') }}
 </button>
  
@@ -293,19 +391,22 @@ export default {
       isSubmitting: false,
       cardId: null,
       isDIY: false,
-      diyImageUrl: ''
+      diyImageUrl: '',
+      agreedToTerms: false,
+      agreementError: false
     };
   },
   computed: {
     isFormValid() {
-      return this.formData.fullName && 
-             this.formData.email && 
-             this.formData.phone && 
+      return this.formData.fullName &&
+             this.formData.email &&
+             this.formData.phone &&
              this.formData.idNumber &&
              !this.errors.fullName &&
              !this.errors.email &&
              !this.errors.phone &&
-             !this.errors.idNumber;
+             !this.errors.idNumber &&
+             this.agreedToTerms;
     }
   },
   watch: {
@@ -476,8 +577,24 @@ export default {
       // 图片加载失败时使用默认图片
       event.target.src = require('../assets/images/img/photo.png');
     },
+    validateAgreement() {
+      this.agreementError = !this.agreedToTerms;
+    },
+    showTerms() {
+      // 跳转到服务条款页面
+      this.$router.push('/terms-of-service');
+    },
+    showPrivacy() {
+      // 跳转到隐私政策页面
+      this.$router.push('/privacy-policy');
+    },
     async submitApplication() {
-      
+      // 验证协议同意
+      if (!this.agreedToTerms) {
+        this.agreementError = true;
+        return;
+      }
+
       this.isSubmitting = true;
       
       try {

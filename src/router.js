@@ -10,6 +10,8 @@ import cardSelection from './views/card-selection.vue'
 import presetCard from './views/preset-card.vue'
 import userApply from './views/user-apply.vue'
 import applicationComplete from './views/application-complete.vue'
+import termsOfService from './views/terms-of-service.vue'
+import privacyPolicy from './views/privacy-policy.vue'
 
 import components from './components/' // 加载公共组件
 
@@ -98,6 +100,22 @@ const router = new Router({
         title: '申请完成'
       },
       component: applicationComplete
+    },
+    {
+      path: '/terms-of-service',
+      meta: {
+        auth: false,
+        title: '服务条款'
+      },
+      component: termsOfService
+    },
+    {
+      path: '/privacy-policy',
+      meta: {
+        auth: false,
+        title: '隐私政策'
+      },
+      component: privacyPolicy
     }
   ]
 })

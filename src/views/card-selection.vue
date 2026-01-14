@@ -299,7 +299,7 @@
         >
           <div class="card-header">
             <span class="category-tag" v-if="card.category">{{ card.category }}</span>
-            <span class="category-tag" v-if="card.category2">{{ card.category2 }}</span>
+            <!-- <span class="category-tag" v-if="card.category2">{{ card.category2 }}</span> -->
           </div>
           <div class="card-content">
             <img :src="card.image" :alt="card.title" class="card-image">

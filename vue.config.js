@@ -13,10 +13,12 @@ function resolve(dir) {
 //process.cwd() 返回运行当前脚本的工作目录的路径
 //process.chdir() 改变工作目录
 module.exports = {
-  publicPath: '/card/diy/',
+//   publicPath: '/card/diy/',
+  publicPath: './',
 	//基本路径
 	// baseUrl: '/gftg', // 根路径  ./表示静态相对路径  /项目/ 服务器上的相对路径 
-	baseUrl: '/card/diy/', // 根路径  ./表示静态相对路径  /项目/ 服务器上的相对路径 
+	// baseUrl: '/card/diy/', // 根路径  ./表示静态相对路径  /项目/ 服务器上的相对路径 
+	baseUrl: './', // 根路径  ./表示静态相对路径  /项目/ 服务器上的相对路径 
 	//输出文件目录
 	outputDir: 'dist', //构建输出目录
 	assetsDir: 'assets', //静态资源目录（js,css,img,fonts）
