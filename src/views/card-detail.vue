@@ -376,7 +376,7 @@
 
 <script>
 export default {
-  name: 'PresetCard',
+  name: 'CardDetail',
   data() {
     return {
       cardData: null,
@@ -498,10 +498,6 @@ export default {
     loadCardData() {
       const presetCardsData = this.getPresetCardsData();
       this.cardData = presetCardsData.find(card => card.id === this.cardId);
-      
-      if (!this.cardData) {
-        this.$router.push('/card-selection');
-      }
     },
     loadDIYCardData() {
       // 根据card id从预设卡片数据中读取对应的产品信息

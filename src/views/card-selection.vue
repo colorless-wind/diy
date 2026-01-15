@@ -307,7 +307,7 @@
               <div class="card-title">{{ card.productName }}</div>
               <div class="card-desc" v-if="card.description">{{ card.description }}</div>
             </div>
-            <button class="apply-btn" @click.stop="goToPresetCard(card)">
+            <button class="apply-btn" @click.stop="goToCardDetail(card)">
               {{ $t('cardSelection.apply') }}
             </button>
           </div>
@@ -345,6 +345,7 @@ export default {
     }
   },
   mounted() {
+    console.log('mounted')
     this.initCardData();
     document.addEventListener('click', this.handleClickOutside);
   },
@@ -381,9 +382,9 @@ export default {
         path: '/home'
       });
     },
-    goToPresetCard(card) {
+    goToCardDetail(card) {
       console.log(card);
-      if(card.category == 'DIY') {
+      if(card.isDiy) {
         this.$router.push({
           path: '/home',
           query: {
@@ -391,7 +392,6 @@ export default {
           }
         });
       } else {
-        
         this.$router.push({
           path: '/card-detail',
           query: {
