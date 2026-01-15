@@ -375,7 +375,6 @@
 <script>
 import { imageBaseUrl } from '@/utils/config'
 import diyCardApi from '@/api/diycard';
-import { resolve } from 'core-js/fn/promise';
 export default {
   name: 'CardDetail',
   data() {
@@ -435,6 +434,11 @@ export default {
     }
   },
   methods: {
+    submitOrder(){
+      return diyCardApi.order.submit({
+        orderId: this.$route.query.oid
+      })
+    },
     getPresetCardsData() {
       const locale = this.$i18n.locale;
       const isZh = locale === 'zh-CN';
@@ -615,14 +619,15 @@ export default {
       try {
         // 这里可以调用实际的API
         // await http.post('/api/card-application', this.formData);
-
+        
         // 模拟API调用
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        // await this.submitOrder()
 
         // 跳转到申请页面，保持流程一致
         this.$router.push({
           path: '/id-upload',
           query: {
+            ...this.$route.query,
             type: this.isDIY ? 'diy' : 'preset',
             cardId: this.isDIY ? 'diy' : this.cardData.id
           }

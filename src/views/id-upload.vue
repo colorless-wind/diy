@@ -142,7 +142,8 @@
     // border-radius: 16px;
     // padding: 24px;
     // box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-background: #f5f7fa;
+    background: #f5f7fa;
+
     .form-title {
         font-size: 18px;
         font-weight: 600;
@@ -765,8 +766,7 @@ background: #f5f7fa;
             <span class="required">*</span>
             姓名
         </label>
-        <input type="text" v-model="formData.fullName" placeholder="请输入姓名"
-            @blur="validateField('fullName')">
+        <input type="text" v-model="formData.fullName" placeholder="请输入姓名" @blur="validateField('fullName')">
         <div v-if="errors.fullName" class="error-message">{{ errors.fullName }}</div>
     </div>
 
@@ -775,8 +775,7 @@ background: #f5f7fa;
             <span class="required">*</span>
             证件号码
         </label>
-        <input type="text" v-model="formData.idNumber" placeholder="请输入证件号码"
-            @blur="validateField('idNumber')">
+        <input type="text" v-model="formData.idNumber" placeholder="请输入证件号码" @blur="validateField('idNumber')">
         <div v-if="errors.idNumber" class="error-message">{{ errors.idNumber }}</div>
     </div>
 
@@ -799,7 +798,7 @@ background: #f5f7fa;
         <div class="date-input-wrapper">
             <input type="date" v-model="formData.idStartDate" @blur="validateField('idStartDate')">
             <svg class="arrow-icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-                <path d="M716.8 409.6L512 614.4 307.2 409.6z" fill="currentColor"/>
+                <path d="M716.8 409.6L512 614.4 307.2 409.6z" fill="currentColor" />
             </svg>
         </div>
         <div v-if="errors.idStartDate" class="error-message">{{ errors.idStartDate }}</div>
@@ -813,7 +812,7 @@ background: #f5f7fa;
         <div class="date-input-wrapper">
             <input type="date" v-model="formData.idEndDate" @blur="validateField('idEndDate')">
             <svg class="arrow-icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-                <path d="M716.8 409.6L512 614.4 307.2 409.6z" fill="currentColor"/>
+                <path d="M716.8 409.6L512 614.4 307.2 409.6z" fill="currentColor" />
             </svg>
         </div>
         <div v-if="errors.idEndDate" class="error-message">{{ errors.idEndDate }}</div>
@@ -825,8 +824,7 @@ background: #f5f7fa;
             <span class="required">*</span>
             手机号
         </label>
-        <input type="tel" v-model="formData.phone" placeholder="请输入手机号"
-            @blur="validateField('phone')">
+        <input type="tel" v-model="formData.phone" placeholder="请输入手机号" @blur="validateField('phone')">
         <div v-if="errors.phone" class="error-message">{{ errors.phone }}</div>
     </div>
 
@@ -845,7 +843,8 @@ background: #f5f7fa;
         <div v-if="errors.verifyCode" class="error-message">{{ errors.verifyCode }}</div>
     </div>
 
-    <button v-if="idPhotos.length > 0" class="submit-btn" @click="handleNextStep" :disabled="!isFormValid || isSubmitting">
+    <button v-if="idPhotos.length > 0" class="submit-btn" @click="handleNextStep"
+        :disabled="!isFormValid || isSubmitting">
         {{ isSubmitting ? '提交中...' : '下一步' }}
     </button>
 
@@ -853,13 +852,13 @@ background: #f5f7fa;
     <div v-if="showFaceRecognitionModal" class="face-recognition-modal" @click.self="closeModal">
         <div class="modal-content">
             <div class="modal-title">人脸识别身份验证授权</div>
-            
+
             <div class="modal-illustration">
                 <div class="illustration-wrapper">
                     <div class="phone-frame">
                         <div class="phone-screen">
-                            <svg t="1768384848122" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4710"
-                                width="200" height="200">
+                            <svg t="1768384848122" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                                xmlns="http://www.w3.org/2000/svg" p-id="4710" width="200" height="200">
                                 <path
                                     d="M297.3 457.3c0-4.2 3.2-7.6 7.3-8 67.1-5.6 96.4-73.5 96.6-74.2 1-2.5 3.3-4.3 5.9-4.8 2.6-0.5 5.4 0.4 7.2 2.3 122.9 128.7 300.2 77.4 302 76.9 2.4-0.7 5-0.3 7.1 1.2s3.2 3.9 3.2 6.4v53.6c10.2 1.6 19.4 6.3 26.6 13v-121c0-102.9-83.8-186.7-186.7-186.7H457.4c-102.9 0-186.7 83.8-186.7 186.7v121.2c7.2-6.8 16.4-11.4 26.6-13v-53.6zM310 654.8c-7.2-18-10.3-33.8-11.6-44.3-10.6-1.5-20.2-6.1-27.7-13.2V767c0 22.6 18.4 41 41 41h162c-125.9-59.3-153-126.5-163.7-153.2zM553.9 808h158.3c22.6 0 41-18.4 41-41V597.3c-7.2 6.8-16.4 11.4-26.6 13.1-0.7 105.8-111.4 170.1-172.7 197.6z"
                                     fill="#A0D3F8" p-id="4711"></path>
@@ -907,6 +906,8 @@ background: #f5f7fa;
 </div>
 </template>
 <script>
+import { imageBaseUrl } from '@/utils/config'
+import diyCardApi from '@/api/diycard';
 export default {
     name: 'PresetCard',
     data() {
@@ -1009,6 +1010,13 @@ export default {
         }
     },
     methods: {
+        uploadPhoto(idCardFront, idCardBack){
+            return diyCardApi.customer.uploadIdCard({
+                idCardFront: idCardFront,
+                idCardBack: idCardBack,
+                orderId: this.$route.query.oid
+            })
+        },
         getPresetCardsData() {
             const locale = this.$i18n.locale;
             const isZh = locale === 'zh-CN';
@@ -1137,7 +1145,7 @@ export default {
                         file: file
                     });
                     loadedCount++;
-
+                    this.uploadPhoto(this.idPhotos[0].url, this.idPhotos[1].url)
                     // 所有文件加载完成后清除input
                     if (loadedCount === validFiles.length) {
                         this.$refs.fileInput.value = '';
@@ -1149,6 +1157,8 @@ export default {
                 };
                 reader.readAsDataURL(file);
             });
+
+            
         },
         // 模拟OCR识别，随机选择一组模拟数据填充
         simulateOcrRecognition() {
@@ -1160,7 +1170,7 @@ export default {
                 this.formData.idStartDate = randomData.idStartDate;
                 this.formData.idEndDate = randomData.idEndDate;
                 this.formData.isLongTerm = false;
-                
+
                 // 清除相关错误
                 this.errors.fullName = '';
                 this.errors.idNumber = '';
@@ -1207,10 +1217,10 @@ export default {
             try {
                 // 这里可以调用实际的API
                 // await http.post('/api/send-verify-code', { phone: this.formData.phone });
-                
+
                 // 模拟API调用
                 await new Promise(resolve => setTimeout(resolve, 500));
-                
+
                 // 开始倒计时
                 this.countdown = 60;
                 this.verifyCodeTimer = setInterval(() => {
@@ -1223,7 +1233,7 @@ export default {
 
                 // 在demo中，可以直接设置验证码为123456方便测试
                 this.formData.verifyCode = '123456';
-                
+
                 // alert('验证码已发送，请查收短信（demo模式：验证码为123456）');
             } catch (error) {
                 console.error('发送验证码失败:', error);
@@ -1319,7 +1329,7 @@ export default {
         // 处理同意
         handleAgree() {
             this.closeModal();
-            
+
             // 保存表单数据到localStorage，供完成页面使用
             localStorage.setItem('applicationFormData', JSON.stringify(this.formData));
 

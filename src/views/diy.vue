@@ -851,6 +851,7 @@ export default {
   methods: {
     // 下一步
     async nextStep() {
+      this.aitest()
       console.log('this.$route.query', this.$route.query)
       // 1. 生成图片
       const imageBase64Data = await this.creatimg()
@@ -891,6 +892,15 @@ export default {
     checkAIReview() {
       return diyCardApi.design.reviewResult({
         orderId: this.$route.query.oid,
+        // imageBase64: imageBase64,
+      })
+      // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":{"reviewResult":"PASS","reviewReason":null},"datas":null}
+    },
+    // 查询图审结果
+    aitest() {
+      return diyCardApi.design.aiGenerate({
+        orderId: this.$route.query.oid,
+        prompt: 'cat'
         // imageBase64: imageBase64,
       })
       // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":{"reviewResult":"PASS","reviewReason":null},"datas":null}
