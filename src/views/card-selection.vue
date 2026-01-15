@@ -228,7 +228,7 @@
       }
       
       .apply-btn {
-        background: #e53935;
+        background: #ff9f2f;
         color: #fff;
         border: none;
         border-radius: 20px;
@@ -298,14 +298,14 @@
           class="card-item"
         >
           <div class="card-header">
-            <span class="category-tag" v-if="card.category">{{ card.category }}</span>
-            <!-- <span class="category-tag" v-if="card.category2">{{ card.category2 }}</span> -->
+            <span class="category-tag" v-if="card.isDiy">{{ 'DIY' }}</span>
+            <!-- <span class="category-tag" v-if="card.supportAiGenerate">{{ 'AIGC' }}</span> -->
           </div>
           <div class="card-content">
-            <img :src="card.image" :alt="card.title" class="card-image">
+            <img :src="`${imageBaseUrl}${card.imageUrl}`" :alt="card.productName" class="card-image">
             <div class="card-info">
-              <div class="card-title">{{ card.title }}</div>
-              <div class="card-desc">{{ card.description }}</div>
+              <div class="card-title">{{ card.productName }}</div>
+              <div class="card-desc" v-if="card.description">{{ card.description }}</div>
             </div>
             <button class="apply-btn" @click.stop="goToPresetCard(card)">
               {{ $t('cardSelection.apply') }}
@@ -318,11 +318,13 @@
 </template>
 
 <script>
+  import {imageBaseUrl} from '@/utils/config'
   import diyCardApi from '@/api/diycard';
 export default {
   name: 'CardSelection',
   data() {
     return {
+      imageBaseUrl,
       dropdownOpen: false,
       presetCards: []
     };
@@ -371,92 +373,8 @@ export default {
       diyCardApi.product.list({
       }, this).then(res => {
         console.log(res);
-        // this.presetCards = res.data.products;
+        this.presetCards = res.data.products;
       });
-      this.presetCards = [
-        {
-          id: 1,
-          category: isZh ? 'DIY' : 'DIY',
-          title: isZh ? '欧洲旅行信用卡' : 'Europe Travel Credit Card',
-          description: isZh ? '欧洲消费1.5%返现无上限' : '1.5% cashback on European spending, no upper limit',
-          image: require('../assets/images/img/banner.png'),
-          details: {
-            benefits: isZh ? [
-              '欧洲消费1.5%返现，无上限',
-              '机场贵宾厅免费使用',
-              '旅行保险保障'
-            ] : [
-              '1.5% cashback on European spending, no limit',
-              'Free airport lounge access',
-              'Travel insurance coverage'
-            ],
-            requirements: isZh ? [
-              '年满18周岁',
-              '有稳定收入来源',
-              '信用记录良好'
-            ] : [
-              'Age 18 or above',
-              'Stable income source',
-              'Good credit history'
-            ]
-          }
-        },
-        {
-          id: 2,
-          category: isZh ? '' : '',
-          title: isZh ? '生肖卡' : 'Zodiac Card',
-          description: isZh ? '铭刻文化,彰显自信' : 'Engrave culture, show confidence',
-          image: require('../assets/images/img/banner1.png'),
-          details: {
-            benefits: isZh ? [
-              '独特生肖设计',
-              '文化纪念价值',
-              '专属权益'
-            ] : [
-              'Unique zodiac design',
-              'Cultural commemorative value',
-              'Exclusive benefits'
-            ],
-            requirements: isZh ? [
-              '年满18周岁',
-              '有稳定收入来源',
-              '信用记录良好'
-            ] : [
-              'Age 18 or above',
-              'Stable income source',
-              'Good credit history'
-            ]
-          }
-        },
-        {
-          id: 3,
-          category: isZh ? 'DIY' : 'DIY',
-          category2: isZh ? 'AIGC' : 'AIGC',
-          title: isZh ? '牡丹超惠龙' : 'Peony Super Benefit Dragon Card',
-          description: isZh ? '硬核超惠,真情回馈' : 'Hardcore super benefits, genuine rewards',
-          image: require('../assets/images/img/banner2.png'),
-          details: {
-            benefits: isZh ? [
-              '超值返现优惠',
-              '消费积分翻倍',
-              '专属商户折扣'
-            ] : [
-              'Super value cashback',
-              'Double points on spending',
-              'Exclusive merchant discounts'
-            ],
-            requirements: isZh ? [
-              '年满18周岁',
-              '有稳定收入来源',
-              '信用记录良好'
-            ] : [
-              'Age 18 or above',
-              'Stable income source',
-              'Good credit history'
-            ]
-          }
-        }
-      ];
     },
     goToDIY() {
       this.$router.push({
@@ -469,7 +387,7 @@ export default {
         this.$router.push({
           path: '/home',
           query: {
-            id: card.id
+            id: card.productId
           }
         });
       } else {
@@ -477,7 +395,7 @@ export default {
         this.$router.push({
           path: '/card-detail',
           query: {
-            id: card.id
+            id: card.productId
           }
         });
       }

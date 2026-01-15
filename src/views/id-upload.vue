@@ -163,7 +163,7 @@ background: #f5f7fa;
             margin-bottom: 8px;
 
             .required {
-                color: #e53935;
+                color: #ff9f2f;
                 margin-left: 4px;
             }
 
@@ -211,7 +211,7 @@ background: #f5f7fa;
         }
 
         .error-message {
-            color: #e53935;
+            color: #ff9f2f;
             font-size: 12px;
             margin-top: 4px;
         }
@@ -247,9 +247,9 @@ background: #f5f7fa;
             .get-code-btn {
                 padding: 12px 20px;
                 background: #fff;
-                border: 1px solid #e53935;
+                border: 1px solid #ff9f2f;
                 border-radius: 8px;
-                color: #e53935;
+                color: #ff9f2f;
                 font-size: 14px;
                 font-weight: 500;
                 cursor: pointer;
@@ -258,7 +258,7 @@ background: #f5f7fa;
                 flex-shrink: 0;
 
                 &:active {
-                    background: #e53935;
+                    background: #ff9f2f;
                     color: #fff;
                 }
 
@@ -301,7 +301,7 @@ background: #f5f7fa;
             margin-bottom: 12px;
 
             .required {
-                color: #e53935;
+                color: #ff9f2f;
                 margin-left: 4px;
             }
 
@@ -446,7 +446,7 @@ background: #f5f7fa;
         }
 
         .error-message {
-            color: #e53935;
+            color: #ff9f2f;
             font-size: 12px;
             margin-top: 8px;
         }
@@ -457,7 +457,7 @@ background: #f5f7fa;
 .submit-btn {
     width: 90%;
     padding: 14px;
-    background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+    background: linear-gradient(135deg, #ff9f2f 0%, #c62828 100%);
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -625,7 +625,7 @@ background: #f5f7fa;
                 .bullet-point {
                     width: 6px;
                     height: 6px;
-                    background: #e53935;
+                    background: #ff9f2f;
                     border-radius: 50%;
                     margin-right: 12px;
                     margin-top: 6px;
@@ -675,7 +675,7 @@ background: #f5f7fa;
                 }
 
                 &.btn-agree {
-                    background: #e53935;
+                    background: #ff9f2f;
                     color: #fff;
 
                     &:active {

@@ -29,3 +29,4 @@ module.exports.HOST = HOST
 module.exports.GET = GET
 module.exports.isDev = false  //vconsole 开关
 module.exports.edition = 'v1.0';  //版本号
+module.exports.imageBaseUrl = 'http://10.165.60.116:8443'

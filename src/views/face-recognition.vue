@@ -686,7 +686,7 @@ export default {
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 
         &.error {
-            border-color: #e53935;
+            border-color: #ff9f2f;
             box-shadow: 0 4px 20px rgba(229, 57, 53, 0.4);
         }
 
@@ -723,7 +723,7 @@ export default {
             z-index: 5;
 
             &.error {
-                color: #e53935;
+                color: #ff9f2f;
             }
 
             &.warning {

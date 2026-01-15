@@ -220,15 +220,15 @@
     }
     
     &.btn-primary {
-      background: #e53935;
+      background: #ff9f2f;
       color: #fff;
       box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
     }
     
     &.btn-secondary {
       background: #fff;
-      color: #e53935;
-      border: 1px solid #e53935;
+      color: #ff9f2f;
+      border: 1px solid #ff9f2f;
     }
   }
 }

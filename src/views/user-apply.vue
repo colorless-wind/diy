@@ -165,7 +165,7 @@ background: #f5f7fa;
             margin-bottom: 8px;
 
             .required {
-                color: #e53935;
+                color: #ff9f2f;
                 margin-left: 4px;
             }
         }
@@ -199,7 +199,7 @@ background: #f5f7fa;
         }
 
         .error-message {
-            color: #e53935;
+            color: #ff9f2f;
             font-size: 12px;
             margin-top: 4px;
         }
@@ -220,7 +220,7 @@ background: #f5f7fa;
             margin-bottom: 12px;
 
             .required {
-                color: #e53935;
+                color: #ff9f2f;
                 margin-left: 4px;
             }
 
@@ -365,7 +365,7 @@ background: #f5f7fa;
         }
 
         .error-message {
-            color: #e53935;
+            color: #ff9f2f;
             font-size: 12px;
             margin-top: 8px;
         }
@@ -376,7 +376,7 @@ background: #f5f7fa;
 .submit-btn {
     width: 90%;
     padding: 14px;
-    background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+    background: linear-gradient(135deg, #ff9f2f 0%, #c62828 100%);
     color: #fff;
     border: none;
     border-radius: 8px;
