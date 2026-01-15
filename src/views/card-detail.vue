@@ -18,7 +18,7 @@
   z-index: 100;
   display: flex;
   align-items: center;
-  
+
   .back-btn {
     width: 32px;
     height: 32px;
@@ -29,18 +29,18 @@
     margin-right: 12px;
     border-radius: 50%;
     transition: background 0.2s;
-    
+
     &:active {
       background: rgba(0, 0, 0, 0.05);
     }
-    
+
     svg {
       width: 20px;
       height: 20px;
       fill: #333;
     }
   }
-  
+
   .header-title {
     font-size: 18px;
     font-weight: 600;
@@ -55,7 +55,7 @@
   border-radius: 16px;
   padding: 24px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  
+
   .category-tag {
     display: inline-block;
     background: linear-gradient(135deg, #ffa726 0%, #fb8c00 100%);
@@ -66,7 +66,7 @@
     font-weight: 500;
     margin-bottom: 16px;
   }
-  
+
   .card-image-large {
     width: 100%;
     max-width: 400px;
@@ -76,38 +76,38 @@
     display: block;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   }
-  
+
   .card-title {
     font-size: 22px;
     font-weight: 600;
     color: #1a1a1a;
     margin-bottom: 12px;
   }
-  
+
   .card-description {
     font-size: 15px;
     color: #666;
     line-height: 1.6;
     margin-bottom: 24px;
   }
-  
+
   .benefits-section {
     margin-top: 24px;
     padding-top: 24px;
     border-top: 1px solid #eee;
-    
+
     .section-title {
       font-size: 16px;
       font-weight: 600;
       color: #1a1a1a;
       margin-bottom: 16px;
     }
-    
+
     .benefits-list {
       list-style: none;
       padding: 0;
       margin: 0;
-      
+
       li {
         padding: 12px 0;
         padding-left: 28px;
@@ -115,7 +115,7 @@
         font-size: 14px;
         color: #333;
         line-height: 1.6;
-        
+
         &::before {
           content: '✓';
           position: absolute;
@@ -143,31 +143,33 @@
   border-radius: 16px;
   padding: 24px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  
+
   .form-title {
     font-size: 18px;
     font-weight: 600;
     color: #1a1a1a;
     margin-bottom: 20px;
   }
-  
+
   .form-group {
     margin-bottom: 20px;
-    
+
     label {
       display: block;
       font-size: 14px;
       font-weight: 500;
       color: #333;
       margin-bottom: 8px;
-      
+
       .required {
         color: #ff9f2f;
         margin-left: 4px;
       }
     }
-    
-    input, select, textarea {
+
+    input,
+    select,
+    textarea {
       width: 100%;
       padding: 12px 16px;
       border: 1px solid #ddd;
@@ -177,22 +179,22 @@
       background: #fff;
       box-sizing: border-box;
       transition: border-color 0.3s;
-      
+
       &:focus {
         outline: none;
         border-color: #409EFF;
       }
-      
+
       &::placeholder {
         color: #999;
       }
     }
-    
+
     textarea {
       min-height: 100px;
       resize: vertical;
     }
-    
+
     .error-message {
       color: #ff9f2f;
       font-size: 12px;
@@ -246,7 +248,7 @@
       }
     }
 
-    input:checked + .checkmark {
+    input:checked+.checkmark {
       background: #4caf50;
       border-color: #4caf50;
 
@@ -279,38 +281,38 @@
   }
 }
 
-    .submit-btn {
-      width: 90%;
-      padding: 14px;
-      background: linear-gradient(135deg, #ff9f2f 0%, #c62828 100%);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      margin-top: 8px;
-      margin-left: 5%;
-      box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
-  
-      &:active {
-        transform: scale(0.98);
-      }
-  
-      &:disabled {
-        background: #ccc;
-        cursor: not-allowed;
-        box-shadow: none;
-      }
-    }
+.submit-btn {
+  width: 90%;
+  padding: 14px;
+  background: linear-gradient(135deg, #ff9f2f 0%, #fb8c00 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 8px;
+  margin-left: 5%;
+  box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+}
 
 @media (min-width: 768px) {
   .preset-card-page {
     max-width: 768px;
     margin: 0 auto;
   }
-  
+
   .card-detail-section {
     .card-image-large {
       max-width: 500px;
@@ -320,61 +322,60 @@
 </style>
 
 <template>
-  <div class="preset-card-page">
-    <div class="header">
-      <div class="back-btn" @click="goBack">
-        <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-          <path d="M631.7 256l-256 256 256 256-60.3 60.3-316.3-316.3 316.3-316.3z"/>
-        </svg>
-      </div>
-      <div class="header-title">{{ $t('presetCard.title') }}</div>
+<div class="preset-card-page">
+  <div class="header">
+    <div class="back-btn" @click="goBack">
+      <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+        <path d="M631.7 256l-256 256 256 256-60.3 60.3-316.3-316.3 316.3-316.3z" />
+      </svg>
     </div>
-
-    <div v-if="cardData" class="card-detail-section">
-      <!-- <span class="category-tag">{{ cardData.category }}</span> -->
-      <img :src="cardData.image" :alt="cardData.title" class="card-image-large" :onerror="handleImageError">
-      <h1 class="card-title">{{ cardData.title }}</h1>
-      <p class="card-description">{{ cardData.description }}</p>
-      
-      <div class="benefits-section" v-if="cardData.details && cardData.details.benefits">
-        <div class="section-title">{{ $t('presetCard.benefits') }}</div>
-        <ul class="benefits-list">
-          <li v-for="(benefit, index) in cardData.details.benefits" :key="index">
-            {{ benefit }}
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- 协议同意部分 -->
-    <div class="agreement-section">
-      <label class="agreement-checkbox">
-        <input
-          type="checkbox"
-          v-model="agreedToTerms"
-          @change="validateAgreement"
-        >
-        <span class="checkmark"></span>
-        <span class="agreement-text">
-          {{ $t('presetCard.agreementText') }}
-          <a href="#" class="agreement-link" @click.prevent="showTerms">{{ $t('presetCard.termsLink') }}</a>
-          {{ $t('presetCard.and') }}
-          <a href="#" class="agreement-link" @click.prevent="showPrivacy">{{ $t('presetCard.privacyLink') }}</a>
-        </span>
-      </label>
-      <div v-if="agreementError" class="error-message">
-        {{ $t('presetCard.agreementError') }}
-      </div>
-    </div>
-
-<button class="submit-btn" @click="submitApplication" :disabled="isSubmitting || !agreedToTerms">
-  {{ isSubmitting ? $t('presetCard.submitting') : $t('presetCard.submit') }}
-</button>
- 
+    <div class="header-title">{{ $t('presetCard.title') }}</div>
   </div>
+
+  <div v-if="cardData" class="card-detail-section">
+    <!-- <span class="category-tag">{{ cardData.category }}</span> -->
+    <img :src="cardData.image" :alt="cardData.productName" class="card-image-large" :onerror="handleImageError">
+    <h1 class="card-title">{{ cardData.productName }}</h1>
+    <p class="card-description" v-if="cardData.description">{{ cardData.description }}</p>
+
+    <div class="benefits-section" v-if="cardData.details && cardData.details.benefits">
+      <div class="section-title">{{ $t('presetCard.benefits') }}</div>
+      <ul class="benefits-list">
+        <li v-for="(benefit, index) in cardData.details.benefits" :key="index">
+          {{ benefit }}
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 协议同意部分 -->
+  <div class="agreement-section">
+    <label class="agreement-checkbox">
+      <input type="checkbox" v-model="agreedToTerms" @change="validateAgreement">
+      <span class="checkmark"></span>
+      <span class="agreement-text">
+        {{ $t('presetCard.agreementText') }}
+        <a href="#" class="agreement-link" @click.prevent="showTerms">{{ $t('presetCard.termsLink') }}</a>
+        {{ $t('presetCard.and') }}
+        <a href="#" class="agreement-link" @click.prevent="showPrivacy">{{ $t('presetCard.privacyLink') }}</a>
+      </span>
+    </label>
+    <div v-if="agreementError" class="error-message">
+      {{ $t('presetCard.agreementError') }}
+    </div>
+  </div>
+
+  <button class="submit-btn" @click="submitApplication" :disabled="isSubmitting || !agreedToTerms">
+    {{ isSubmitting ? $t('presetCard.submitting') : $t('presetCard.submit') }}
+  </button>
+
+</div>
 </template>
 
 <script>
+import { imageBaseUrl } from '@/utils/config'
+import diyCardApi from '@/api/diycard';
+import { resolve } from 'core-js/fn/promise';
 export default {
   name: 'CardDetail',
   data() {
@@ -399,14 +400,14 @@ export default {
   computed: {
     isFormValid() {
       return this.formData.fullName &&
-             this.formData.email &&
-             this.formData.phone &&
-             this.formData.idNumber &&
-             !this.errors.fullName &&
-             !this.errors.email &&
-             !this.errors.phone &&
-             !this.errors.idNumber &&
-             this.agreedToTerms;
+        this.formData.email &&
+        this.formData.phone &&
+        this.formData.idNumber &&
+        !this.errors.fullName &&
+        !this.errors.email &&
+        !this.errors.phone &&
+        !this.errors.idNumber &&
+        this.agreedToTerms;
     }
   },
   watch: {
@@ -421,7 +422,7 @@ export default {
   mounted() {
     const query = this.$route.query;
     this.isDIY = query.type === 'diy';
-    
+
     if (this.isDIY) {
       // DIY类型，从localStorage获取图片和card id
       this.diyImageUrl = localStorage.getItem('imgResult') || '';
@@ -437,7 +438,6 @@ export default {
     getPresetCardsData() {
       const locale = this.$i18n.locale;
       const isZh = locale === 'zh-CN';
-      
       return [
         {
           id: 1,
@@ -496,15 +496,34 @@ export default {
       ];
     },
     loadCardData() {
-      const presetCardsData = this.getPresetCardsData();
-      this.cardData = presetCardsData.find(card => card.id === this.cardId);
+      return new Promise(resolve=>{
+
+        diyCardApi.product.detail({
+          productId: this.$route.query.id
+        }).then(res => {
+          console.log(res)
+          const resData = res.data
+          this.cardData = {
+            id: resData.productId,
+            productName: resData.productName,
+            image: `${imageBaseUrl}${resData.standardImageUrl}`,
+            details: {
+              benefits: resData.benefits
+            }
+          }
+          resolve(res)
+        }).catch(err=>{
+          resolve()
+          console.error(err)
+        })
+      })
     },
     loadDIYCardData() {
       // 根据card id从预设卡片数据中读取对应的产品信息
-      const presetCardsData = this.getPresetCardsData();
+      const presetCardsData = this.loadCardData();
       const cardId = parseInt(this.cardId);
       const baseCardData = presetCardsData.find(card => card.id === cardId);
-      
+
       if (baseCardData) {
         // 使用基础卡片信息，但替换图片为DIY图片
         this.cardData = {
@@ -515,7 +534,7 @@ export default {
         // 如果找不到对应的卡片，使用默认DIY数据
         const locale = this.$i18n.locale;
         const isZh = locale === 'zh-CN';
-        
+
         this.cardData = {
           id: 'diy',
           category: isZh ? 'DIY' : 'DIY',
@@ -541,7 +560,7 @@ export default {
     },
     validateField(fieldName) {
       this.errors[fieldName] = '';
-      
+
       switch (fieldName) {
         case 'fullName':
           if (!this.formData.fullName.trim()) {
@@ -592,14 +611,14 @@ export default {
       }
 
       this.isSubmitting = true;
-      
+
       try {
         // 这里可以调用实际的API
         // await http.post('/api/card-application', this.formData);
-        
+
         // 模拟API调用
         await new Promise(resolve => setTimeout(resolve, 1500));
-        
+
         // 跳转到申请页面，保持流程一致
         this.$router.push({
           path: '/id-upload',
