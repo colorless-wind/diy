@@ -30,8 +30,12 @@
         <!-- 准备中状态 -->
         <div v-if="status === 'preparing'" class="preparing-state">
             <div class="camera-frame preparing">
-                <div class="preparing-text">准备中...</div>
-                <div class="face-placeholder"></div>
+                <div class="camera-preview mirror">
+                    <video ref="video" class="camera-video" autoplay playsinline muted></video>
+                    <div class="camera-overlay">
+                        <div class="preparing-text">准备中...</div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -44,9 +48,20 @@
                 <!-- 状态提示 -->
                 <div class="status-message" :class="messageClass">{{ currentMessage }}</div>
                 
-                <!-- 模拟人脸区域 -->
-                <div class="face-detection-area">
-                    <div v-if="faceDetected" class="detected-face"></div>
+                <div class="camera-preview mirror">
+                    <video ref="video" class="camera-video" autoplay playsinline muted></video>
+                    <div class="camera-overlay">
+                        <div
+                            v-if="faceBox"
+                            class="face-box"
+                            :style="{
+                                left: faceBox.left + '%',
+                                top: faceBox.top + '%',
+                                width: faceBox.width + '%',
+                                height: faceBox.height + '%'
+                            }"
+                        ></div>
+                    </div>
                 </div>
             </div>
 
@@ -63,8 +78,12 @@
         <!-- 验证中状态 -->
         <div v-else-if="status === 'verifying'" class="verifying-state">
             <div class="camera-frame verifying">
-                <div class="verifying-text">验证中，请保持姿势不变</div>
-                <div class="face-placeholder verifying-face"></div>
+                <div class="camera-preview mirror">
+                    <video ref="video" class="camera-video" autoplay playsinline muted></video>
+                    <div class="camera-overlay">
+                        <div class="verifying-text">验证中，请保持姿势不变</div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -87,28 +106,86 @@ export default {
             showPermissionModal: true,
             countdown: 8,
             faceDetected: false,
-            currentMessage: '请靠近一点',
+            faceBox: null, // { left, top, width, height } percentage relative to video
+            faceOk: false,
+            lastFaceSeenAt: 0,
+            currentMessage: '请允许摄像头权限',
             messageClass: 'warning',
             frameClass: 'warning',
             soundEnabled: true,
             recognitionTimer: null,
-            countdownTimer: null
+            countdownTimer: null,
+            stream: null,
+            detector: null,
+            detectRafId: null,
+            detectThrottleMs: 120,
+            lastDetectAt: 0
         };
     },
     mounted() {
         // 页面加载时显示权限请求
     },
+    watch: {
+        status() {
+            // 状态切换会导致 video 节点被重新渲染（v-if/v-else-if），需要重新绑定 stream
+            this.$nextTick(() => {
+                this.attachStreamToVideo();
+            });
+        }
+    },
     beforeDestroy() {
-        this.clearTimers();
+        this.cleanupResources();
     },
     methods: {
         clearTimers() {
             if (this.recognitionTimer) {
-                clearInterval(this.recognitionTimer);
+                clearTimeout(this.recognitionTimer);
+                this.recognitionTimer = null;
             }
             if (this.countdownTimer) {
                 clearInterval(this.countdownTimer);
+                this.countdownTimer = null;
             }
+        },
+        attachStreamToVideo() {
+            const video = this.$refs.video;
+            if (!video || !this.stream) return;
+            if (video.srcObject !== this.stream) {
+                video.srcObject = this.stream;
+            }
+            // 尝试播放（某些浏览器会抛异常，但不影响渲染）
+            try {
+                const p = video.play();
+                if (p && typeof p.catch === 'function') p.catch(() => {});
+            } catch (e) {
+                // ignore
+            }
+        },
+        stopDetectLoop() {
+            if (this.detectRafId) {
+                cancelAnimationFrame(this.detectRafId);
+                this.detectRafId = null;
+            }
+        },
+        stopCamera() {
+            try {
+                if (this.stream) {
+                    this.stream.getTracks().forEach(t => t.stop());
+                }
+            } catch (e) {
+                // ignore
+            }
+            this.stream = null;
+            const video = this.$refs.video;
+            if (video && video.srcObject) {
+                video.srcObject = null;
+            }
+        },
+        cleanupResources() {
+            this.clearTimers();
+            this.stopDetectLoop();
+            this.detector = null;
+            this.stopCamera();
         },
         allowCamera() {
             this.showPermissionModal = false;
@@ -122,15 +199,185 @@ export default {
             alert('需要摄像头权限才能进行人脸识别');
             this.handleClose();
         },
-        startRecognition() {
-            // 进入准备状态
+        async initCamera() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                throw new Error('当前浏览器不支持摄像头访问');
+            }
+
+            const constraints = {
+                audio: false,
+                video: {
+                    facingMode: 'user',
+                    width: { ideal: 720 },
+                    height: { ideal: 720 }
+                }
+            };
+
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
+            this.stream = stream;
+
+            await this.$nextTick();
+            this.attachStreamToVideo();
+
+            // 等待 video 元数据就绪（用于拿到 videoWidth / videoHeight）
+            const video = this.$refs.video;
+            if (!video) throw new Error('摄像头预览初始化失败');
+
+            await new Promise((resolve, reject) => {
+                if (video.videoWidth && video.videoHeight) {
+                    resolve();
+                    return;
+                }
+                const onLoaded = () => {
+                    video.removeEventListener('loadedmetadata', onLoaded);
+                    resolve();
+                };
+                video.addEventListener('loadedmetadata', onLoaded);
+                setTimeout(() => reject(new Error('摄像头预览超时')), 8000);
+            });
+        },
+        setupDetector() {
+            if (typeof window !== 'undefined' && 'FaceDetector' in window) {
+                try {
+                    this.detector = new window.FaceDetector({ fastMode: true, maxDetectedFaces: 1 });
+                    return true;
+                } catch (e) {
+                    this.detector = null;
+                    return false;
+                }
+            }
+            this.detector = null;
+            return false;
+        },
+        startDetectLoop() {
+            this.stopDetectLoop();
+
+            const tick = async () => {
+                if (this.status !== 'recognizing') return;
+
+                const video = this.$refs.video;
+                if (!video || !this.detector || !video.videoWidth || !video.videoHeight) {
+                    this.detectRafId = requestAnimationFrame(tick);
+                    return;
+                }
+
+                const now = Date.now();
+                if (now - this.lastDetectAt < this.detectThrottleMs) {
+                    this.detectRafId = requestAnimationFrame(tick);
+                    return;
+                }
+                this.lastDetectAt = now;
+
+                try {
+                    const faces = await this.detector.detect(video);
+                    if (!faces || faces.length === 0) {
+                        this.faceDetected = false;
+                        this.faceOk = false;
+                        this.faceBox = null;
+                        this.currentMessage = '没有检测到人脸';
+                        this.messageClass = 'error';
+                        this.frameClass = 'error';
+                    } else {
+                        const box = faces[0].boundingBox;
+                        const vw = video.videoWidth;
+                        const vh = video.videoHeight;
+
+                        const left = (box.x / vw) * 100;
+                        const top = (box.y / vh) * 100;
+                        const width = (box.width / vw) * 100;
+                        const height = (box.height / vh) * 100;
+                        this.faceBox = {
+                            left: Math.max(0, Math.min(100, left)),
+                            top: Math.max(0, Math.min(100, top)),
+                            width: Math.max(0, Math.min(100, width)),
+                            height: Math.max(0, Math.min(100, height))
+                        };
+
+                        this.faceDetected = true;
+                        this.lastFaceSeenAt = now;
+
+                        // 简单质量判断：大小 + 居中
+                        const areaRatio = (box.width * box.height) / (vw * vh);
+                        const cx = (box.x + box.width / 2) / vw;
+                        const cy = (box.y + box.height / 2) / vh;
+                        const centered = Math.abs(cx - 0.5) < 0.18 && Math.abs(cy - 0.5) < 0.18;
+                        const sizeOk = areaRatio > 0.08 && areaRatio < 0.35;
+
+                        if (!sizeOk) {
+                            this.faceOk = false;
+                            this.currentMessage = areaRatio <= 0.08 ? '请靠近一点' : '请远离一点';
+                            this.messageClass = 'warning';
+                            this.frameClass = 'warning';
+                        } else if (!centered) {
+                            this.faceOk = false;
+                            this.currentMessage = '请将人脸移到中心位置';
+                            this.messageClass = 'warning';
+                            this.frameClass = 'warning';
+                        } else {
+                            this.faceOk = true;
+                            this.currentMessage = '检测到人脸，请保持不动';
+                            this.messageClass = 'info';
+                            this.frameClass = 'info';
+                        }
+                    }
+                } catch (e) {
+                    this.faceDetected = false;
+                    this.faceOk = false;
+                    this.faceBox = null;
+                    this.currentMessage = '人脸检测失败，请换用 Chrome/Edge 重试';
+                    this.messageClass = 'error';
+                    this.frameClass = 'error';
+                }
+
+                this.detectRafId = requestAnimationFrame(tick);
+            };
+
+            this.detectRafId = requestAnimationFrame(tick);
+        },
+        async startRecognition() {
+            this.cleanupResources();
+
+            this.faceDetected = false;
+            this.faceOk = false;
+            this.faceBox = null;
+            this.lastFaceSeenAt = 0;
+            this.currentMessage = '正在打开摄像头...';
+            this.messageClass = 'warning';
+            this.frameClass = 'warning';
+
+            // 进入准备状态（渲染 video 节点）
             this.status = 'preparing';
-            
+
+            try {
+                await this.initCamera();
+            } catch (e) {
+                this.cleanupResources();
+                alert((e && e.message) ? e.message : '无法打开摄像头，请检查权限设置');
+                this.status = 'permission';
+                this.showPermissionModal = true;
+                return;
+            }
+
             // 2秒后进入识别状态
-            setTimeout(() => {
+            this.recognitionTimer = setTimeout(() => {
                 this.status = 'recognizing';
+
+                const supported = this.setupDetector();
+                if (!supported) {
+                    // 不支持原生 FaceDetector：明确提示，并回退到模拟流程（页面仍可走通）
+                    this.currentMessage = '当前浏览器不支持人脸检测，请使用 Chrome/Edge；已进入模拟流程';
+                    this.messageClass = 'warning';
+                    this.frameClass = 'warning';
+                    this.startCountdown();
+                    this.simulateFaceDetection();
+                    return;
+                }
+
+                this.currentMessage = '请将人脸置于圆形取景框内';
+                this.messageClass = 'warning';
+                this.frameClass = 'warning';
                 this.startCountdown();
-                this.simulateFaceDetection();
+                this.startDetectLoop();
             }, 2000);
         },
         startCountdown() {
@@ -139,14 +386,33 @@ export default {
                 this.countdown--;
                 if (this.countdown <= 0) {
                     clearInterval(this.countdownTimer);
-                    // 倒计时结束，进入验证状态
+                    this.countdownTimer = null;
+
+                    // 倒计时结束：原生检测场景下必须检测到“合格人脸”
+                    const freshFace = this.detector
+                        ? (this.faceOk && (Date.now() - this.lastFaceSeenAt < 1500))
+                        : this.faceDetected;
+
+                    if (!freshFace) {
+                        this.currentMessage = '未检测到清晰人脸，请重新对准后再试';
+                        this.messageClass = 'error';
+                        this.frameClass = 'error';
+                        setTimeout(() => {
+                            if (this.status === 'recognizing') this.startCountdown();
+                        }, 800);
+                        return;
+                    }
+
+                    // 进入验证状态
                     this.status = 'verifying';
+                    this.stopDetectLoop();
+
                     setTimeout(() => {
                         this.status = 'success';
                         setTimeout(() => {
                             this.completeRecognition();
                         }, 1500);
-                    }, 2000);
+                    }, 1200);
                 }
             }, 1000);
         },
@@ -166,6 +432,9 @@ export default {
                     this.messageClass = currentStep.class;
                     this.frameClass = currentStep.frame;
                     this.faceDetected = currentStep.detected;
+                    this.faceOk = currentStep.detected;
+                    this.faceBox = null;
+                    if (currentStep.detected) this.lastFaceSeenAt = Date.now();
 
                     step++;
                     if (step < steps.length) {
@@ -192,7 +461,7 @@ export default {
         },
         handleClose() {
             if (confirm('确定要退出人脸识别吗？')) {
-                this.clearTimers();
+                this.cleanupResources();
                 this.$router.back();
             }
         },
@@ -343,21 +612,52 @@ export default {
         align-items: center;
         justify-content: center;
         position: relative;
+        overflow: hidden;
 
         &.preparing {
             .preparing-text {
                 color: #fff;
                 font-size: 18px;
-                margin-bottom: 20px;
-            }
-
-            .face-placeholder {
-                width: 60%;
-                height: 60%;
-                background: #3a3a3a;
-                border-radius: 50%;
             }
         }
+    }
+}
+
+// 摄像头预览与覆盖层
+.camera-preview {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+
+    &.mirror {
+        transform: scaleX(-1);
+    }
+
+    .camera-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        background: #000;
+    }
+
+    .camera-overlay {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 0 20px;
+    }
+
+    .face-box {
+        position: absolute;
+        border: 2px solid rgba(64, 158, 255, 0.9);
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(64, 158, 255, 0.35);
+        background: rgba(64, 158, 255, 0.06);
     }
 }
 
@@ -420,6 +720,7 @@ export default {
             font-weight: 500;
             text-align: center;
             padding: 0 20px;
+            z-index: 5;
 
             &.error {
                 color: #e53935;
@@ -435,51 +736,6 @@ export default {
 
             &.verifying {
                 color: #4caf50;
-            }
-        }
-
-        .face-detection-area {
-            width: 80%;
-            height: 60%;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            .detected-face {
-                width: 100%;
-                height: 100%;
-                background: #000;
-                border-radius: 50%;
-                position: relative;
-                animation: faceAppear 0.5s ease-out;
-                overflow: hidden;
-
-                // 模拟人脸轮廓
-                &::before {
-                    content: '';
-                    position: absolute;
-                    top: 15%;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    width: 30%;
-                    height: 25%;
-                    background: #3a3a3a;
-                    border-radius: 50% 50% 0 0;
-                }
-
-                // 模拟眼睛
-                &::after {
-                    content: '';
-                    position: absolute;
-                    top: 35%;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    width: 60%;
-                    height: 40%;
-                    background: linear-gradient(to bottom, #3a3a3a 0%, #2a2a2a 100%);
-                    border-radius: 50%;
-                }
             }
         }
     }
@@ -533,17 +789,6 @@ export default {
     }
 }
 
-@keyframes faceAppear {
-    from {
-        opacity: 0;
-        transform: scale(0.8);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
 // 验证中状态
 .verifying-state {
     display: flex;
@@ -564,6 +809,7 @@ export default {
         align-items: center;
         justify-content: center;
         position: relative;
+        overflow: hidden;
 
         &.verifying {
             .verifying-text {
@@ -574,25 +820,7 @@ export default {
                 font-weight: 500;
                 text-align: center;
                 padding: 0 20px;
-            }
-
-            .verifying-face {
-                width: 70%;
-                height: 70%;
-                background: #000;
-                border-radius: 50%;
-                position: relative;
-                overflow: hidden;
-
-                &::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    height: 30%;
-                    background: #3a3a3a;
-                }
+                z-index: 5;
             }
         }
     }
