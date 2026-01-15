@@ -318,6 +318,7 @@
 </template>
 
 <script>
+  import diyCardApi from '@/api/diycard';
 export default {
   name: 'CardSelection',
   data() {
@@ -367,6 +368,11 @@ export default {
       const locale = this.$i18n.locale;
       const isZh = locale === 'zh-CN';
       
+      diyCardApi.product.list({
+      }, this).then(res => {
+        console.log(res);
+        // this.presetCards = res.data.products;
+      });
       this.presetCards = [
         {
           id: 1,
@@ -469,7 +475,7 @@ export default {
       } else {
         
         this.$router.push({
-          path: '/preset-card',
+          path: '/card-detail',
           query: {
             id: card.id
           }

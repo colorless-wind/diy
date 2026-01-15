@@ -206,7 +206,7 @@ export default {
           // DIY类型跳转到preset-card页面，传递card id
           const diyCardId = localStorage.getItem('diyCardId') || '';
           this.$router.push({
-            path:'/preset-card',
+            path:'/card-detail',
             query: {
               type: 'diy',
               id: diyCardId
@@ -223,7 +223,7 @@ export default {
         }
       });
       this.$router.push({
-        path: '/preset-card',
+        path: '/card-detail',
         query: {
           type: 'diy',
           cardId: 'diy'

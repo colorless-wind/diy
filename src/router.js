@@ -7,7 +7,7 @@ import DIY from './views/diy.vue'
 import submit from './views/submit.vue'
 import result from './views/result.vue'
 import cardSelection from './views/card-selection.vue'
-import presetCard from './views/preset-card.vue'
+import cardDetail from './views/card-detail.vue'
 import userApply from './views/user-apply.vue'
 import applicationComplete from './views/application-complete.vue'
 import termsOfService from './views/terms-of-service.vue'
@@ -47,12 +47,12 @@ const router = new Router({
       component: cardSelection
     },
     {
-      path: '/preset-card',
+      path: '/card-detail',
       meta: {
         auth: false,
         title: 'Card Details & Application'
       },
-      component: presetCard
+      component: cardDetail
     },
     {
       path: '/home',

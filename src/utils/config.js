@@ -13,8 +13,11 @@
 // const proxyUrl =  process.env.NODE_ENV === 'development' ? 'http://10.165.60.116:9501':'http://10.165.60.116:9501'; 
 // const getUrl =  process.env.NODE_ENV === 'development' ? 'http://10.165.60.116:9501':'http://10.165.60.116:9501'; 
 
-const proxyUrl =  process.env.NODE_ENV === 'development' ? 'https://cpc.goldpac.cn/dpApi':'https://cpc.goldpac.cn/dpApi'; 
-const getUrl =  process.env.NODE_ENV === 'development' ? 'https://cpc.goldpac.cn/dpApi':'https://cpc.goldpac.cn/dpApi'; 
+// const proxyUrl =  process.env.NODE_ENV === 'development' ? 'https://cpc.goldpac.cn/dpApi':'https://cpc.goldpac.cn/dpApi'; 
+// const getUrl =  process.env.NODE_ENV === 'development' ? 'https://cpc.goldpac.cn/dpApi':'https://cpc.goldpac.cn/dpApi'; 
+
+const proxyUrl =  process.env.NODE_ENV === 'development' ? 'http://10.165.60.116:19903':'http://10.165.60.116:19903'; 
+const getUrl =  process.env.NODE_ENV === 'development' ? 'http://10.165.60.116:19903':'http://10.165.60.116:19903'; 
 
 /**@event 本地跨域  */
 const HOST = process.env.NODE_ENV === 'development' ? proxyUrl : proxyUrl
