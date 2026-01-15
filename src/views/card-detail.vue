@@ -497,9 +497,8 @@ export default {
     },
     loadCardData() {
       return new Promise(resolve=>{
-
         diyCardApi.product.detail({
-          productId: this.$route.query.id
+          productId: this.$route.query.cid
         }).then(res => {
           console.log(res)
           const resData = res.data
@@ -517,6 +516,7 @@ export default {
           console.error(err)
         })
       })
+      // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":{"productId":"1","productCode":"DEBIT_STANDARD_001","productName":"金穗借记卡","cardType":"DEBIT","cardLevel":"STANDARD","cardOrg":"UNIONPAY","bankName":"中国农业银行","imageUrl":"/images/products/debit_standard_001.jpg","templateUrl":"/templates/debit_standard_001_template.png","annualFee":0.00,"annualFeeFree":"免年费","features":["免年费","全国ATM取款","网上银行"],"benefits":["免收账户管理费","免收小额账户管理费"],"applyCondition":"年满18周岁，持有效身份证件","isDiy":true,"standardImageUrl":"/images/products/debit_standard_001_std.jpg","supportAiGenerate":true,"needAiReview":true,"needPay":false,"payAmount":0.00},"datas":null}
     },
     loadDIYCardData() {
       // 根据card id从预设卡片数据中读取对应的产品信息

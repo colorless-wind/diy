@@ -185,7 +185,10 @@ export default {
     },
     openpage(){
       this.$router.push({
-        path:'DIY'
+        path:'DIY',
+        query: {
+          ...this.$route.query
+        }
       })
     },
     toggleDropdown(){

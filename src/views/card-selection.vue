@@ -368,10 +368,13 @@ export default {
       const isZh = locale === 'zh-CN';
 
       diyCardApi.product.list({
+        pageNo: 1,
+        pageSize: 50
       }, this).then(res => {
         console.log(res);
-        this.presetCards = res.data.products;
+        this.presetCards = res.data.records;
       });
+      // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":{"curPage":1,"totalPage":1,"amount":1,"total":null,"records":[{"productId":"1","productCode":"DEBIT_STANDARD_001","productName":"金穗借记卡","cardType":"DEBIT","cardLevel":"STANDARD","imageUrl":"/images/products/debit_standard_001.jpg","annualFee":0.00,"isDiy":true,"standardImageUrl":"/images/products/debit_standard_001_std.jpg","supportAiGenerate":true,"needAiReview":true,"needPay":false,"payAmount":0.00}]},"datas":null}
 
     },
     goToDIY() {
@@ -380,25 +383,30 @@ export default {
       });
     },
     createOrder(productId){
-      diyCardApi.order.create({
+      return diyCardApi.order.create({
         productId,
       })
+      // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":{"orderId":"45bbd44c618341bbaf9c6abd10d1f6ff","orderNo":"DIY20260115000015","orderStatus":"DESIGNING","isDiy":true,"standardImageUrl":"/images/products/debit_standard_001_std.jpg","supportAiGenerate":true,"needAiReview":true,"needPay":false},"datas":null}
     },
     async goToCardDetail(card) {
       console.log(card);
-      this.createOrder(card.productId)
+      const orderRes = await this.createOrder(card.productId)
+      console.log('orderRes', orderRes);
       if (card.isDiy) {
         this.$router.push({
           path: '/home',
           query: {
-            id: card.productId
+            cid: card.productId,
+            oid: orderRes.data.orderId,
+            supportAiGenerate: card.supportAiGenerate,
+            needAiReview: card.needAiReview,
           }
         });
       } else {
         this.$router.push({
           path: '/card-detail',
           query: {
-            id: card.productId
+            cid: card.productId
           }
         });
       }

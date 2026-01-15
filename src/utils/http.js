@@ -89,7 +89,7 @@ export default {
             if(i==newkey.length-1)_and=''
             SIGN = SIGN + newkey[i]+'='+ SIGN_Data[newkey[i]]+_and
         }
-        console.log(SIGN)
+        // console.log(SIGN)
         let SIGNS = Base64.encode(SIGN); // base64 转码
         let hash = CryptoJS.HmacSHA256(SIGNS,secret);
         SIGNS =CryptoJS.enc.Hex.stringify(hash);

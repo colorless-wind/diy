@@ -585,9 +585,12 @@
   </div>
   <div class="Sticker_box">
     <div class="header">
-      <p @click="change_sticker(0)" class="text" :class="{ 'active1': Sticker_type == 0 }">{{ $t('diy.emojiSticker') }}</p>
-      <p @click="change_sticker(1)" class="text" :class="{ 'active2': Sticker_type == 1 }">{{ $t('diy.textSticker') }}</p>
-      <p @click="change_sticker(2)" class="text" :class="{ 'active3': Sticker_type == 2 }">{{ $t('diy.moodSticker') }}</p>
+      <p @click="change_sticker(0)" class="text" :class="{ 'active1': Sticker_type == 0 }">{{ $t('diy.emojiSticker') }}
+      </p>
+      <p @click="change_sticker(1)" class="text" :class="{ 'active2': Sticker_type == 1 }">{{ $t('diy.textSticker') }}
+      </p>
+      <p @click="change_sticker(2)" class="text" :class="{ 'active3': Sticker_type == 2 }">{{ $t('diy.moodSticker') }}
+      </p>
       <div :class="{ 'active1': Sticker_type == 0, 'active2': Sticker_type == 1, 'active3': Sticker_type == 2 }"
         class="anmation_line"></div>
     </div>
@@ -599,7 +602,7 @@
   </div>
   <div v-show="imgback_arr.photoUrl" class="btn_box">
     <button class="btn_a" @click="reload_start">{{ $t('diy.reUpload') }}</button>
-    <button class="btn_b" @click="creatimg">{{ $t('diy.nextStep') }}</button>
+    <button class="btn_b" @click="nextStep">{{ $t('diy.nextStep') }}</button>
     <div class="bottomdiv"></div>
   </div>
   <!-- 背景蒙层 -->
@@ -654,7 +657,8 @@ import "cropperjs/dist/cropper.css";
 import AlloyFinger from "alloyfinger"; //手势插件
 import { MessageBox } from 'mint-ui';  //弹框
 import html2canvas from "../utils/html2canvas";
-
+import diyCardApi from "../api/diycard";
+import { resolve } from "core-js/fn/promise";
 export default {
   components: {
     Load,
@@ -845,6 +849,52 @@ export default {
     this.init()
   },
   methods: {
+    // 下一步
+    async nextStep() {
+      console.log('this.$route.query', this.$route.query)
+      // 1. 生成图片
+      const imageBase64Data = await this.creatimg()
+      if (!imageBase64Data) return console.error('图片生成失败imageBase64Data=', imageBase64Data)
+      // 2. 上传卡面图片
+      const designInfo = await this.userUploadCardFace(imageBase64Data)
+      if (!designInfo.data) return console.error('上传卡面图片失败designInfo=', designInfo)
+      // 3. 校验图审
+      if (!this.$route.query.needAiReview || this.$route.query.needAiReview == 'false') return console.log('跳过AI图审 this.$route.query.needAiReview=', this.$route.query.needAiReview)
+      // 4. 提交卡面进行图审
+      const reviewInfo = await this.submitAIReview()
+      console.debug('reviewInfo', reviewInfo)
+      // 跳转下一页
+      this.$router.push({
+        path: '/card-detail',
+        query: {
+          ...this.$route.query
+        }
+      })
+    },
+    // 用户上传卡面
+    userUploadCardFace(imageBase64) {
+      return diyCardApi.design.diyUpload({
+        orderId: this.$route.query.oid,
+        imageBase64: imageBase64,
+      })
+      // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":{"designId":"979841fd5a0f4c96954afe17d7747c68","imageUrl":"https://mock.example.com/diy_upload_1768470385967.png"},"datas":null}
+    },
+    // 提交卡面进行图审
+    submitAIReview() {
+      return diyCardApi.design.reviewSubmit({
+        orderId: this.$route.query.oid,
+        // imageBase64: imageBase64,
+      })
+      // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":{"reviewResult":"PASS","reviewReason":null,"ucode":"UC20260115000001","qrcodeUrl":null,"skippedReview":null},"datas":null}
+    },
+    // 查询图审结果
+    checkAIReview() {
+      return diyCardApi.design.reviewResult({
+        orderId: this.$route.query.oid,
+        // imageBase64: imageBase64,
+      })
+      // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":{"reviewResult":"PASS","reviewReason":null},"datas":null}
+    },
     // 添加元素
     geticon(type, index) {
       if (!this.imgback_arr.photoUrl) {
@@ -1557,53 +1607,58 @@ export default {
     },
     // 跳转 下一步
     creatimg() {
-      window.scrollTo(0, 0)
-      var box = this.$refs.imageWrapper;
-      this.tc_show = true;
-      this.isshow = false
-      this.iscreat = false
-      const scrollTop = document.documentElement.scrollTop || document.body.scrollTop; // 获取滚动轴滚动的长度
-      const rect = this.$refs.imageWrapper.getBoundingClientRect() // 获取元素相对于视口的
-      setTimeout(() => {
+      return new Promise(resolve => {
+        window.scrollTo(0, 0)
         var box = this.$refs.imageWrapper;
-        var width = 1051;
-        var height = 673;
-        this.canvas = document.createElement("canvas");
-        this.canvas.width = width;
-        this.canvas.height = height;
-        var scalewidth = (1051 / box.clientWidth).toFixed(2);
-        var clientHeight = (1051 / box.clientHeight).toFixed(2);
-        this.ctx = this.canvas.getContext("2d");
-        //然后将画布缩放，将图像放大两倍画到画布上
-        this.ctx.scale(673 / box.clientHeight, 673 / box.clientHeight);
-        (window.html2canvas || html2canvas)(this.$refs.imageWrapper, {
-          x: rect.left, // 绘制的dom元素相对于视口的位置
-          y: rect.top,
-          scrollY: -scrollTop,
-          useCORS: true,
-          backgroundColor: null,
-          width: width,
-          height: height,
-          scale: 1,
-          canvas: this.canvas,
-          logging: false,
-        }).then((canvas) => {
-          let dataURL = canvas.toDataURL("image/png");
-          localStorage.setItem("imgResult", dataURL)
-          this.iscreat = true
-          this.tc_show = false;
-          // let a = document.createElement("a");
-          // a.download = "invitation";
-          // a.href = dataURL;
-          // a.click();
-          this.examine(dataURL)
-          // this.$router.push({
-          //   path:"/submit"
-          // })
-        }).catch(() => {
-          console.log("error")
-        });
-      }, 1);
+        this.tc_show = true;
+        this.isshow = false
+        this.iscreat = false
+        const scrollTop = document.documentElement.scrollTop || document.body.scrollTop; // 获取滚动轴滚动的长度
+        const rect = this.$refs.imageWrapper.getBoundingClientRect() // 获取元素相对于视口的
+        setTimeout(() => {
+          var box = this.$refs.imageWrapper;
+          var width = 1051;
+          var height = 673;
+          this.canvas = document.createElement("canvas");
+          this.canvas.width = width;
+          this.canvas.height = height;
+          var scalewidth = (1051 / box.clientWidth).toFixed(2);
+          var clientHeight = (1051 / box.clientHeight).toFixed(2);
+          this.ctx = this.canvas.getContext("2d");
+          //然后将画布缩放，将图像放大两倍画到画布上
+          this.ctx.scale(673 / box.clientHeight, 673 / box.clientHeight);
+          (window.html2canvas || html2canvas)(this.$refs.imageWrapper, {
+            x: rect.left, // 绘制的dom元素相对于视口的位置
+            y: rect.top,
+            scrollY: -scrollTop,
+            useCORS: true,
+            backgroundColor: null,
+            width: width,
+            height: height,
+            scale: 1,
+            canvas: this.canvas,
+            logging: false,
+          }).then(async (canvas) => {
+            let dataURL = canvas.toDataURL("image/png");
+            localStorage.setItem("imgResult", dataURL)
+            this.iscreat = true
+            this.tc_show = false;
+            resolve(dataURL)
+            // let a = document.createElement("a");
+            // a.download = "invitation";
+            // a.href = dataURL;
+            // a.click();
+            // this.examine(dataURL)
+
+            // this.$router.push({
+            //   path:"/submit"
+            // })
+          }).catch(() => {
+            console.log("error")
+            resolve()
+          });
+        }, 1);
+      })
     },
     async examine(src) {
       var that = this
