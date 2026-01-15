@@ -372,14 +372,21 @@ export default {
         console.log(res);
         this.presetCards = res.data.products;
       });
+
     },
     goToDIY() {
       this.$router.push({
         path: '/home'
       });
     },
-    goToCardDetail(card) {
+    createOrder(productId){
+      diyCardApi.order.create({
+        productId,
+      })
+    },
+    async goToCardDetail(card) {
       console.log(card);
+      this.createOrder(card.productId)
       if (card.isDiy) {
         this.$router.push({
           path: '/home',
