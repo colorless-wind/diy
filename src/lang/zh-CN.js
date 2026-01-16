@@ -70,6 +70,23 @@ export default {
     progressTip: '您可通过手机银行"信用卡-申请进度"查询办卡进度',
     customerServiceTip: '客服功能开发中'
   },
+  applicationProgress: {
+    title: '申请进度',
+    applicationNumber: '申请单号',
+    applicationNumberPlaceholder: '请输入申请单号',
+    query: '查询',
+    loading: '查询中...',
+    currentStatus: '当前状态',
+    statusSubmitted: '审核中',
+    stepSubmitted: '已提交',
+    stepSubmittedDesc: '已成功提交申请，请耐心等待审核。',
+    stepReviewing: '审核中',
+    stepReviewingDesc: '系统正在审核您的资料。',
+    stepResult: '审核结果',
+    stepResultDesc: '审核完成后将通知您结果。',
+    tip: '提示：当前为页面内演示进度；如需真实办卡进度，请以手机银行“信用卡-申请进度”为准。',
+    queryFailed: '查询失败，请稍后重试'
+  },
     diy:{
       clickUpload:'点击上传',
       imageSize:'图片上传大小：不大于20M',

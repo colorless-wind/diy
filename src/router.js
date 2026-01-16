@@ -10,6 +10,7 @@ import cardSelection from './views/card-selection.vue'
 import cardDetail from './views/card-detail.vue'
 import userApply from './views/user-apply.vue'
 import applicationComplete from './views/application-complete.vue'
+import applicationProgress from './views/application-progress.vue'
 import termsOfService from './views/terms-of-service.vue'
 import privacyPolicy from './views/privacy-policy.vue'
 import idUpload from './views/id-upload.vue'
@@ -117,6 +118,14 @@ const router = new Router({
         title: '申请完成'
       },
       component: applicationComplete
+    },
+    {
+      path: '/application-progress',
+      meta: {
+        auth: false,
+        title: '申请进度'
+      },
+      component: applicationProgress
     },
     {
       path: '/terms-of-service',

@@ -69,6 +69,23 @@ export default {
     progressTip: 'You can check the application progress through "Credit Card - Application Progress" in mobile banking',
     customerServiceTip: 'Customer service feature under development'
   },
+  applicationProgress: {
+    title: 'Application Progress',
+    applicationNumber: 'Application Number',
+    applicationNumberPlaceholder: 'Please enter application number',
+    query: 'Query',
+    loading: 'Loading...',
+    currentStatus: 'Current Status',
+    statusSubmitted: 'Under Review',
+    stepSubmitted: 'Submitted',
+    stepSubmittedDesc: 'Application submitted successfully. Please wait for review.',
+    stepReviewing: 'Reviewing',
+    stepReviewingDesc: 'We are reviewing your information.',
+    stepResult: 'Result',
+    stepResultDesc: 'We will notify you once the review is completed.',
+    tip: 'Tip: This page shows demo progress. For real-time progress, please use Mobile Banking "Credit Card - Application Progress".',
+    queryFailed: 'Query failed, please try again later'
+  },
   diy:{
     clickUpload : 'Click to Upload',
     imageSize: 'Image upload size: no larger than 20MB',

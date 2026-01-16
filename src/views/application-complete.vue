@@ -287,7 +287,7 @@
 
     <div class="action-buttons">
       <button class="btn btn-primary" @click="goBack">{{ $t('applicationComplete.return') }}</button>
-      <!-- <button class="btn btn-secondary" @click="checkProgress">{{ $t('applicationComplete.checkProgress') }}</button> -->
+      <button class="btn btn-secondary" @click="checkProgress">{{ $t('applicationComplete.checkProgress') }}</button>
     </div>
   </div>
 </template>
@@ -331,6 +331,9 @@ export default {
       
       // 申请单号（生成一个示例单号）
       this.applicationNumber = query.applicationNumber || this.generateApplicationNumber();
+      try {
+        localStorage.setItem('lastApplicationNumber', this.applicationNumber);
+      } catch (e) {}
       
       // 获取卡片信息
       const cardId = query.cardId;
@@ -450,14 +453,12 @@ export default {
     },
     checkProgress() {
       // 跳转到查询办卡进度页面
-      // 这里可以跳转到一个新的进度查询页面，或者显示提示
-      // this.$toasted.show(this.$t('applicationComplete.progressTip'), {
-      //   theme: 'toasted-primary',
-      //   position: 'center',
-      //   duration: 2000
-      // });
-      // 或者跳转到进度查询页面
-      // this.$router.push('/application-progress');
+      this.$router.push({
+        path: '/application-progress',
+        query: {
+          applicationNumber: this.applicationNumber
+        }
+      });
     },
     showCustomerService() {
       // 显示客服
