@@ -1,1 +1,228 @@
-<!DOCTYPE html><html lang=en><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><!--[if IE]><link rel="icon" href="favicon.ico"><![endif]--><title>珠海推广项目</title><script src=js/config.js></script><link href=assets/css/app.3b59246c.css rel=preload as=style><link href=assets/css/chunk-vendors.0ab8f0de.css rel=preload as=style><link href=assets/js/app.b4eb83b1.js rel=preload as=script><link href=assets/js/chunk-vendors.90256d94.js rel=preload as=script><link href=assets/css/chunk-vendors.0ab8f0de.css rel=stylesheet><link href=assets/css/app.3b59246c.css rel=stylesheet><link rel=icon type=image/png sizes=32x32 href=favicon.ico><link rel=icon type=image/png sizes=16x16 href=favicon.ico><link rel=manifest href=manifest.json><meta name=theme-color content=#4DBA87><meta name=apple-mobile-web-app-capable content=no><meta name=apple-mobile-web-app-status-bar-style content=default><meta name=apple-mobile-web-app-title content=m-station><link rel=apple-touch-icon href=favicon.ico><link rel=mask-icon href=favicon.ico color=#4DBA87><meta name=msapplication-TileImage content=favicon.ico><meta name=msapplication-TileColor content=#000000></head><body><noscript><strong>We're sorry but m-station doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id=app></div><script></script><script src=assets/js/chunk-vendors.90256d94.js></script><script src=assets/js/app.b4eb83b1.js></script></body></html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>前端人脸识别示例</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        #video {
+            width: 640px;
+            height: 480px;
+            border: 2px solid #333;
+            border-radius: 8px;
+        }
+
+        #canvas {
+            position: absolute;
+            top: 20px;
+            left: calc(50% - 320px);
+            width: 640px;
+            height: 480px;
+            pointer-events: none;
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>前端人脸识别演示</h1>
+    <div style="position: relative;">
+        <video id="video" autoplay muted playsinline></video>
+        <canvas id="canvas"></canvas>
+    </div>
+    <div class="controls">
+        <button id="startBtn">开启摄像头</button>
+        <button id="registerBtn">注册人脸</button>
+        <button id="verifyBtn">验证人脸</button>
+        <button id="stopBtn">停止识别</button>
+    </div>
+    <div id="result"></div>
+
+    <!-- 引入face-api.js库 -->
+    <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/dist/face-api.min.js"></script>
+
+    <script>
+        // 全局变量
+        let video, canvas, ctx;
+        let registeredFace = null; // 存储注册的人脸特征
+        let detectInterval = null; // 检测定时器
+
+        // 初始化
+        async function init() {
+            video = document.getElementById('video');
+            canvas = document.getElementById('canvas');
+            ctx = canvas.getContext('2d');
+
+            // 设置canvas尺寸和视频一致
+            canvas.width = 640;
+            canvas.height = 480;
+
+            // 加载人脸识别模型（需要联网）
+            try {
+                await faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/model/');
+                await faceapi.nets.faceLandmark68Net.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/model/');
+                await faceapi.nets.faceRecognitionNet.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/model/');
+                document.getElementById('result').textContent = '模型加载完成，点击开启摄像头';
+            } catch (err) {
+                document.getElementById('result').textContent = `模型加载失败：${err.message}`;
+                console.error(err);
+            }
+        }
+
+        // 开启摄像头
+        async function startCamera() {
+            try {
+                // 获取用户媒体设备（摄像头）
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { width: 640, height: 480 },
+                    audio: false
+                });
+                video.srcObject = stream;
+
+                // 开始人脸检测
+                startFaceDetection();
+                document.getElementById('result').textContent = '摄像头已开启，正在检测人脸...';
+            } catch (err) {
+                document.getElementById('result').textContent = `摄像头开启失败：${err.message}`;
+                console.error(err);
+            }
+        }
+
+        // 人脸检测主函数
+        async function detectFaces() {
+            if (!video || video.paused) return;
+
+            try {
+                // 检测人脸
+                const options = new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.5 });
+                const detections = await faceapi.detectSingleFace(video, options)
+                    .withFaceLandmarks()
+                    .withFaceDescriptor();
+
+                // 清空canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                if (detections) {
+                    // 绘制人脸框和关键点
+                    const resizedDetections = faceapi.resizeResults(detections, { width: 640, height: 480 });
+                    faceapi.draw.drawDetections(canvas, resizedDetections);
+                    faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
+
+                    return detections.descriptor; // 返回人脸特征描述符
+                } else {
+                    document.getElementById('result').textContent = '未检测到人脸，请正对摄像头';
+                    return null;
+                }
+            } catch (err) {
+                console.error('人脸检测失败：', err);
+                return null;
+            }
+        }
+
+        // 启动人脸检测循环
+        function startFaceDetection() {
+            // 先停止之前的检测
+            if (detectInterval) clearInterval(detectInterval);
+
+            // 每100ms检测一次
+            detectInterval = setInterval(async () => {
+                await detectFaces();
+            }, 100);
+        }
+
+        // 注册人脸
+        async function registerFace() {
+            const faceDescriptor = await detectFaces();
+            if (faceDescriptor) {
+                registeredFace = faceDescriptor;
+                document.getElementById('result').textContent = '人脸注册成功！可以进行验证';
+            } else {
+                document.getElementById('result').textContent = '未检测到人脸，注册失败';
+            }
+        }
+
+        // 验证人脸
+        async function verifyFace() {
+            if (!registeredFace) {
+                document.getElementById('result').textContent = '请先注册人脸！';
+                return;
+            }
+
+            const currentFace = await detectFaces();
+            if (currentFace) {
+                // 计算人脸相似度（欧式距离），值越小越相似
+                const distance = faceapi.euclideanDistance(registeredFace, currentFace);
+                const isMatch = distance < 0.6; // 阈值可调整
+
+                if (isMatch) {
+                    document.getElementById('result').textContent = `人脸验证通过！相似度：${(1 - distance).toFixed(2)}`;
+                } else {
+                    document.getElementById('result').textContent = `人脸验证失败！相似度：${(1 - distance).toFixed(2)}`;
+                }
+            }
+        }
+
+        // 停止识别
+        function stopDetection() {
+            // 停止视频流
+            if (video.srcObject) {
+                const tracks = video.srcObject.getTracks();
+                tracks.forEach(track => track.stop());
+                video.srcObject = null;
+            }
+
+            // 清除定时器
+            if (detectInterval) {
+                clearInterval(detectInterval);
+                detectInterval = null;
+            }
+
+            // 清空canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            document.getElementById('result').textContent = '已停止人脸识别';
+        }
+
+        // 绑定事件
+        document.addEventListener('DOMContentLoaded', () => {
+            init();
+            document.getElementById('startBtn').addEventListener('click', startCamera);
+            document.getElementById('registerBtn').addEventListener('click', registerFace);
+            document.getElementById('verifyBtn').addEventListener('click', verifyFace);
+            document.getElementById('stopBtn').addEventListener('click', stopDetection);
+        });
+    </script>
+</body>
+
+</html>
