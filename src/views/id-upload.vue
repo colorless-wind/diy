@@ -1000,7 +1000,6 @@ export default {
     },
     mounted() {
         this.cardId = this.$route.query.id;
-        // this.loadCardData();
     },
     beforeDestroy() {
         // 清理验证码倒计时定时器
@@ -1016,6 +1015,16 @@ export default {
                 idCardBack: idCardBack,
                 orderId: this.$route.query.oid
             })
+        },
+        saveCustomerInfo(){
+            return diyCardApi.customer.save({
+                orderId: this.$route.query.oid,
+                name: 'name',
+                idNumber: 'idNumber',
+                idType: 'PASSPORT',
+                gender: 'FEMALE',
+            })
+            // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":null,"datas":null}
         },
         getPresetCardsData() {
             const locale = this.$i18n.locale;
@@ -1312,7 +1321,7 @@ export default {
             if (!this.isFormValid) {
                 return;
             }
-
+            this.saveCustomerInfo()
             // 显示人脸识别授权弹窗
             this.showFaceRecognitionModal = true;
         },

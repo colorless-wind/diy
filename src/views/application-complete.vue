@@ -312,6 +312,7 @@ export default {
     this.$nextTick(() => {
       setTimeout(() => {
         this.generateQRCode();
+        this.getUcodeReq();
       }, 300);
     });
   },
@@ -325,6 +326,13 @@ export default {
     }
   },
   methods: {
+    getUcodeReq() {
+      return diyCardApi.ucode.qrcode({
+        // idCardFront: idCardFront,
+        // idCardBack: idCardBack,
+        orderId: this.$route.query.oid
+      })
+    },
     initData() {
       // 从路由参数或localStorage获取数据
       const query = this.$route.query;
