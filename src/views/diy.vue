@@ -851,7 +851,6 @@ export default {
   methods: {
     // 下一步
     async nextStep() {
-      this.aitest()
       console.log('this.$route.query', this.$route.query)
       // 1. 生成图片
       const imageBase64Data = await this.creatimg()
@@ -896,15 +895,25 @@ export default {
       })
       // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":{"reviewResult":"PASS","reviewReason":null},"datas":null}
     },
-    // 查询图审结果
-    aitest() {
+    // AI生成卡面
+    aiGeneratetest() {
       return diyCardApi.design.aiGenerate({
         orderId: this.$route.query.oid,
         prompt: 'cat'
         // imageBase64: imageBase64,
       })
-      // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":{"reviewResult":"PASS","reviewReason":null},"datas":null}
+      // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":{"designId":"4ef16219a26d401e9dba7113f0b72484","candidates":[{"candidateId":"260d96caa9084b05bd23fdd1c1d4ad98","imageUrl":"https://mock.example.com/card_template_1.png"},{"candidateId":"a66b1e39368a4a9f8fa89f90e2d8c470","imageUrl":"https://mock.example.com/card_template_2.png"},{"candidateId":"3bdd84d1f991433ab5c2055b1686e520","imageUrl":"https://mock.example.com/card_template_3.png"},{"candidateId":"0a6e7b7654a346fa830e52cf22feeb7f","imageUrl":"https://mock.example.com/card_template_4.png"}]},"datas":null}
     },
+    // 选择AI生成的卡面
+    aiSelecttest() {
+      return diyCardApi.design.aiSelect({
+        orderId: this.$route.query.oid,
+        candidateId: 'a66b1e39368a4a9f8fa89f90e2d8c470'
+        // imageBase64: imageBase64,
+      })
+      // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":{"designId":"4ef16219a26d401e9dba7113f0b72484","imageUrl":"https://mock.example.com/card_template_2.png"},"datas":null}
+    },
+
     // 添加元素
     geticon(type, index) {
       if (!this.imgback_arr.photoUrl) {
