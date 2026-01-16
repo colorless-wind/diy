@@ -722,7 +722,7 @@
     <div class="id-upload-section">
         <label class="upload-label">
             <span class="required">*</span>
-            请拍摄申请人的证件照片
+            请拍摄申请人的证件照片（正反面共计2张）
         </label>
         <div class="upload-area" :class="{ 'has-images': idPhotos.length > 0 }">
             <div v-if="idPhotos.length === 0" class="upload-placeholder" @click="triggerFileInput">
@@ -757,11 +757,11 @@
     </div>
 
     <!-- 身份信息表单（上传证件照后显示） -->
-    <div v-if="idPhotos.length > 0" class="info-section">
+    <div v-if="idPhotos.length > 1" class="info-section">
         <div class="info-title">请核对身份信息，若有误请手动修改</div>
     </div>
 
-    <div v-if="idPhotos.length > 0" class="form-group">
+    <div v-if="idPhotos.length > 1" class="form-group">
         <label>
             <span class="required">*</span>
             姓名
@@ -770,7 +770,7 @@
         <div v-if="errors.fullName" class="error-message">{{ errors.fullName }}</div>
     </div>
 
-    <div v-if="idPhotos.length > 0" class="form-group">
+    <div v-if="idPhotos.length > 1" class="form-group">
         <label>
             <span class="required">*</span>
             证件号码
@@ -779,7 +779,7 @@
         <div v-if="errors.idNumber" class="error-message">{{ errors.idNumber }}</div>
     </div>
 
-    <div v-if="idPhotos.length > 0" class="form-group">
+    <div v-if="idPhotos.length > 1" class="form-group">
         <label>
             <span class="required">*</span>
             是否长期有效
@@ -790,7 +790,7 @@
         </select>
     </div>
 
-    <div v-if="idPhotos.length > 0 && !formData.isLongTerm" class="form-group">
+    <div v-if="idPhotos.length > 1 && !formData.isLongTerm" class="form-group">
         <label>
             <span class="required">*</span>
             证件起始日期
@@ -804,7 +804,7 @@
         <div v-if="errors.idStartDate" class="error-message">{{ errors.idStartDate }}</div>
     </div>
 
-    <div v-if="idPhotos.length > 0 && !formData.isLongTerm" class="form-group">
+    <div v-if="idPhotos.length > 1 && !formData.isLongTerm" class="form-group">
         <label>
             <span class="required">*</span>
             证件截止日期
@@ -819,7 +819,7 @@
     </div>
 
     <!-- 联系方式 -->
-    <div v-if="idPhotos.length > 0" class="form-group">
+    <div v-if="idPhotos.length > 1" class="form-group">
         <label>
             <span class="required">*</span>
             手机号
@@ -827,23 +827,7 @@
         <input type="tel" v-model="formData.phone" placeholder="请输入手机号" @blur="validateField('phone')">
         <div v-if="errors.phone" class="error-message">{{ errors.phone }}</div>
     </div>
-
-    <div v-if="idPhotos.length > 0" class="form-group">
-        <label>
-            <span class="required">*</span>
-            短信验证码
-        </label>
-        <div class="verify-code-wrapper">
-            <input type="text" v-model="formData.verifyCode" placeholder="请输入6位数字" maxlength="6"
-                @blur="validateField('verifyCode')">
-            <button class="get-code-btn" @click="getVerifyCode" :disabled="!canGetCode || countdown > 0">
-                {{ countdown > 0 ? `${countdown}秒后重新获取` : '获取' }}
-            </button>
-        </div>
-        <div v-if="errors.verifyCode" class="error-message">{{ errors.verifyCode }}</div>
-    </div>
-
-    <button v-if="idPhotos.length > 0" class="submit-btn" @click="handleNextStep"
+    <button v-if="idPhotos.length > 1" class="submit-btn" @click="handleNextStep"
         :disabled="!isFormValid || isSubmitting">
         {{ isSubmitting ? '提交中...' : '下一步' }}
     </button>
@@ -890,7 +874,7 @@
             </ul>
 
             <div class="disclaimer-text">
-                本次申请需进行人脸识别,所收集的脸部影像信息仅用于公安系统核验是否您本人申请,如果您不同意,后续我行将采取电话或柜面等措施核验您的身份,谢谢!
+                本次申请需进行人脸识别,所收集的脸部影像信息仅用于核验是否您本人申请,如果您不同意,后续我行将采取电话或柜面等措施核验您的身份,谢谢!
             </div>
 
             <div class="conditional-text">
@@ -966,15 +950,11 @@ export default {
             const baseValid = this.formData.fullName &&
                 this.formData.phone &&
                 this.formData.idNumber &&
-                this.idPhotos.length > 0 &&
+                this.idPhotos.length > 1 &&
                 !this.errors.fullName &&
                 !this.errors.phone &&
                 !this.errors.idNumber &&
                 !this.errors.idPhoto;
-
-            // 验证码验证
-            const verifyCodeValid = this.formData.verifyCode &&
-                !this.errors.verifyCode;
 
             // 日期验证（如果不是长期有效）
             let dateValid = true;
@@ -985,7 +965,7 @@ export default {
                     !this.errors.idEndDate;
             }
 
-            return baseValid && verifyCodeValid && dateValid;
+            return baseValid && dateValid;
         },
         canGetCode() {
             return this.formData.phone && /^1[3-9]\d{9}$/.test(this.formData.phone);
@@ -1041,6 +1021,7 @@ export default {
                 idCardBack: idCardBack,
                 orderId: this.$route.query.oid
             })
+            // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":null,"datas":null}
         },
         // 保存客户信息
         saveCustomerInfo(){
@@ -1362,7 +1343,13 @@ export default {
         handleDisagree() {
             this.closeModal();
             // 可以在这里添加不同意的处理逻辑
-            alert('您已选择不同意，后续我们将通过电话或柜面等方式核验您的身份');
+            // alert('您已选择不同意，后续我们将通过电话或柜面等方式核验您的身份');
+            this.$router.push({
+                path: '/user-apply',
+                query: {
+                    ...this.$route.query,
+                }
+            });
         },
         // 处理同意
         handleAgree() {
@@ -1376,6 +1363,7 @@ export default {
             this.$router.push({
                 path: '/face-recognition',
                 query: {
+                    ...this.$route.query,
                     type: queryType,
                     cardId: this.cardId
                 }

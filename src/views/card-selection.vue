@@ -368,7 +368,7 @@ export default {
       const isZh = locale === 'zh-CN';
 
       diyCardApi.product.list({
-        pageNo: 1,
+        pageNum: 1,
         pageSize: 50
       }, this).then(res => {
         console.log(res);
