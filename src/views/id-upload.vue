@@ -996,6 +996,22 @@ export default {
             if (this.cardId) {
                 this.loadCardData();
             }
+        },
+        // 监听证件上传
+        idPhotos:{
+            handler(newValue){
+                if(newValue.length < 2) return
+                const imageReqList = []
+                newValue.forEach(async(item)=>{
+                    imageReqList.push(this.uploadImageFile(item.url, item.file))
+                })
+                Promise.all(imageReqList).then(resList=>{
+                    if (resList[0] && resList[1]) {
+                        this.uploadPhoto(resList[0].data, resList[1].data)
+                    }
+                })
+            },
+            deep: true
         }
     },
     mounted() {
@@ -1009,13 +1025,24 @@ export default {
         }
     },
     methods: {
+        // 上传图片文件 base64 ==> url
+        uploadImageFile(imageBase64, fileObj){
+            return diyCardApi.file.imageUpload({
+                "base64": imageBase64,
+                "fileName": fileObj.name
+            })
+            // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":"group1/M00/02/43/CqU8dGlp2PyAdqR7AAZRBV9237I672.png","datas":null}
+        },
+        // 上传证件信息
         uploadPhoto(idCardFront, idCardBack){
+            // if(!idCardFront || !idCardBack) return false
             return diyCardApi.customer.uploadIdCard({
                 idCardFront: idCardFront,
                 idCardBack: idCardBack,
                 orderId: this.$route.query.oid
             })
         },
+        // 保存客户信息
         saveCustomerInfo(){
             return diyCardApi.customer.save({
                 orderId: this.$route.query.oid,
@@ -1025,6 +1052,76 @@ export default {
                 gender: 'FEMALE',
             })
             // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":null,"datas":null}
+        },
+        handleFileUpload(event) {
+            const files = Array.from(event.target.files || []);
+            if (files.length === 0) return;
+
+            // 检查是否超过最大数量
+            const remainingSlots = this.maxPhotos - this.idPhotos.length;
+            if (files.length > remainingSlots) {
+                this.errors.idPhoto = this.$t('userApply.errors.tooManyPhotos', { max: this.maxPhotos, current: this.idPhotos.length, remaining: remainingSlots });
+                this.$refs.fileInput.value = '';
+                return;
+            }
+
+            // 清除错误
+            this.errors.idPhoto = '';
+
+            // 处理每个文件
+            const validFiles = [];
+            files.forEach((file, index) => {
+                // 验证文件类型
+                if (!/^image\/(jpeg|jpg|png|webp)$/i.test(file.type)) {
+                    if (files.length === 1) {
+                        this.errors.idPhoto = this.$t('userApply.errors.invalidFormat');
+                    }
+                    return;
+                }
+
+                // 验证文件大小 (最大5MB)
+                const maxSize = 5 * 1024 * 1024; // 5MB
+                if (file.size > maxSize) {
+                    if (files.length === 1) {
+                        this.errors.idPhoto = this.$t('userApply.errors.fileTooLarge');
+                    }
+                    return;
+                }
+
+                validFiles.push(file);
+            });
+
+            if (validFiles.length === 0) {
+                this.$refs.fileInput.value = '';
+                return;
+            }
+
+            // 读取所有有效文件并显示预览
+            let loadedCount = 0;
+            validFiles.forEach((file) => {
+                const reader = new FileReader();
+                reader.onload = async(e) => {
+                    // const imageRes = this.uploadImageFile(e.target.result, file)
+                    this.idPhotos.push({
+                        url: e.target.result,
+                        file: file,
+                        // onlineUrl: imageRes.data
+                    });
+                    loadedCount++;
+                    // if(this.idPhotos[0] && this.idPhotos[1]){
+                    //     this.uploadPhoto(this.idPhotos[0].onlineUrl, this.idPhotos[1].onlineUrl)
+                    // }
+                    // 所有文件加载完成后清除input
+                    if (loadedCount === validFiles.length) {
+                        this.$refs.fileInput.value = '';
+                        // 如果是第一次上传证件照，模拟OCR识别并填充数据
+                        if (this.idPhotos.length === validFiles.length && !this.formData.fullName) {
+                            this.simulateOcrRecognition();
+                        }
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
         },
         getPresetCardsData() {
             const locale = this.$i18n.locale;
@@ -1100,75 +1197,7 @@ export default {
         },
         triggerFileInput() {
             this.$refs.fileInput.click();
-        },
-        handleFileUpload(event) {
-            const files = Array.from(event.target.files || []);
-            if (files.length === 0) return;
-
-            // 检查是否超过最大数量
-            const remainingSlots = this.maxPhotos - this.idPhotos.length;
-            if (files.length > remainingSlots) {
-                this.errors.idPhoto = this.$t('userApply.errors.tooManyPhotos', { max: this.maxPhotos, current: this.idPhotos.length, remaining: remainingSlots });
-                this.$refs.fileInput.value = '';
-                return;
-            }
-
-            // 清除错误
-            this.errors.idPhoto = '';
-
-            // 处理每个文件
-            const validFiles = [];
-            files.forEach((file, index) => {
-                // 验证文件类型
-                if (!/^image\/(jpeg|jpg|png|webp)$/i.test(file.type)) {
-                    if (files.length === 1) {
-                        this.errors.idPhoto = this.$t('userApply.errors.invalidFormat');
-                    }
-                    return;
-                }
-
-                // 验证文件大小 (最大5MB)
-                const maxSize = 5 * 1024 * 1024; // 5MB
-                if (file.size > maxSize) {
-                    if (files.length === 1) {
-                        this.errors.idPhoto = this.$t('userApply.errors.fileTooLarge');
-                    }
-                    return;
-                }
-
-                validFiles.push(file);
-            });
-
-            if (validFiles.length === 0) {
-                this.$refs.fileInput.value = '';
-                return;
-            }
-
-            // 读取所有有效文件并显示预览
-            let loadedCount = 0;
-            validFiles.forEach((file) => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.idPhotos.push({
-                        url: e.target.result,
-                        file: file
-                    });
-                    loadedCount++;
-                    this.uploadPhoto(this.idPhotos[0].url, this.idPhotos[1].url)
-                    // 所有文件加载完成后清除input
-                    if (loadedCount === validFiles.length) {
-                        this.$refs.fileInput.value = '';
-                        // 如果是第一次上传证件照，模拟OCR识别并填充数据
-                        if (this.idPhotos.length === validFiles.length && !this.formData.fullName) {
-                            this.simulateOcrRecognition();
-                        }
-                    }
-                };
-                reader.readAsDataURL(file);
-            });
-
-            
-        },
+        },        
         // 模拟OCR识别，随机选择一组模拟数据填充
         simulateOcrRecognition() {
             // 模拟识别延迟

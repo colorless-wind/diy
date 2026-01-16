@@ -122,6 +122,11 @@ export const product = {
   detail: (data, that) => http.post(`${BASE}/product/detail`, data, that),
 }
 
+export const file = {
+  /** diy.card.file.imageUpload - 上传图片 */
+  imageUpload: (data, that) => http.post(`/bal/fileUpload/img`, data, that),
+}
+
 /**
  * 默认导出：按模块聚合
  */
@@ -131,5 +136,6 @@ export default {
   customer,
   ucode,
   product,
+  file
 }
 
