@@ -137,8 +137,8 @@
                 if (detections) {
                     // 绘制人脸框和关键点
                     const resizedDetections = faceapi.resizeResults(detections, { width: 640, height: 480 });
-                    faceapi.draw.drawDetections(canvas, resizedDetections);
-                    faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
+                    // faceapi.draw.drawDetections(canvas, resizedDetections);
+                    // faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
 
                     return detections.descriptor; // 返回人脸特征描述符
                 } else {

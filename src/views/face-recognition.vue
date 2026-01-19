@@ -33,7 +33,7 @@
                 <div class="camera-preview mirror">
                     <video ref="video" class="camera-video" autoplay playsinline muted></video>
                     <div class="camera-overlay">
-                        <div class="preparing-text">准备中...</div>
+                        <div class="overlay-text preparing-text">准备中...</div>
                     </div>
                 </div>
             </div>
@@ -93,7 +93,7 @@
                 <div class="camera-preview mirror">
                     <video ref="video" class="camera-video" autoplay playsinline muted></video>
                     <div class="camera-overlay">
-                        <div class="verifying-text">验证中，请保持姿势不变</div>
+                        <div class="overlay-text verifying-text">验证中，请保持姿势不变</div>
                     </div>
                 </div>
             </div>
@@ -999,6 +999,13 @@ export default {
         justify-content: center;
         text-align: center;
         padding: 0 20px;
+    }
+
+    // overlay 内的文字需要“反镜像”回来（否则会跟随镜像翻转）
+    &.mirror {
+        .overlay-text {
+            transform: scaleX(-1);
+        }
     }
 
     .face-box {

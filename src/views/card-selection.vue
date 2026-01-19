@@ -337,33 +337,20 @@ export default {
   },
   watch: {
     '$i18n.locale'() {
-      this.initCardData();
+      this.getCardProductList();
     }
   },
   mounted() {
     console.log('mounted')
-    this.initCardData();
+    this.getCardProductList();
     document.addEventListener('click', this.handleClickOutside);
   },
   beforeDestroy() {
     document.removeEventListener('click', this.handleClickOutside);
   },
   methods: {
-    toggleDropdown() {
-      this.dropdownOpen = !this.dropdownOpen;
-    },
-    handleClickOutside(e) {
-      if (this.dropdownOpen && !this.$refs.languageSwitch.contains(e.target)) {
-        this.dropdownOpen = false;
-      }
-    },
-    switchLanguage(lang) {
-      this.$i18n.locale = lang;
-      localStorage.setItem('locale', lang);
-      this.dropdownOpen = false;
-      this.initCardData();
-    },
-    initCardData() {
+    // 获取卡产品列表
+    getCardProductList() {
       const locale = this.$i18n.locale;
       const isZh = locale === 'zh-CN';
 
@@ -375,19 +362,15 @@ export default {
         this.presetCards = res.data.records;
       });
       // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":{"curPage":1,"totalPage":1,"amount":1,"total":null,"records":[{"productId":"1","productCode":"DEBIT_STANDARD_001","productName":"金穗借记卡","cardType":"DEBIT","cardLevel":"STANDARD","imageUrl":"/images/products/debit_standard_001.jpg","annualFee":0.00,"isDiy":true,"standardImageUrl":"/images/products/debit_standard_001_std.jpg","supportAiGenerate":true,"needAiReview":true,"needPay":false,"payAmount":0.00}]},"datas":null}
-
     },
-    goToDIY() {
-      this.$router.push({
-        path: '/home'
-      });
-    },
-    createOrder(productId){
+    // 创建订单
+    createOrder(productId) {
       return diyCardApi.order.create({
         productId,
       })
       // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":{"orderId":"45bbd44c618341bbaf9c6abd10d1f6ff","orderNo":"DIY20260115000015","orderStatus":"DESIGNING","isDiy":true,"standardImageUrl":"/images/products/debit_standard_001_std.jpg","supportAiGenerate":true,"needAiReview":true,"needPay":false},"datas":null}
     },
+    // 跳转卡产品详情
     async goToCardDetail(card) {
       console.log(card);
       const orderRes = await this.createOrder(card.productId)
@@ -406,11 +389,34 @@ export default {
         this.$router.push({
           path: '/card-detail',
           query: {
-            cid: card.productId
+            cid: card.productId,
+            oid: orderRes.data.orderId,
           }
         });
       }
-    }
+    },
+    toggleDropdown() {
+      this.dropdownOpen = !this.dropdownOpen;
+    },
+    handleClickOutside(e) {
+      if (this.dropdownOpen && !this.$refs.languageSwitch.contains(e.target)) {
+        this.dropdownOpen = false;
+      }
+    },
+    switchLanguage(lang) {
+      this.$i18n.locale = lang;
+      localStorage.setItem('locale', lang);
+      this.dropdownOpen = false;
+      this.getCardProductList();
+    },
+    
+    goToDIY() {
+      this.$router.push({
+        path: '/home'
+      });
+    },
+    
+    
   }
 };
 </script>
