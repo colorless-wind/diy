@@ -861,7 +861,7 @@ export default {
             const steps = [
                 { message: '没有检测到人脸', class: 'error', frame: 'error', detected: false, delay: 2000 },
                 { message: '请靠近一点', class: 'warning', frame: 'warning', detected: false, delay: 2000 },
-                { message: '请点点头', class: 'info', frame: 'info', detected: true, delay: 3000 }
+                { message: '检测到人脸，请保持不动', class: 'info', frame: 'info', detected: true, delay: 2000 }
             ];
 
             const processStep = () => {
