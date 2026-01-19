@@ -286,7 +286,7 @@
     </div>
 
     <div class="action-buttons">
-      <button class="btn btn-primary" @click="goBack">{{ $t('applicationComplete.return') }}</button>
+      <button class="btn btn-primary" @click="goBack">{{ $t('applicationComplete.return') }}首页</button>
       <button class="btn btn-secondary" @click="checkProgress">{{ $t('applicationComplete.checkProgress') }}</button>
     </div>
   </div>
@@ -295,6 +295,9 @@
 <script>
 import QRCode from 'qrcodejs2';
 import md5 from 'js-md5';
+import diyCardApi from '@/api/diycard';
+import Vue from 'vue';
+import Toasted from 'vue-toasted';
 export default {
   name: 'ApplicationComplete',
   data() {
@@ -307,12 +310,15 @@ export default {
     };
   },
   mounted() {
-    this.initData();
+    // this.initData();
     // 延迟生成二维码，确保数据已加载
     this.$nextTick(() => {
       setTimeout(() => {
         this.generateQRCode();
-        this.getUcodeReq();
+        this.queryOrderReq();
+        this.queryProductDetailReq();
+        this.mailingAddress = this.$route.query.address || this.$t('applicationComplete.defaultAddress');
+        this.queryCustomerInfo(); // 页面暂未用到
       }, 300);
     });
   },
@@ -326,19 +332,76 @@ export default {
     }
   },
   methods: {
+    // 查询订单详情
+    queryOrderReq(){
+      diyCardApi.order.queryByUcode({
+        ucode: this.$route.query.ucode
+      }).then(res => {
+        console.log(res,'res')
+        this.applicationNumber = res.data.orderNo;
+      })
+      // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":{"orderId":"9c2f6caaf666423abdfe2e80e75a7d39","orderNo":"DIY20260119000006","ucode":"UC20260119000006","orderStatus":"PROCESSING","orderStatusDesc":"办理中","imageUrl":"/images/products/credit_coop_001_std.jpg","qrcodeUrl":null,"customerName":"李*","addTime":"2026-01-19 16:14:51"},"datas":null}
+    },
+    // 查询产品详情
+    queryProductDetailReq(){
+      diyCardApi.product.detail({
+        productId: this.$route.query.cid
+      }).then(res => {
+        console.log(res,'res')
+        this.cardProduct = res.data.productName;
+      })
+      // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":{"productId":"8","productCode":"CREDIT_COOP_001","productName":"迪士尼联名信用卡","cardType":"CREDIT","cardLevel":"STANDARD","cardOrg":"UNIONPAY","bankName":"中国农业银行","imageUrl":"/images/products/credit_coop_001.jpg","templateUrl":null,"annualFee":150,"annualFeeFree":"首年免年费，刷卡6次免次年年费","features":["迪士尼主题卡面","乐园门票优惠","周边商品折扣","专属积分兑换"],"benefits":["迪士尼乐园门票9折","快速通道优惠","周边商品8折","积分兑换迪士尼礼品"],"applyCondition":"年满18周岁，迪士尼粉丝优先","isDiy":false,"standardImageUrl":"/images/products/credit_coop_001_std.jpg","supportAiGenerate":false,"needAiReview":false,"needPay":false,"payAmount":0,"needFaceVerify":false,"faceVerifyRequired":false},"datas":null}
+    },
+    // 查询客户信息
+    queryCustomerInfo(){
+      return diyCardApi.customer.info({
+        orderId: this.$route.query.oid,
+      }).then(res => {
+        console.log(res, 'res')
+      })
+      // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":{"idCardFront":"group1/M00/02/45/CqU8dGlt6AKAAM4gAATZ873SDXI394.jpg","idCardBack":"group1/M00/02/45/CqU8dGlt6AKAMuOeAAbJHUH85d0138.png","name":"李四","gender":"FEMALE","idType":"PASSPORT","idNumber":"320***2345"},"datas":null}
+    },
+    // 未调通 前端实现U码展示即可 已弃用
     getUcodeReq() {
       return diyCardApi.ucode.qrcode({
-        // idCardFront: idCardFront,
-        // idCardBack: idCardBack,
-        orderId: this.$route.query.oid
+        orderId: this.$route.query.oid,
+        // ucode: this.$route.query.ucode,
+      }).then(res => {
+        console.log(res,'res')
+        this.qrcode = res.data.qrcodeBase64;
       })
+    },
+    generateQRCode() {
+      // 生成包含卡面信息的二维码
+      this.$nextTick(() => {
+        const qrcodeElement = document.getElementById('qrcode');
+        if (qrcodeElement) {
+          qrcodeElement.innerHTML = '';
+          console.log(qrcodeElement, 'qrcodeElement')
+          console.log(this.$route.query.ucode, 'this.$route.query.ucode')
+          try {
+            this.qrcode = new QRCode(qrcodeElement, {
+              text: this.$route.query.ucode,
+              width: 200,
+              height: 200,
+              colorDark: '#000000',
+              colorLight: '#ffffff',
+              correctLevel: 2 // 错误纠正级别：L(1), M(0), Q(3), H(2)
+            });
+          } catch (error) {
+            console.error('生成二维码失败:', error);
+            // 如果生成失败，显示错误提示
+            qrcodeElement.innerHTML = '<div style="padding: 20px; color: #999;">二维码生成失败</div>';
+          }
+        }
+      });
     },
     initData() {
       // 从路由参数或localStorage获取数据
       const query = this.$route.query;
       
       // 申请单号（生成一个示例单号）
-      this.applicationNumber = query.applicationNumber || this.generateApplicationNumber();
+      this.applicationNumber = ''//query.applicationNumber || this.generateApplicationNumber();
       try {
         localStorage.setItem('lastApplicationNumber', this.applicationNumber);
       } catch (e) {}
@@ -347,14 +410,14 @@ export default {
       const cardId = query.cardId;
       const isDIY = query.type === 'diy';
       
-      if (isDIY) {
-        this.cardImageUrl = localStorage.getItem('imgResult') || '';
-        const diyCardId = localStorage.getItem('diyCardId') || cardId || '1';
-        this.loadCardInfo(diyCardId, true);
-      } else {
-        this.loadCardInfo(cardId || '1', false);
-      }
-      
+      // if (isDIY) {
+      //   this.cardImageUrl = localStorage.getItem('imgResult') || '';
+      //   const diyCardId = localStorage.getItem('diyCardId') || cardId || '1';
+      //   this.loadCardInfo(diyCardId, true);
+      // } else {
+      //   this.loadCardInfo(cardId || '1', false);
+      // }
+      this.cardProduct = ''
       // 邮寄地址（从表单数据或localStorage获取）
       const formData = JSON.parse(localStorage.getItem('applicationFormData') || '{}');
       this.mailingAddress = formData.address || query.address || this.$t('applicationComplete.defaultAddress');
@@ -414,48 +477,7 @@ export default {
       const random = String(Math.floor(Math.random() * 100000)).padStart(5, '0');
       return `020020${year}${month}${day}${random}`;
     },
-    generateQRCode() {
-      // 生成包含卡面信息的二维码
-      // 二维码内容可以是卡面图片的URL或卡面信息的JSON字符串
-      const qrcodeData = {
-        type: 'cardInfo',
-        // cardImage: this.cardImageUrl,
-        cardProduct: this.cardProduct,
-        applicationNumber: this.applicationNumber,
-        timestamp: Date.now()
-      };
-      
-      const qrcodeContent = JSON.stringify(qrcodeData);
-      
-      // 如果卡面图片是base64或本地路径，可以转换为可访问的URL
-      // 这里使用JSON字符串作为二维码内容
-      // 实际应用中，可能需要将图片上传到服务器后获取URL
-      
-      this.$nextTick(() => {
-        const qrcodeElement = document.getElementById('qrcode');
-        if (qrcodeElement) {
-          qrcodeElement.innerHTML = '';
-          console.log(qrcodeContent,'qrcodeContent')
-          console.log(this.qrcode,'this.qrcode')
-          console.log(qrcodeElement,'qrcodeElement')
-          console.log(md5(qrcodeData.cardProduct),'md5(qrcodeData.cardProduct)')
-          try {
-            this.qrcode = new QRCode(qrcodeElement, {
-              text: md5(qrcodeData.cardProduct).slice(0, 8),
-              width: 200,
-              height: 200,
-              colorDark: '#000000',
-              colorLight: '#ffffff',
-              correctLevel: 2 // 错误纠正级别：L(1), M(0), Q(3), H(2)
-            });
-          } catch (error) {
-            console.error('生成二维码失败:', error);
-            // 如果生成失败，显示错误提示
-            qrcodeElement.innerHTML = '<div style="padding: 20px; color: #999;">二维码生成失败</div>';
-          }
-        }
-      });
-    },
+    
     goBack() {
       this.$router.push('/card-selection');
     },
