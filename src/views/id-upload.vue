@@ -1027,10 +1027,10 @@ export default {
         saveCustomerInfo(){
             return diyCardApi.customer.save({
                 orderId: this.$route.query.oid,
-                name: 'name',
-                idNumber: 'idNumber',
-                idType: 'PASSPORT',
-                gender: 'FEMALE',
+                name: this.formData.fullName,
+                idNumber: this.formData.idNumber,
+                idType: 'PASSPORT', // ID_CARD, PASSPORT 页面暂时没选择
+                gender: 'FEMALE', // MALE, FEMALE 页面暂时没选择
             })
             // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":null,"datas":null}
         },

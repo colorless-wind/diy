@@ -142,7 +142,8 @@
     // border-radius: 16px;
     // padding: 24px;
     // box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-background: #f5f7fa;
+    background: #f5f7fa;
+
     .form-title {
         font-size: 18px;
         font-weight: 600;
@@ -424,7 +425,7 @@ background: #f5f7fa;
         <div class="header-title">{{ $t('presetCard.applicationForm') }}</div>
     </div>
 
-    <div class="form-group" style="margin-top: 50px;">
+    <!-- <div class="form-group" style="margin-top: 50px;">
         <label>
             <span class="required">*</span>
             {{ $t('presetCard.fullName') }}
@@ -452,6 +453,24 @@ background: #f5f7fa;
         <input type="tel" v-model="formData.phone" :placeholder="$t('presetCard.phonePlaceholder')"
             @blur="validateField('phone')">
         <div v-if="errors.phone" class="error-message">{{ errors.phone }}</div>
+    </div> -->
+    <div class="form-group" style="margin-top: 50px;">
+        <label>
+            <span class="required">*</span>
+            职业
+        </label>
+        <input type="email" v-model="formData.job" :placeholder="$t('presetCard.emailPlaceholder')"
+            @blur="validateField('job')">
+        <div v-if="errors.job" class="error-message">{{ errors.job }}</div>
+    </div>
+    <div class="form-group">
+        <label>
+            <span class="required">*</span>
+            工作单位
+        </label>
+        <input type="email" v-model="formData.company" :placeholder="$t('presetCard.emailPlaceholder')"
+            @blur="validateField('company')">
+        <div v-if="errors.company" class="error-message">{{ errors.company }}</div>
     </div>
 
     <div class="form-group">
@@ -479,6 +498,10 @@ background: #f5f7fa;
 </div>
 </template>
 <script>
+import diyCardApi from '@/api/diycard';
+import Vue from 'vue';  
+import Toasted from 'vue-toasted';
+
 export default {
     name: 'PresetCard',
     data() {
@@ -486,6 +509,8 @@ export default {
             cardData: null,
             formData: {
                 fullName: '',
+                job: '',
+                company: '',
                 email: '',
                 phone: '',
                 idNumber: '',
@@ -500,15 +525,13 @@ export default {
     },
     computed: {
         isFormValid() {
-            return this.formData.fullName &&
+            return this.formData.job &&
+                this.formData.company &&
                 this.formData.email &&
-                this.formData.phone &&
-                this.formData.idNumber &&
                 this.formData.address &&
-                !this.errors.fullName &&
+                !this.errors.job &&
+                !this.errors.company &&
                 !this.errors.email &&
-                !this.errors.phone &&
-                !this.errors.idNumber &&
                 !this.errors.address;
         }
     },
@@ -524,6 +547,24 @@ export default {
         // this.loadCardData();
     },
     methods: {
+        // 提交订单
+        submitOrderReq() {
+            return diyCardApi.order.submit({
+                orderId: this.$route.query.oid,
+            })
+            // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":{"orderStatus":"PROCESSING","ucode":"UC20260119000002","needPay":false,"payAmount":0},"datas":null}
+        },
+        // 保存客户信息
+        saveCustomerInfo() {
+            return diyCardApi.customer.save({
+                orderId: this.$route.query.oid,
+                // name: this.formData.fullName,
+                // idNumber: this.formData.idNumber,
+                idType: 'PASSPORT', // ID_CARD, PASSPORT 页面暂时没选择
+                gender: 'FEMALE', // MALE, FEMALE 页面暂时没选择
+            })
+            // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":null,"datas":null}
+        },
         getPresetCardsData() {
             const locale = this.$i18n.locale;
             const isZh = locale === 'zh-CN';
@@ -730,17 +771,29 @@ export default {
                 // 保存表单数据到localStorage，供完成页面使用
                 localStorage.setItem('applicationFormData', JSON.stringify(this.formData));
 
-                // 模拟API调用
-                await new Promise(resolve => setTimeout(resolve, 1500));
+                // TODO 字段待完善
+                await this.saveCustomerInfo();
+                const submitOrderRes = await this.submitOrderReq();
+                if(submitOrderRes.subStatus != '0') {
+                    if(submitOrderRes.subErrorMsg == '参数不合法') {}
+                    Vue.toasted.show(submitOrderRes.subErrorMsg, {
+                        theme: "toasted-primary",
+                        position: "center",
+                        duration: 2000,
+                    });
+                    console.error('提交订单失败:', submitOrderRes);
+                }
 
                 // 跳转到完成页面
                 const queryType = this.$route.query.type === 'diy' ? 'diy' : 'preset';
                 this.$router.push({
                     path: '/application-complete',
                     query: {
+                        ...this.$route.query,
                         type: queryType,
                         cardId: this.cardId,
-                        address: this.formData.address
+                        address: this.formData.address,
+                        ucode: submitOrderRes.data.ucode
                     }
                 });
             } catch (error) {
