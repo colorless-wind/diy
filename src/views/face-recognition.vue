@@ -104,6 +104,8 @@
             <div class="success-content">
                 <div class="success-icon">✓</div>
                 <div class="success-text">人脸识别成功</div>
+                {{ imageBaseUrl + '/' + faceImageUrl }}
+                <img :src="imageBaseUrl + '/' + faceImageUrl" alt="faceImage" style="width: 200px; height: 200px;">
             </div>
         </div>
     </div>
@@ -116,6 +118,7 @@ export default {
     name: 'FaceRecognition',
     data() {
         return {
+            imageBaseUrl,
             status: 'permission', // permission, preparing, recognizing, verifying, success
             showPermissionModal: true,
             countdown: 8,
@@ -146,7 +149,14 @@ export default {
             lastDescriptor: null, // Float32Array
             registeredDescriptor: null, // Float32Array
             lastVerifyDistance: null,
-            verifyThreshold: 0.6
+            verifyThreshold: 0.6,
+
+            // 上传给后端的人脸图片地址
+            faceImageUrl: '',
+            // face-api 最近一次检测到的人脸框（像素，基于 videoWidth/videoHeight）
+            lastFaceBoxPx: null,
+            // 在切到 success 之前预先缓存的人脸图片（base64），避免 video 被 v-if 卸载后无法抓帧
+            pendingFaceBase64: null
         };
     },
     computed: {
@@ -192,18 +202,155 @@ export default {
         uploadImageFile(imageBase64) {
             return diyCardApi.file.imageUpload({
                 "base64": imageBase64,
-                "fileName": 'faceRecognitionImage'
+                "fileName": 'faceRecognitionImage.png'
             })
             // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":"group1/M00/02/43/CqU8dGlp2PyAdqR7AAZRBV9237I672.png","datas":null}
         },
-        uploadFaceReq(){
+        uploadFaceReq(faceImageUrl){
             return diyCardApi.customer.faceRecognition({
                 orderId: this.$route.query.oid,
                 faceImage: faceImageUrl
             })
+            // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":{"passed":false,"similarity":84,"message":"人脸识别失败，相似度过低"},"datas":null}
+        },
+        // 生成一张预设“模拟人脸图”，用于无摄像头/模拟流程的接口对接
+        async generatePresetFaceBase64() {
+            const size = 360;
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+
+            // 背景
+            ctx.fillStyle = '#f3f6ff';
+            ctx.fillRect(0, 0, size, size);
+
+            // 脸
+            ctx.fillStyle = '#ffd7b3';
+            ctx.beginPath();
+            ctx.arc(size / 2, size / 2, 140, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 眼睛
+            ctx.fillStyle = '#2a2a2a';
+            ctx.beginPath();
+            ctx.arc(size / 2 - 55, size / 2 - 30, 12, 0, Math.PI * 2);
+            ctx.arc(size / 2 + 55, size / 2 - 30, 12, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 嘴巴
+            ctx.strokeStyle = '#c05a4a';
+            ctx.lineWidth = 8;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.arc(size / 2, size / 2 + 35, 55, 0.15 * Math.PI, 0.85 * Math.PI);
+            ctx.stroke();
+
+            // 水印
+            ctx.fillStyle = 'rgba(0,0,0,0.35)';
+            ctx.font = '14px Arial';
+            ctx.fillText('SIMULATED FACE', 12, size - 14);
+
+            return canvas.toDataURL('image/png');
+        },
+        // 从 video 抓一帧（尽量裁剪到人脸区域），返回 base64（dataURL）
+        async captureFaceBase64FromVideo() {
+            const video = this.$refs.video;
+            if (!video || !video.videoWidth || !video.videoHeight) return null;
+
+            const vw = video.videoWidth;
+            const vh = video.videoHeight;
+
+            // 全帧 canvas
+            const full = document.createElement('canvas');
+            full.width = vw;
+            full.height = vh;
+            const fctx = full.getContext('2d');
+            fctx.drawImage(video, 0, 0, vw, vh);
+
+            // 计算裁剪框
+            let rect = null;
+            // if (this.lastFaceBoxPx && this.lastFaceBoxPx.width && this.lastFaceBoxPx.height) {
+            //     rect = { ...this.lastFaceBoxPx };
+            // } else if (this.faceBox) {
+            //     rect = {
+            //         x: (this.faceBox.left / 100) * vw,
+            //         y: (this.faceBox.top / 100) * vh,
+            //         width: (this.faceBox.width / 100) * vw,
+            //         height: (this.faceBox.height / 100) * vh
+            //     };
+            // }
+
+            // 没有框就用全帧（保证不阻塞流程）
+            if (!rect || !rect.width || !rect.height) {
+                return full.toDataURL('image/png');
+            }
+
+            // 扩大一点边距，避免只截到脸的一部分
+            const margin = 0.25;
+            const mx = rect.width * margin;
+            const my = rect.height * margin;
+
+            let sx = Math.max(0, rect.x - mx);
+            let sy = Math.max(0, rect.y - my);
+            let sw = Math.min(vw - sx, rect.width + mx * 2);
+            let sh = Math.min(vh - sy, rect.height + my * 2);
+
+            // 输出固定尺寸，控制体积
+            const outSize = 480;
+            const out = document.createElement('canvas');
+            out.width = outSize;
+            out.height = outSize;
+            const octx = out.getContext('2d');
+            octx.fillStyle = '#000';
+            octx.fillRect(0, 0, outSize, outSize);
+            octx.drawImage(full, sx, sy, sw, sh, 0, 0, outSize, outSize);
+
+            return out.toDataURL('image/png');
+        },
+        async getFaceImageBase64ForUpload() {
+            // 无摄像头/模拟流程：用预设图
+            if (this.engine === 'simulate' || !this.stream) {
+                return await this.generatePresetFaceBase64();
+            }
+
+            // 有摄像头：抓帧
+            const base64 = await this.captureFaceBase64FromVideo();
+            if (base64) return base64;
+
+            // 抓帧失败仍不阻塞：用预设图兜底
+            return await this.generatePresetFaceBase64();
+        },
+        async preparePendingFaceBase64() {
+            try {
+                this.pendingFaceBase64 = await this.getFaceImageBase64ForUpload();
+            } catch (e) {
+                this.pendingFaceBase64 = await this.generatePresetFaceBase64();
+            }
         },
         async completeRecognition() {
-            await this.uploadFaceReq()
+            // 1) 获取人脸图片（base64）
+            // 2) 调 uploadImageFile 得到图片地址
+            // 3) 调 uploadFaceReq 完成对接
+            try {
+                const faceBase64 = this.pendingFaceBase64 || await this.getFaceImageBase64ForUpload();
+                const uploadRes = await this.uploadImageFile(faceBase64);
+                this.faceImageUrl = uploadRes && uploadRes.data ? uploadRes.data : '';
+                if (this.faceImageUrl) {
+                    const uploadFaceRes = await this.uploadFaceReq(this.faceImageUrl);
+                    alert(JSON.stringify(uploadFaceRes))
+                } else {
+                    // 无地址也不阻塞主流程，但在控制台提示，便于排查
+                    // eslint-disable-next-line no-console
+                    console.warn('faceRecognition: uploadImageFile 返回空地址');
+                }
+            } catch (e) {
+                // 不影响当前稳定流程：接口失败不阻塞跳转
+                // eslint-disable-next-line no-console
+                console.error('faceRecognition: 接口对接失败', e);
+            }
+            this.pendingFaceBase64 = null;
+            return
             // 完成识别，跳转到完成页面
             const queryType = this.$route.query.type === 'diy' ? 'diy' : 'preset';
             this.$router.push({
@@ -515,6 +662,7 @@ export default {
                     const video = this.$refs.video;
                     if (!result || !video) {
                         this.lastDescriptor = null;
+                        this.lastFaceBoxPx = null;
                         this.faceDetected = false;
                         this.faceOk = false;
                         this.faceBox = null;
@@ -524,6 +672,7 @@ export default {
                     } else {
                         const { box, descriptor } = result;
                         this.lastDescriptor = descriptor;
+                        this.lastFaceBoxPx = { x: box.x, y: box.y, width: box.width, height: box.height };
 
                         const vw = video.videoWidth;
                         const vh = video.videoHeight;
@@ -789,6 +938,9 @@ export default {
                 return;
             }
 
+            // 关键：在切换到 verifying/success 前先抓取并缓存一张图片（success 时 video 会被 v-if 卸载）
+            await this.preparePendingFaceBase64();
+
             this.status = 'verifying';
             this.stopDetectLoop();
 
@@ -868,6 +1020,9 @@ export default {
                 this.frameClass = 'info';
 
                 if (shouldProceed) {
+                    // 关键：在切换到 verifying/success 前先抓取并缓存一张图片（success 时 video 会被 v-if 卸载）
+                    await this.preparePendingFaceBase64();
+
                     this.status = 'verifying';
                     this.stopDetectLoop();
                     setTimeout(() => {
