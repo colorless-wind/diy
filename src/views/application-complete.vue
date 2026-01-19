@@ -486,7 +486,7 @@ export default {
       this.$router.push({
         path: '/application-progress',
         query: {
-          ...this.$router.query,
+          ...this.$route.query,
           applicationNumber: this.applicationNumber
         }
       });

@@ -486,7 +486,7 @@
     <div class="form-group">
         <label>
             <span class="required">*</span>
-            {{ $t('presetCard.address') }}
+            邮寄{{ $t('presetCard.address') }}
         </label>
         <textarea v-model="formData.address" :placeholder="$t('presetCard.addressPlaceholder')"></textarea>
         <div v-if="errors.address" class="error-message">{{ errors.address }}</div>

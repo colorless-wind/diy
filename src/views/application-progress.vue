@@ -285,27 +285,33 @@
     <div v-if="detail" class="panel info-card">
       <div class="row">
         <div class="left">
-          {{ $t('applicationProgress.applicationSheet') }}：{{ detail.applicationNumber || '-' }}
+          {{ $t('applicationProgress.applicationSheet') }}：{{ detail.ucode || '-' }}
         </div>
         <div class="right status-text">
-          {{ detail.statusText || '-' }}
+          {{ detail.orderStatusDesc || '-' }}
         </div>
       </div>
 
       <div class="row">
-        <div class="left strong">{{ detail.cardProduct || '-' }}</div>
-        <div class="right muted">{{ detail.city || '-' }}</div>
+        <div class="left strong">
+          产品名称：{{ cardProduct || '-' }}</div>
+        <!-- <div class="right muted">{{ detail.city || '-' }}</div> -->
       </div>
 
       <div class="row">
         <div class="left">
-          {{ $t('applicationProgress.applyDate') }}：{{ detail.applyDate || '-' }}
+          {{ $t('applicationProgress.applyDate') }}：{{ detail.addTime || '-' }}
         </div>
       </div>
 
-      <div class="row">
+      <!-- <div class="row">
         <div class="left">
           {{ $t('applicationProgress.applyType') }}：{{ detail.applyType || '-' }}
+        </div>
+      </div> -->
+      <div class="row">
+        <div class="left">
+          邮寄地址：{{ $route.query.address || '-' }}
         </div>
       </div>
     </div>
@@ -371,12 +377,13 @@ function guessCityFromAddress(address) {
   // fallback: 取前2-3个字
   return String(address).slice(0, 3).replace(/(市|省)$/, '');
 }
-
+import diyCardApi from '@/api/diycard';
 export default {
   name: 'ApplicationProgress',
   data() {
     return {
       applicationNumber: '',
+      cardProduct: '',
       isLoading: false,
       errorMsg: '',
       progress: null,
@@ -384,14 +391,33 @@ export default {
     };
   },
   mounted() {
-    const q = (this.$route && this.$route.query) || {};
-    const fromQuery = q.applicationNumber || '';
-    const fromStorage = localStorage.getItem(STORAGE_LAST_NO) || '';
-    this.applicationNumber = fromQuery || fromStorage || '';
-    this.detail = this.makeDetailFromQuery(q);
-    if (this.applicationNumber) this.loadProgress();
+    this.applicationNumber = this.$route.query.ucode;
+    this.queryOrderReq();
+    this.queryProductDetailReq();
+    // this.detail = this.makeDetailFromQuery(q);
+    // if (this.applicationNumber) this.loadProgress();
   },
   methods: {
+    // 查询订单详情
+    queryOrderReq() {
+      diyCardApi.order.queryByUcode({
+        ucode: this.$route.query.ucode
+      }).then(res => {
+        console.log(res, 'res')
+        this.detail = res.data;
+      })
+      // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":{"orderId":"9c2f6caaf666423abdfe2e80e75a7d39","orderNo":"DIY20260119000006","ucode":"UC20260119000006","orderStatus":"PROCESSING","orderStatusDesc":"办理中","imageUrl":"/images/products/credit_coop_001_std.jpg","qrcodeUrl":null,"customerName":"李*","addTime":"2026-01-19 16:14:51"},"datas":null}
+    },
+    // 查询产品详情
+    queryProductDetailReq() {
+      diyCardApi.product.detail({
+        productId: this.$route.query.cid
+      }).then(res => {
+        console.log(res, 'res')
+        this.cardProduct = res.data.productName;
+      })
+      // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":{"productId":"8","productCode":"CREDIT_COOP_001","productName":"迪士尼联名信用卡","cardType":"CREDIT","cardLevel":"STANDARD","cardOrg":"UNIONPAY","bankName":"中国农业银行","imageUrl":"/images/products/credit_coop_001.jpg","templateUrl":null,"annualFee":150,"annualFeeFree":"首年免年费，刷卡6次免次年年费","features":["迪士尼主题卡面","乐园门票优惠","周边商品折扣","专属积分兑换"],"benefits":["迪士尼乐园门票9折","快速通道优惠","周边商品8折","积分兑换迪士尼礼品"],"applyCondition":"年满18周岁，迪士尼粉丝优先","isDiy":false,"standardImageUrl":"/images/products/credit_coop_001_std.jpg","supportAiGenerate":false,"needAiReview":false,"needPay":false,"payAmount":0,"needFaceVerify":false,"faceVerifyRequired":false},"datas":null}
+    },
     goBack() {
       this.$router.back();
     },

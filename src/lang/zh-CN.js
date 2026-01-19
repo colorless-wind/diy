@@ -73,7 +73,7 @@ export default {
   applicationProgress: {
     title: '申请进度',
     applicationNumber: '申请单号',
-    applicationSheet: '申请单',
+    applicationSheet: '申请单号',
     applyDate: '申请日期',
     applyType: '申办类型',
     applicationNumberPlaceholder: '请输入申请单号',
