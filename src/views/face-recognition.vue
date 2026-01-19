@@ -110,6 +110,8 @@
 </template>
 
 <script>
+import { imageBaseUrl } from '@/utils/config'
+import diyCardApi from '@/api/diycard';
 export default {
     name: 'FaceRecognition',
     data() {
@@ -186,6 +188,33 @@ export default {
         this.cleanupResources();
     },
     methods: {
+        // 上传图片文件 base64 ==> url
+        uploadImageFile(imageBase64) {
+            return diyCardApi.file.imageUpload({
+                "base64": imageBase64,
+                "fileName": 'faceRecognitionImage'
+            })
+            // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":"group1/M00/02/43/CqU8dGlp2PyAdqR7AAZRBV9237I672.png","datas":null}
+        },
+        uploadFaceReq(){
+            return diyCardApi.customer.faceRecognition({
+                orderId: this.$route.query.oid,
+                faceImage: faceImageUrl
+            })
+        },
+        async completeRecognition() {
+            await this.uploadFaceReq()
+            // 完成识别，跳转到完成页面
+            const queryType = this.$route.query.type === 'diy' ? 'diy' : 'preset';
+            this.$router.push({
+                path: '/user-apply',
+                query: {
+                    ...this.$route.query,
+                    type: queryType,
+                    cardId: this.$route.query.cardId
+                }
+            });
+        },
         cameraPermissionKey() {
             return 'cameraPermissionRemembered';
         },
@@ -886,17 +915,6 @@ export default {
             };
 
             processStep();
-        },
-        completeRecognition() {
-            // 完成识别，跳转到完成页面
-            const queryType = this.$route.query.type === 'diy' ? 'diy' : 'preset';
-            this.$router.push({
-                path: '/user-apply',
-                query: {
-                    type: queryType,
-                    cardId: this.$route.query.cardId
-                }
-            });
         },
         handleClose() {
             if (confirm('确定要退出人脸识别吗？')) {
