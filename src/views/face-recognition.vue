@@ -159,6 +159,12 @@ export default {
     mounted() {
         // 页面加载时显示权限请求
         this.loadRegisteredDescriptor();
+
+        // 记住“使用时允许”：下次进入自动开启（若权限被撤销会自动回退到弹窗）
+        if (this.getRememberCameraPermission()) {
+            this.showPermissionModal = false;
+            this.startRecognition();
+        }
     },
     watch: {
         status() {
@@ -172,6 +178,27 @@ export default {
         this.cleanupResources();
     },
     methods: {
+        cameraPermissionKey() {
+            return 'cameraPermissionRemembered';
+        },
+        getRememberCameraPermission() {
+            try {
+                return localStorage.getItem(this.cameraPermissionKey()) === '1';
+            } catch (e) {
+                return false;
+            }
+        },
+        setRememberCameraPermission(remember) {
+            try {
+                if (remember) {
+                    localStorage.setItem(this.cameraPermissionKey(), '1');
+                } else {
+                    localStorage.removeItem(this.cameraPermissionKey());
+                }
+            } catch (e) {
+                // ignore
+            }
+        },
         clearTimers() {
             if (this.recognitionTimer) {
                 clearTimeout(this.recognitionTimer);
@@ -316,13 +343,18 @@ export default {
         },
         allowCamera() {
             this.showPermissionModal = false;
+            // “使用时允许” -> 记住，下次进入不再弹窗
+            this.setRememberCameraPermission(true);
             this.startRecognition();
         },
         allowCameraOnce() {
             this.showPermissionModal = false;
+            // “仅本次使用” -> 不记住
+            this.setRememberCameraPermission(false);
             this.startRecognition();
         },
         denyCamera() {
+            this.setRememberCameraPermission(false);
             alert('需要摄像头权限才能进行人脸识别');
             this.handleClose();
         },
@@ -587,6 +619,8 @@ export default {
                 await this.initCamera();
             } catch (e) {
                 this.cleanupResources();
+                // 可能是用户撤销了权限/策略变化：清除“记住”并重新展示弹窗
+                this.setRememberCameraPermission(false);
                 // alert((e && e.message) ? e.message : '无法打开摄像头，请检查权限设置');
                 this.status = 'permission'; // permission, preparing, recognizing, verifying, success
                 this.showPermissionModal = true;
