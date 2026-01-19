@@ -18,6 +18,10 @@
   z-index: 100;
   display: flex;
   align-items: center;
+  justify-content: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 
   .back-btn {
     width: 32px;
@@ -29,6 +33,8 @@
     margin-right: 12px;
     border-radius: 50%;
     transition: background 0.2s;
+    position: absolute;
+    left: 16px;
 
     &:active {
       background: rgba(0, 0, 0, 0.05);
@@ -45,6 +51,7 @@
     font-size: 18px;
     font-weight: 600;
     color: #1a1a1a;
+    text-align: center;
     flex: 1;
   }
 }
@@ -55,6 +62,55 @@
   border-radius: 14px;
   padding: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.info-card {
+  .row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    &:first-child {
+      padding-top: 0;
+    }
+  }
+
+  .left {
+    flex: 1;
+    min-width: 0;
+    font-size: 14px;
+    color: #1a1a1a;
+    line-height: 1.4;
+    word-break: break-all;
+  }
+
+  .right {
+    flex-shrink: 0;
+    font-size: 14px;
+    color: #1a1a1a;
+    white-space: nowrap;
+  }
+
+  .muted {
+    color: #666;
+  }
+
+  .strong {
+    font-weight: 600;
+  }
+
+  .status-text {
+    font-weight: 600;
+    color: #52c41a;
+  }
 }
 
 .form {
@@ -226,7 +282,35 @@
       <div class="header-title">{{ $t('applicationProgress.title') }}</div>
     </div>
 
-    <div class="panel">
+    <div v-if="detail" class="panel info-card">
+      <div class="row">
+        <div class="left">
+          {{ $t('applicationProgress.applicationSheet') }}：{{ detail.applicationNumber || '-' }}
+        </div>
+        <div class="right status-text">
+          {{ detail.statusText || '-' }}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="left strong">{{ detail.cardProduct || '-' }}</div>
+        <div class="right muted">{{ detail.city || '-' }}</div>
+      </div>
+
+      <div class="row">
+        <div class="left">
+          {{ $t('applicationProgress.applyDate') }}：{{ detail.applyDate || '-' }}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="left">
+          {{ $t('applicationProgress.applyType') }}：{{ detail.applyType || '-' }}
+        </div>
+      </div>
+    </div>
+
+    <div v-else class="panel">
       <div class="form">
         <div class="label">{{ $t('applicationProgress.applicationNumber') }}</div>
         <input
@@ -244,27 +328,6 @@
       </div>
     </div>
 
-    <!-- <div v-if="progress" class="panel">
-      <div class="status">
-        <div class="title">{{ $t('applicationProgress.currentStatus') }}</div>
-        <div class="badge">{{ progress.statusText }}</div>
-      </div>
-
-      <div class="timeline">
-        <div
-          v-for="(item, idx) in progress.timeline"
-          :key="idx"
-          class="item"
-          :class="{ active: idx === progress.activeIndex }"
-        >
-          <div class="line1">
-            <div class="name">{{ item.name }}</div>
-            <div class="time">{{ item.time || '-' }}</div>
-          </div>
-          <div v-if="item.desc" class="desc">{{ item.desc }}</div>
-        </div>
-      </div>
-    </div> -->
   </div>
 </template>
 
@@ -287,6 +350,28 @@ function formatTime(ts) {
   }
 }
 
+function formatDateYMD(ts) {
+  if (!ts) return '';
+  try {
+    const d = new Date(ts);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  } catch (e) {
+    return '';
+  }
+}
+
+function guessCityFromAddress(address) {
+  if (!address) return '';
+  // 兼容 “北京市...”/“广东省...”/“内蒙古自治区...”
+  const m = String(address).match(/^(.{2,8}?)(市|省|自治区)/);
+  if (m && m[1]) return m[1];
+  // fallback: 取前2-3个字
+  return String(address).slice(0, 3).replace(/(市|省)$/, '');
+}
+
 export default {
   name: 'ApplicationProgress',
   data() {
@@ -294,29 +379,58 @@ export default {
       applicationNumber: '',
       isLoading: false,
       errorMsg: '',
-      progress: null
+      progress: null,
+      detail: null
     };
   },
   mounted() {
-    const fromQuery = (this.$route.query && this.$route.query.applicationNumber) || '';
+    const q = (this.$route && this.$route.query) || {};
+    const fromQuery = q.applicationNumber || '';
     const fromStorage = localStorage.getItem(STORAGE_LAST_NO) || '';
     this.applicationNumber = fromQuery || fromStorage || '';
-    if (this.applicationNumber) {
-      this.loadProgress();
-    }
+    this.detail = this.makeDetailFromQuery(q);
+    if (this.applicationNumber) this.loadProgress();
   },
   methods: {
     goBack() {
       this.$router.back();
     },
+    makeDetailFromQuery(q) {
+      if (!q) return null;
+      const applicationNumber = q.applicationNumber || '';
+      const cardProduct = q.cardProduct || q.productName || '';
+      const address = q.address || '';
+      const city = q.city || guessCityFromAddress(address) || '';
+      const applyDate = q.applyDate || q.applicationDate || formatDateYMD(Date.now());
+      const applyType = q.applyType || this.$t('applicationProgress.defaultApplyType');
+      const statusText = q.statusText || this.$t('applicationProgress.statusReceived');
+
+      // 有任何有效字段就渲染卡片（避免空对象）
+      const hasAny =
+        applicationNumber || cardProduct || city || applyDate || applyType || statusText;
+      if (!hasAny) return null;
+
+      return {
+        applicationNumber,
+        cardProduct,
+        city,
+        applyDate,
+        applyType,
+        statusText
+      };
+    },
     makeDefaultProgress(applicationNumber) {
       const now = Date.now();
       return {
         applicationNumber,
-        status: 'SUBMITTED',
-        statusText: this.$t('applicationProgress.statusSubmitted'),
+        status: 'RECEIVED',
+        statusText: this.$t('applicationProgress.statusReceived'),
         activeIndex: 1,
         updatedAt: now,
+        cardProduct: (this.detail && this.detail.cardProduct) || this.$t('applicationProgress.defaultCardProduct'),
+        city: (this.detail && this.detail.city) || '',
+        applyDate: (this.detail && this.detail.applyDate) || formatDateYMD(now),
+        applyType: (this.detail && this.detail.applyType) || this.$t('applicationProgress.defaultApplyType'),
         timeline: [
           {
             name: this.$t('applicationProgress.stepSubmitted'),
@@ -364,6 +478,28 @@ export default {
         const local = this.readLocalProgress(this.applicationNumber);
         const progress = local || this.makeDefaultProgress(this.applicationNumber);
         this.progress = progress;
+        // 同步详情卡片：优先 query，其次 localStorage/progress
+        if (!this.detail) {
+          this.detail = {
+            applicationNumber: progress.applicationNumber,
+            statusText: progress.statusText,
+            cardProduct: progress.cardProduct,
+            city: progress.city,
+            applyDate: progress.applyDate,
+            applyType: progress.applyType
+          };
+        } else {
+          // 若 query 缺字段，用 progress 补齐
+          this.detail = {
+            ...this.detail,
+            applicationNumber: this.detail.applicationNumber || progress.applicationNumber,
+            statusText: this.detail.statusText || progress.statusText,
+            cardProduct: this.detail.cardProduct || progress.cardProduct,
+            city: this.detail.city || progress.city,
+            applyDate: this.detail.applyDate || progress.applyDate,
+            applyType: this.detail.applyType || progress.applyType
+          };
+        }
         if (!local) this.saveLocalProgress(progress);
       } catch (e) {
         this.errorMsg = this.$t('applicationProgress.queryFailed');
