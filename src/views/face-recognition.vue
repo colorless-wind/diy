@@ -104,8 +104,21 @@
             <div class="success-content">
                 <div class="success-icon">✓</div>
                 <div class="success-text">人脸识别成功</div>
-                {{ imageBaseUrl + '/' + faceImageUrl }}
-                <img :src="imageBaseUrl + '/' + faceImageUrl" alt="faceImage" style="width: 200px; height: 200px;">
+            </div>
+        </div>
+
+        <!-- 失败状态 -->
+        <div v-else-if="status === 'failed'" class="failed-state">
+            <div class="failed-content">
+                <div class="failed-icon">✕</div>
+                <div class="failed-text">人脸识别失败</div>
+                <div v-if="faceVerifyMessage" class="failed-desc">{{ faceVerifyMessage }}</div>
+                <div v-if="faceVerifySimilarity !== null" class="failed-desc">相似度：{{ faceVerifySimilarity }}</div>
+
+                <div class="failed-actions">
+                    <button class="failed-btn primary" @click="retryRecognition">重新识别</button>
+                    <button class="failed-btn" @click="goBack">返回</button>
+                </div>
             </div>
         </div>
     </div>
@@ -119,7 +132,7 @@ export default {
     data() {
         return {
             imageBaseUrl,
-            status: 'permission', // permission, preparing, recognizing, verifying, success
+            status: 'permission', // permission, preparing, recognizing, verifying, success, failed
             showPermissionModal: true,
             countdown: 8,
             faceDetected: false,
@@ -160,6 +173,11 @@ export default {
 
             // 上传给后端的人脸图片地址
             faceImageUrl: '',
+            // 后端人脸核验结果
+            faceVerifyPassed: null, // true/false/null
+            faceVerifyMessage: '',
+            faceVerifySimilarity: null,
+            backendVerifyInFlight: false,
             // face-api 最近一次检测到的人脸框（像素，基于 videoWidth/videoHeight）
             lastFaceBoxPx: null,
             // 在切到 success 之前预先缓存的人脸图片（base64），避免 video 被 v-if 卸载后无法抓帧
@@ -219,6 +237,7 @@ export default {
                 faceImage: faceImageUrl
             })
             // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":{"passed":false,"similarity":84,"message":"人脸识别失败，相似度过低"},"datas":null}
+            // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":{"passed":true,"similarity":85,"message":"人脸识别通过"},"datas":null}
         },
         // 生成一张预设“模拟人脸图”，用于无摄像头/模拟流程的接口对接
         async generatePresetFaceBase64() {
@@ -336,38 +355,93 @@ export default {
             }
         },
         async completeRecognition() {
+            if (this.backendVerifyInFlight) return;
+            this.backendVerifyInFlight = true;
+
+            // 重置后端结果
+            this.faceVerifyPassed = null;
+            this.faceVerifyMessage = '';
+            this.faceVerifySimilarity = null;
+
             // 1) 获取人脸图片（base64）
             // 2) 调 uploadImageFile 得到图片地址
-            // 3) 调 uploadFaceReq 完成对接
+            // 3) 调 uploadFaceReq 完成对接，并根据 passed 决定最终成功/失败
             try {
                 const faceBase64 = this.pendingFaceBase64 || await this.getFaceImageBase64ForUpload();
                 const uploadRes = await this.uploadImageFile(faceBase64);
                 this.faceImageUrl = uploadRes && uploadRes.data ? uploadRes.data : '';
-                if (this.faceImageUrl) {
-                    const uploadFaceRes = await this.uploadFaceReq(this.faceImageUrl);
-                    alert(JSON.stringify(uploadFaceRes))
+
+                if (!this.faceImageUrl) {
+                    this.faceVerifyPassed = false;
+                    this.faceVerifyMessage = '图片上传失败，请重试';
+                    this.status = 'failed';
+                    return;
+                }
+
+                const uploadFaceRes = await this.uploadFaceReq(this.faceImageUrl);
+                const data = uploadFaceRes && uploadFaceRes.data ? uploadFaceRes.data : null;
+
+                const passed = !!(data && data.passed === true);
+                this.faceVerifyPassed = passed;
+                this.faceVerifyMessage = (data && data.message) ? data.message : (passed ? '人脸识别通过' : '人脸识别失败');
+                this.faceVerifySimilarity = (data && typeof data.similarity !== 'undefined') ? data.similarity : null;
+
+                if (passed) {
+                    this.status = 'success';
+
+                    // 成功后自动跳转下一页
+                    setTimeout(() => {
+                        const queryType = this.$route.query.type === 'diy' ? 'diy' : 'preset';
+                        this.$router.push({
+                            path: '/user-apply',
+                            query: {
+                                ...this.$route.query,
+                                type: queryType,
+                                cardId: this.$route.query.cardId
+                            }
+                        });
+                    }, 1200);
                 } else {
-                    // 无地址也不阻塞主流程，但在控制台提示，便于排查
-                    // eslint-disable-next-line no-console
-                    console.warn('faceRecognition: uploadImageFile 返回空地址');
+                    this.status = 'failed';
                 }
             } catch (e) {
-                // 不影响当前稳定流程：接口失败不阻塞跳转
+                // 接口异常：按失败处理，避免卡住流程
+                this.faceVerifyPassed = false;
+                this.faceVerifyMessage = '接口调用失败，请重试';
+                this.status = 'failed';
                 // eslint-disable-next-line no-console
                 console.error('faceRecognition: 接口对接失败', e);
+            } finally {
+                this.pendingFaceBase64 = null;
+                this.backendVerifyInFlight = false;
             }
-            this.pendingFaceBase64 = null;
-            return
-            // 完成识别，跳转到完成页面
-            const queryType = this.$route.query.type === 'diy' ? 'diy' : 'preset';
-            this.$router.push({
-                path: '/user-apply',
-                query: {
-                    ...this.$route.query,
-                    type: queryType,
-                    cardId: this.$route.query.cardId
+        },
+        retryRecognition() {
+            // 重新识别：优先走真实识别；无摄像头则走模拟
+            this.cleanupResources();
+            this.status = 'permission';
+            this.showPermissionModal = true;
+            this.faceVerifyPassed = null;
+            this.faceVerifyMessage = '';
+            this.faceVerifySimilarity = null;
+            this.faceImageUrl = '';
+
+            this.hasCameraDevice().then(has => {
+                if (!has) {
+                    this.startSimulatedRecognitionFlow('未检测到摄像头，已进入模拟流程');
+                    return;
+                }
+
+                // 已记住权限则直接开始，否则让用户点击授权按钮
+                if (this.getRememberCameraPermission()) {
+                    this.showPermissionModal = false;
+                    this.startRecognition();
                 }
             });
+        },
+        goBack() {
+            this.cleanupResources();
+            this.$router.back();
         },
         cameraPermissionKey() {
             return 'cameraPermissionRemembered';
@@ -973,13 +1047,7 @@ export default {
 
             this.status = 'verifying';
             this.stopDetectLoop();
-
-            setTimeout(() => {
-                this.status = 'success';
-                setTimeout(() => {
-                    this.completeRecognition();
-                }, 1500);
-            }, 1200);
+            await this.completeRecognition();
         },
         async registerFace() {
             if (!this.faceApiReady) {
@@ -1055,12 +1123,7 @@ export default {
 
                     this.status = 'verifying';
                     this.stopDetectLoop();
-                    setTimeout(() => {
-                        this.status = 'success';
-                        setTimeout(() => {
-                            this.completeRecognition();
-                        }, 1500);
-                    }, 800);
+                    await this.completeRecognition();
                 }
             } catch (e) {
                 this.currentMessage = '验证失败，请检查网络或稍后重试';
@@ -1203,7 +1266,7 @@ export default {
                 transition: all 0.3s;
 
                 &.primary {
-                    background: #409EFF;
+                    background: linear-gradient(135deg,#ffa726,#fb8c00);
                     color: #fff;
 
                     &:active {
@@ -1213,7 +1276,7 @@ export default {
 
                 &.text {
                     background: transparent;
-                    color: #409EFF;
+                    color: linear-gradient(135deg,#ffa726,#fb8c00);
                     padding: 12px;
 
                     &:active {
@@ -1468,7 +1531,7 @@ export default {
         }
 
         &.primary {
-            background: #409EFF;
+            background: linear-gradient(135deg,#ffa726,#fb8c00);
             color: #fff;
         }
     }
@@ -1546,6 +1609,75 @@ export default {
             font-size: 20px;
             font-weight: 600;
             color: #1a1a1a;
+        }
+    }
+}
+
+// 失败状态
+.failed-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+
+    .failed-content {
+        text-align: center;
+        padding: 0 20px;
+
+        .failed-icon {
+            width: 100px;
+            height: 100px;
+            background: #ff4d4f;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 60px;
+            color: #fff;
+            animation: successScale 0.5s ease-out;
+        }
+
+        .failed-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .failed-desc {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .failed-actions {
+            margin-top: 22px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+
+            .failed-btn {
+                min-width: 120px;
+                padding: 12px 14px;
+                border: none;
+                border-radius: 10px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+                background: rgba(0, 0, 0, 0.06);
+                color: #333;
+                transition: transform 0.15s, opacity 0.15s;
+
+                &:active {
+                    transform: scale(0.98);
+                }
+
+                &.primary {
+                    background: linear-gradient(135deg,#ffa726,#fb8c00);
+                    color: #fff;
+                }
+            }
         }
     }
 }
