@@ -151,6 +151,13 @@ export default {
             lastVerifyDistance: null,
             verifyThreshold: 0.6,
 
+            // face-api 检测性能参数（越小越快，但太小会影响检出率）
+            faceApiInputSize: 224,
+            faceApiScoreThreshold: 0.4,
+            faceApiNoFaceSince: 0,
+            faceApiOptionsCacheKey: '',
+            faceApiOptions: null,
+
             // 上传给后端的人脸图片地址
             faceImageUrl: '',
             // face-api 最近一次检测到的人脸框（像素，基于 videoWidth/videoHeight）
@@ -592,8 +599,9 @@ export default {
                 audio: false,
                 video: {
                     facingMode: 'user',
-                    width: { ideal: 720 },
-                    height: { ideal: 720 }
+                    // 分辨率越高越耗性能；这里适当降低以提升实时识别速度
+                    width: { ideal: 640 },
+                    height: { ideal: 480 }
                 }
             };
 
@@ -626,7 +634,16 @@ export default {
             const video = this.$refs.video;
             if (!faceapi || !video || !video.videoWidth || !video.videoHeight) return null;
 
-            const options = new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.5 });
+            // 缓存 options：避免每帧 new 对象产生额外开销
+            const cacheKey = `${this.faceApiInputSize}:${this.faceApiScoreThreshold}`;
+            if (!this.faceApiOptions || this.faceApiOptionsCacheKey !== cacheKey) {
+                this.faceApiOptionsCacheKey = cacheKey;
+                this.faceApiOptions = new faceapi.TinyFaceDetectorOptions({
+                    inputSize: this.faceApiInputSize,
+                    scoreThreshold: this.faceApiScoreThreshold
+                });
+            }
+            const options = this.faceApiOptions;
             const det = await faceapi.detectSingleFace(video, options).withFaceLandmarks().withFaceDescriptor();
             if (!det) return null;
 
@@ -640,6 +657,7 @@ export default {
         startFaceApiLoop() {
             this.stopDetectLoop();
             this.faceApiInFlight = false;
+            this.faceApiNoFaceSince = 0;
 
             const tick = async () => {
                 if (this.status !== 'recognizing') return;
@@ -669,7 +687,17 @@ export default {
                         this.currentMessage = this.faceApiLoading ? '正在加载人脸识别模型...' : '没有检测到人脸';
                         this.messageClass = 'error';
                         this.frameClass = 'error';
+
+                        // 长时间未检出：自动降阈值/降输入尺寸提速并提高检出率
+                        if (!this.faceApiNoFaceSince) this.faceApiNoFaceSince = now;
+                        const noFaceMs = now - this.faceApiNoFaceSince;
+                        if (noFaceMs > 5000) {
+                            // 更快的配置：更容易检出（可能略增误检，但只用于“检测阶段”提示）
+                            this.faceApiInputSize = 160;
+                            this.faceApiScoreThreshold = 0.3;
+                        }
                     } else {
+                        this.faceApiNoFaceSince = 0;
                         const { box, descriptor } = result;
                         this.lastDescriptor = descriptor;
                         this.lastFaceBoxPx = { x: box.x, y: box.y, width: box.width, height: box.height };
@@ -882,6 +910,8 @@ export default {
                 this.messageClass = 'warning';
                 this.frameClass = 'warning';
                 this.startCountdown();
+                // warm-up：首次推理通常更慢，先跑一帧减少后续卡顿
+                try { await this.detectWithFaceApi(); } catch (e) { /* ignore */ }
                 this.startFaceApiLoop();
                 return;
             }
