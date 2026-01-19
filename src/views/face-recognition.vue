@@ -7,11 +7,11 @@
                     <path d="M563.8 512l262.5-312.9c4.4-5.2.7-13.1-6.1-13.1h-79.8c-4.7 0-9.2 2.1-12.3 5.7L511.6 449.8 295.1 191.7c-3.1-3.6-7.6-5.7-12.3-5.7H203c-6.8 0-10.5 7.9-6.1 13.1L459.4 512 196.9 824.9A7.95 7.95 0 00203 838h79.8c4.7 0 9.2-2.1 12.3-5.7l216.5-258.1 216.5 258.1c3.1 3.6 7.6 5.7 12.3 5.7h79.8c6.8 0 10.5-7.9 6.1-13.1L563.8 512z" fill="#666"/>
                 </svg>
             </div>
-            <div class="sound-btn" @click="toggleSound">
+            <!-- <div class="sound-btn" @click="toggleSound">
                 <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
                     <path d="M625.2 64H308.8c-19.2 0-34.8 15.6-34.8 34.8v850.4c0 19.2 15.6 34.8 34.8 34.8h316.4c19.2 0 34.8-15.6 34.8-34.8V98.8c0-19.2-15.6-34.8-34.8-34.8zM580 896H444V128h136v768z" fill="#666"/>
                 </svg>
-            </div>
+            </div> -->
         </div>
 
         <!-- 摄像头权限请求弹窗 -->
@@ -65,14 +65,26 @@
                 </div>
             </div>
 
+            <!-- <div class="recognition-actions">
+                <button class="action-btn" :disabled="!faceApiReady" @click="registerFace">
+                    注册人脸
+                </button>
+                <button class="action-btn primary" :disabled="!faceApiReady || !hasRegisteredFace" @click="verifyFaceAndProceed(false)">
+                    验证人脸
+                </button>
+            </div>
+            <div v-if="faceApiReady && hasRegisteredFace && lastVerifyDistance !== null" class="recognition-result">
+                相似度：{{ (1 - lastVerifyDistance).toFixed(2) }}（阈值：{{ (1 - verifyThreshold).toFixed(2) }}）
+            </div> -->
+
             <!-- 底部示例图标 -->
-            <div class="face-guide">
+            <!-- <div class="face-guide">
                 <div class="guide-icon">
                     <div class="guide-face">
                         <div class="guide-frame"></div>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
 
         <!-- 验证中状态 -->
@@ -119,11 +131,34 @@ export default {
             detector: null,
             detectRafId: null,
             detectThrottleMs: 120,
-            lastDetectAt: 0
+            lastDetectAt: 0,
+
+            // face-api（人脸“识别/比对”）
+            engine: 'auto', // auto | faceapi | facedetector | simulate
+            faceApiLoading: false,
+            faceApiReady: false,
+            faceApiError: '',
+            faceApiInFlight: false,
+            modelUrl: 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/model/',
+            scriptUrl: 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/dist/face-api.min.js',
+            lastDescriptor: null, // Float32Array
+            registeredDescriptor: null, // Float32Array
+            lastVerifyDistance: null,
+            verifyThreshold: 0.6
         };
+    },
+    computed: {
+        descriptorStorageKey() {
+            const cardId = this.$route && this.$route.query ? this.$route.query.cardId : '';
+            return `faceDescriptor:${cardId || 'default'}`;
+        },
+        hasRegisteredFace() {
+            return !!this.registeredDescriptor;
+        }
     },
     mounted() {
         // 页面加载时显示权限请求
+        this.loadRegisteredDescriptor();
     },
     watch: {
         status() {
@@ -185,7 +220,99 @@ export default {
             this.clearTimers();
             this.stopDetectLoop();
             this.detector = null;
+            this.faceApiInFlight = false;
             this.stopCamera();
+        },
+        loadRegisteredDescriptor() {
+            try {
+                const raw = localStorage.getItem(this.descriptorStorageKey);
+                if (!raw) {
+                    this.registeredDescriptor = null;
+                    return;
+                }
+                const arr = JSON.parse(raw);
+                if (!Array.isArray(arr) || arr.length === 0) {
+                    this.registeredDescriptor = null;
+                    return;
+                }
+                this.registeredDescriptor = new Float32Array(arr);
+            } catch (e) {
+                this.registeredDescriptor = null;
+            }
+        },
+        saveRegisteredDescriptor(descriptor) {
+            try {
+                const arr = Array.from(descriptor);
+                localStorage.setItem(this.descriptorStorageKey, JSON.stringify(arr));
+            } catch (e) {
+                // ignore
+            }
+        },
+        getFaceApi() {
+            if (typeof window === 'undefined') return null;
+            return window.faceapi || null;
+        },
+        async ensureFaceApiReady() {
+            if (this.faceApiReady) return true;
+            if (this.faceApiLoading) {
+                // 等待全局 promise
+                try {
+                    if (window.__faceApiModelsPromise) await window.__faceApiModelsPromise;
+                    this.faceApiReady = !!this.getFaceApi();
+                    return this.faceApiReady;
+                } catch (e) {
+                    return false;
+                }
+            }
+
+            this.faceApiLoading = true;
+            this.faceApiError = '';
+
+            try {
+                if (typeof window === 'undefined') throw new Error('Face API 仅支持浏览器环境');
+
+                if (!window.__faceApiScriptPromise) {
+                    window.__faceApiScriptPromise = new Promise((resolve, reject) => {
+                        const existing = document.querySelector(`script[data-faceapi="1"]`);
+                        if (existing) {
+                            existing.addEventListener('load', () => resolve());
+                            existing.addEventListener('error', () => reject(new Error('face-api 脚本加载失败')));
+                            return;
+                        }
+
+                        const s = document.createElement('script');
+                        s.src = this.scriptUrl;
+                        s.async = true;
+                        s.defer = true;
+                        s.setAttribute('data-faceapi', '1');
+                        s.onload = () => resolve();
+                        s.onerror = () => reject(new Error('face-api 脚本加载失败'));
+                        document.head.appendChild(s);
+                    });
+                }
+                await window.__faceApiScriptPromise;
+
+                const faceapi = this.getFaceApi();
+                if (!faceapi) throw new Error('face-api 未初始化');
+
+                if (!window.__faceApiModelsPromise) {
+                    window.__faceApiModelsPromise = (async () => {
+                        await faceapi.nets.tinyFaceDetector.loadFromUri(this.modelUrl);
+                        await faceapi.nets.faceLandmark68Net.loadFromUri(this.modelUrl);
+                        await faceapi.nets.faceRecognitionNet.loadFromUri(this.modelUrl);
+                    })();
+                }
+                await window.__faceApiModelsPromise;
+
+                this.faceApiReady = true;
+                return true;
+            } catch (e) {
+                this.faceApiReady = false;
+                this.faceApiError = (e && e.message) ? e.message : 'face-api 初始化失败';
+                return false;
+            } finally {
+                this.faceApiLoading = false;
+            }
         },
         allowCamera() {
             this.showPermissionModal = false;
@@ -235,6 +362,114 @@ export default {
                 video.addEventListener('loadedmetadata', onLoaded);
                 setTimeout(() => reject(new Error('摄像头预览超时')), 8000);
             });
+        },
+        // face-api：检测单张人脸并返回 descriptor + box
+        async detectWithFaceApi() {
+            const faceapi = this.getFaceApi();
+            const video = this.$refs.video;
+            if (!faceapi || !video || !video.videoWidth || !video.videoHeight) return null;
+
+            const options = new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.5 });
+            const det = await faceapi.detectSingleFace(video, options).withFaceLandmarks().withFaceDescriptor();
+            if (!det) return null;
+
+            const box = det.detection.box; // { x, y, width, height }
+            return {
+                box,
+                descriptor: det.descriptor
+            };
+        },
+        // face-api：循环检测（用于实时框 + 质量提示）
+        startFaceApiLoop() {
+            this.stopDetectLoop();
+            this.faceApiInFlight = false;
+
+            const tick = async () => {
+                if (this.status !== 'recognizing') return;
+
+                const now = Date.now();
+                if (now - this.lastDetectAt < this.detectThrottleMs) {
+                    this.detectRafId = requestAnimationFrame(tick);
+                    return;
+                }
+                if (this.faceApiInFlight) {
+                    this.detectRafId = requestAnimationFrame(tick);
+                    return;
+                }
+
+                this.lastDetectAt = now;
+                this.faceApiInFlight = true;
+
+                try {
+                    const result = await this.detectWithFaceApi();
+                    const video = this.$refs.video;
+                    if (!result || !video) {
+                        this.lastDescriptor = null;
+                        this.faceDetected = false;
+                        this.faceOk = false;
+                        this.faceBox = null;
+                        this.currentMessage = this.faceApiLoading ? '正在加载人脸识别模型...' : '没有检测到人脸';
+                        this.messageClass = 'error';
+                        this.frameClass = 'error';
+                    } else {
+                        const { box, descriptor } = result;
+                        this.lastDescriptor = descriptor;
+
+                        const vw = video.videoWidth;
+                        const vh = video.videoHeight;
+                        const left = (box.x / vw) * 100;
+                        const top = (box.y / vh) * 100;
+                        const width = (box.width / vw) * 100;
+                        const height = (box.height / vh) * 100;
+                        this.faceBox = {
+                            left: Math.max(0, Math.min(100, left)),
+                            top: Math.max(0, Math.min(100, top)),
+                            width: Math.max(0, Math.min(100, width)),
+                            height: Math.max(0, Math.min(100, height))
+                        };
+
+                        this.faceDetected = true;
+                        this.lastFaceSeenAt = now;
+
+                        // 简单质量判断：大小 + 居中
+                        const areaRatio = (box.width * box.height) / (vw * vh);
+                        const cx = (box.x + box.width / 2) / vw;
+                        const cy = (box.y + box.height / 2) / vh;
+                        const centered = Math.abs(cx - 0.5) < 0.18 && Math.abs(cy - 0.5) < 0.18;
+                        const sizeOk = areaRatio > 0.08 && areaRatio < 0.35;
+
+                        if (!sizeOk) {
+                            this.faceOk = false;
+                            this.currentMessage = areaRatio <= 0.08 ? '请靠近一点' : '请远离一点';
+                            this.messageClass = 'warning';
+                            this.frameClass = 'warning';
+                        } else if (!centered) {
+                            this.faceOk = false;
+                            this.currentMessage = '请将人脸移到中心位置';
+                            this.messageClass = 'warning';
+                            this.frameClass = 'warning';
+                        } else {
+                            this.faceOk = true;
+                            this.currentMessage = this.hasRegisteredFace ? '检测到人脸，请保持不动' : '检测到人脸，可点击注册';
+                            this.messageClass = 'info';
+                            this.frameClass = 'info';
+                        }
+                    }
+                } catch (e) {
+                    this.lastDescriptor = null;
+                    this.faceDetected = false;
+                    this.faceOk = false;
+                    this.faceBox = null;
+                    this.currentMessage = '人脸识别失败，请检查网络或稍后重试';
+                    this.messageClass = 'error';
+                    this.frameClass = 'error';
+                } finally {
+                    this.faceApiInFlight = false;
+                    this.detectRafId = requestAnimationFrame(tick);
+                }
+            };
+
+            this.detectRafId = requestAnimationFrame(tick);
         },
         setupDetector() {
             if (typeof window !== 'undefined' && 'FaceDetector' in window) {
@@ -352,33 +587,55 @@ export default {
                 await this.initCamera();
             } catch (e) {
                 this.cleanupResources();
-                alert((e && e.message) ? e.message : '无法打开摄像头，请检查权限设置');
-                this.status = 'permission';
+                // alert((e && e.message) ? e.message : '无法打开摄像头，请检查权限设置');
+                this.status = 'permission'; // permission, preparing, recognizing, verifying, success
                 this.showPermissionModal = true;
                 return;
             }
 
             // 2秒后进入识别状态
             this.recognitionTimer = setTimeout(() => {
-                this.status = 'recognizing';
+                this.startRecognizingPhase();
+            }, 2000);
+        },
+        async startRecognizingPhase() {
+            this.status = 'recognizing';
+            this.loadRegisteredDescriptor();
+            this.lastVerifyDistance = null;
 
-                const supported = this.setupDetector();
-                if (!supported) {
-                    // 不支持原生 FaceDetector：明确提示，并回退到模拟流程（页面仍可走通）
-                    this.currentMessage = '当前浏览器不支持人脸检测，请使用 Chrome/Edge；已进入模拟流程';
-                    this.messageClass = 'warning';
-                    this.frameClass = 'warning';
-                    this.startCountdown();
-                    this.simulateFaceDetection();
-                    return;
-                }
+            this.currentMessage = '正在加载人脸识别模型...';
+            this.messageClass = 'warning';
+            this.frameClass = 'warning';
 
-                this.currentMessage = '请将人脸置于圆形取景框内';
+            const faceApiOk = await this.ensureFaceApiReady();
+            if (faceApiOk) {
+                this.engine = 'faceapi';
+                this.currentMessage = this.hasRegisteredFace ? '请将人脸置于圆形取景框内' : '请将人脸置于圆形取景框内，可点击注册';
                 this.messageClass = 'warning';
                 this.frameClass = 'warning';
                 this.startCountdown();
-                this.startDetectLoop();
-            }, 2000);
+                this.startFaceApiLoop();
+                return;
+            }
+
+            // face-api 不可用时：回退到原生 FaceDetector，再不行就模拟
+            const supported = this.setupDetector();
+            if (!supported) {
+                this.engine = 'simulate';
+                this.currentMessage = '当前环境无法加载人脸识别模型/检测能力不足，已进入模拟流程';
+                this.messageClass = 'warning';
+                this.frameClass = 'warning';
+                this.startCountdown();
+                this.simulateFaceDetection();
+                return;
+            }
+
+            this.engine = 'facedetector';
+            this.currentMessage = '请将人脸置于圆形取景框内';
+            this.messageClass = 'warning';
+            this.frameClass = 'warning';
+            this.startCountdown();
+            this.startDetectLoop();
         },
         startCountdown() {
             this.countdown = 8;
@@ -387,34 +644,126 @@ export default {
                 if (this.countdown <= 0) {
                     clearInterval(this.countdownTimer);
                     this.countdownTimer = null;
+                    this.onCountdownFinished();
+                }
+            }, 1000);
+        },
+        async onCountdownFinished() {
+            // face-api 模式：如果已有注册人脸，则进行验证；否则先注册一次（演示效果）
+            if (this.engine === 'faceapi' && this.faceApiReady) {
+                await this.verifyFaceAndProceed(true);
+                return;
+            }
 
-                    // 倒计时结束：原生检测场景下必须检测到“合格人脸”
-                    const freshFace = this.detector
-                        ? (this.faceOk && (Date.now() - this.lastFaceSeenAt < 1500))
-                        : this.faceDetected;
+            // 其他模式：仅依赖“检测到清晰人脸”
+            const freshFace = this.detector
+                ? (this.faceOk && (Date.now() - this.lastFaceSeenAt < 1500))
+                : this.faceDetected;
 
-                    if (!freshFace) {
-                        this.currentMessage = '未检测到清晰人脸，请重新对准后再试';
-                        this.messageClass = 'error';
-                        this.frameClass = 'error';
-                        setTimeout(() => {
-                            if (this.status === 'recognizing') this.startCountdown();
-                        }, 800);
-                        return;
-                    }
+            if (!freshFace) {
+                this.currentMessage = '未检测到清晰人脸，请重新对准后再试';
+                this.messageClass = 'error';
+                this.frameClass = 'error';
+                setTimeout(() => {
+                    if (this.status === 'recognizing') this.startCountdown();
+                }, 800);
+                return;
+            }
 
-                    // 进入验证状态
+            this.status = 'verifying';
+            this.stopDetectLoop();
+
+            setTimeout(() => {
+                this.status = 'success';
+                setTimeout(() => {
+                    this.completeRecognition();
+                }, 1500);
+            }, 1200);
+        },
+        async registerFace() {
+            if (!this.faceApiReady) {
+                alert(this.faceApiError || '人脸识别模型尚未就绪');
+                return;
+            }
+
+            try {
+                const result = await this.detectWithFaceApi();
+                if (!result || !result.descriptor) {
+                    alert('未检测到人脸，注册失败');
+                    return;
+                }
+                this.registeredDescriptor = result.descriptor;
+                this.saveRegisteredDescriptor(result.descriptor);
+                this.currentMessage = '人脸注册成功，可点击验证或等待倒计时自动验证';
+                this.messageClass = 'info';
+                this.frameClass = 'info';
+            } catch (e) {
+                alert('注册失败，请重试');
+            }
+        },
+        async verifyFaceAndProceed(shouldProceed) {
+            if (!this.faceApiReady) {
+                if (!shouldProceed) alert(this.faceApiError || '人脸识别模型尚未就绪');
+                return;
+            }
+
+            const faceapi = this.getFaceApi();
+            if (!faceapi) {
+                if (!shouldProceed) alert('face-api 未加载');
+                return;
+            }
+
+            // 没有注册人脸时：自动注册一次（演示用）
+            if (!this.registeredDescriptor) {
+                await this.registerFace();
+                if (!this.registeredDescriptor) {
+                    if (shouldProceed) this.startCountdown();
+                    return;
+                }
+            }
+
+            try {
+                const result = await this.detectWithFaceApi();
+                if (!result || !result.descriptor) {
+                    this.currentMessage = '未检测到人脸，验证失败';
+                    this.messageClass = 'error';
+                    this.frameClass = 'error';
+                    if (shouldProceed) this.startCountdown();
+                    return;
+                }
+
+                const distance = faceapi.euclideanDistance(this.registeredDescriptor, result.descriptor);
+                this.lastVerifyDistance = distance;
+
+                const ok = distance < this.verifyThreshold;
+                if (!ok) {
+                    this.currentMessage = '验证失败，请正对摄像头重试';
+                    this.messageClass = 'error';
+                    this.frameClass = 'error';
+                    if (shouldProceed) this.startCountdown();
+                    return;
+                }
+
+                this.currentMessage = '验证通过';
+                this.messageClass = 'info';
+                this.frameClass = 'info';
+
+                if (shouldProceed) {
                     this.status = 'verifying';
                     this.stopDetectLoop();
-
                     setTimeout(() => {
                         this.status = 'success';
                         setTimeout(() => {
                             this.completeRecognition();
                         }, 1500);
-                    }, 1200);
+                    }, 800);
                 }
-            }, 1000);
+            } catch (e) {
+                this.currentMessage = '验证失败，请检查网络或稍后重试';
+                this.messageClass = 'error';
+                this.frameClass = 'error';
+                if (shouldProceed) this.startCountdown();
+            }
         },
         simulateFaceDetection() {
             // 模拟人脸检测过程
@@ -595,10 +944,10 @@ export default {
 // 准备中状态
 .preparing-state {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     min-height: 100vh;
-    padding: 80px 20px 200px;
+    padding: 120px 20px 200px;
 
     .camera-frame {
         width: 100%;
@@ -666,9 +1015,9 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     min-height: 100vh;
-    padding: 80px 20px 200px;
+    padding: 120px 20px 200px;
 
     .camera-frame {
         width: 100%;
@@ -789,13 +1138,56 @@ export default {
     }
 }
 
+.recognition-actions {
+    margin-top: 18px;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    width: 100%;
+
+    .action-btn {
+        min-width: 120px;
+        padding: 12px 14px;
+        border: none;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.9);
+        color: #333;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+        transition: transform 0.15s, opacity 0.15s;
+
+        &:active {
+            transform: scale(0.98);
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        &.primary {
+            background: #409EFF;
+            color: #fff;
+        }
+    }
+}
+
+.recognition-result {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #666;
+    text-align: center;
+}
+
 // 验证中状态
 .verifying-state {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     min-height: 100vh;
-    padding: 80px 20px 200px;
+    padding: 120px 20px 200px;
 
     .camera-frame {
         width: 100%;
