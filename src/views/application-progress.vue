@@ -244,7 +244,7 @@
       </div>
     </div>
 
-    <div v-if="progress" class="panel">
+    <!-- <div v-if="progress" class="panel">
       <div class="status">
         <div class="title">{{ $t('applicationProgress.currentStatus') }}</div>
         <div class="badge">{{ progress.statusText }}</div>
@@ -264,7 +264,7 @@
           <div v-if="item.desc" class="desc">{{ item.desc }}</div>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 

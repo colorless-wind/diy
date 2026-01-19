@@ -66,7 +66,7 @@ export default {
     qrcodeTitle: '卡面信息二维码',
     qrcodeTip: '扫描二维码查看卡面信息',
     return: '返回',
-    checkProgress: '查询办卡进度',
+    checkProgress: '查询申请进度',
     progressTip: '您可通过手机银行"信用卡-申请进度"查询办卡进度',
     customerServiceTip: '客服功能开发中'
   },
