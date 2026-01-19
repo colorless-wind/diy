@@ -160,11 +160,19 @@ export default {
         // 页面加载时显示权限请求
         this.loadRegisteredDescriptor();
 
-        // 记住“使用时允许”：下次进入自动开启（若权限被撤销会自动回退到弹窗）
-        if (this.getRememberCameraPermission()) {
-            this.showPermissionModal = false;
-            this.startRecognition();
-        }
+        // 没有摄像头：直接走模拟流程，避免卡在授权/打开环节
+        this.hasCameraDevice().then(has => {
+            if (!has) {
+                this.startSimulatedRecognitionFlow('未检测到摄像头，已进入模拟流程');
+                return;
+            }
+
+            // 记住“使用时允许”：下次进入自动开启（若权限被撤销会自动回退到弹窗）
+            if (this.getRememberCameraPermission()) {
+                this.showPermissionModal = false;
+                this.startRecognition();
+            }
+        });
     },
     watch: {
         status() {
@@ -198,6 +206,47 @@ export default {
             } catch (e) {
                 // ignore
             }
+        },
+        async hasCameraDevice() {
+            try {
+                if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return true;
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                return Array.isArray(devices) && devices.some(d => d && d.kind === 'videoinput');
+            } catch (e) {
+                // 枚举失败时按“有摄像头”处理，不干扰正常流程
+                return true;
+            }
+        },
+        isNoCameraError(e) {
+            const name = e && e.name;
+            // 常见无摄像头/无可用视频输入的错误
+            return name === 'NotFoundError' || name === 'DevicesNotFoundError' || name === 'OverconstrainedError';
+        },
+        startSimulatedRecognitionFlow(reasonMessage) {
+            // 不影响正常流程：仅在“无摄像头/无法使用摄像头”时进入
+            this.cleanupResources();
+            this.engine = 'simulate';
+            this.showPermissionModal = false;
+
+            this.faceDetected = false;
+            this.faceOk = false;
+            this.faceBox = null;
+            this.lastFaceSeenAt = 0;
+            this.lastVerifyDistance = null;
+
+            this.currentMessage = reasonMessage || '已进入模拟流程';
+            this.messageClass = 'warning';
+            this.frameClass = 'warning';
+
+            this.status = 'preparing';
+            this.recognitionTimer = setTimeout(() => {
+                this.status = 'recognizing';
+                this.currentMessage = '模拟识别中...';
+                this.messageClass = 'warning';
+                this.frameClass = 'warning';
+                this.startCountdown();
+                this.simulateFaceDetection();
+            }, 800);
         },
         clearTimers() {
             if (this.recognitionTimer) {
@@ -619,6 +668,13 @@ export default {
                 await this.initCamera();
             } catch (e) {
                 this.cleanupResources();
+
+                // 无摄像头：直接进入模拟流程，不阻塞
+                if (this.isNoCameraError(e)) {
+                    this.startSimulatedRecognitionFlow('未检测到摄像头，已进入模拟流程');
+                    return;
+                }
+
                 // 可能是用户撤销了权限/策略变化：清除“记住”并重新展示弹窗
                 this.setRememberCameraPermission(false);
                 // alert((e && e.message) ? e.message : '无法打开摄像头，请检查权限设置');
