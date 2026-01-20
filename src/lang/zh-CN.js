@@ -1,5 +1,19 @@
 
 export default {
+  languages: {
+    zhCN: '中文',
+    enUS: 'English',
+    koKR: '한국어',
+    esES: 'Español'
+  },
+  common: {
+    back: '返回',
+    nextStep: '下一步',
+    submit: '提交',
+    submitting: '提交中...',
+    agree: '同意',
+    disagree: '不同意'
+  },
   home: {
     title: '上传彩照留住回忆',
     title_2: 'DIY个性卡定制',
@@ -40,7 +54,8 @@ export default {
       emailInvalid: '请输入有效的邮箱地址',
       phoneRequired: '请输入您的电话号码',
       phoneInvalid: '请输入有效的电话号码',
-      idNumberRequired: '请输入您的证件号码'
+      idNumberRequired: '请输入您的证件号码',
+      addressRequired: '请输入您的地址'
     }
   },
   userApply: {
@@ -48,32 +63,43 @@ export default {
     idPhotoTip: '请上传清晰的证件照片（最多9张）',
     clickToUpload: '点击上传证件照片',
     uploadFormat: '支持 JPG、PNG 格式，每张最大 5MB',
+    job: '职业',
+    jobPlaceholder: '请输入职业',
+    company: '工作单位',
+    companyPlaceholder: '请输入工作单位',
+    mailingAddress: '邮寄地址',
     errors: {
       idPhotoRequired: '请至少上传一张证件照片',
       invalidFormat: '图片格式不支持，请上传 JPG 或 PNG 格式',
       fileTooLarge: '图片大小超过 5MB，请重新选择',
-      tooManyPhotos: '最多只能上传 {max} 张照片，当前已有 {current} 张，还可上传 {remaining} 张'
+      tooManyPhotos: '最多只能上传 {max} 张照片，当前已有 {current} 张，还可上传 {remaining} 张',
+      jobRequired: '请输入职业',
+      companyRequired: '请输入工作单位'
     }
   },
   applicationComplete: {
     title: '申请信用卡',
     success: '成功',
-    successMessage: '尊敬的客户，您的申请已成功提交，请您耐心等待审核通知！',
+    successMessage: '尊敬的客户，您的申请已成功提交，请您耐心等待审核通知！您可通过手机银行“信用卡-申请进度”查询办卡进度。',
     applicationNumber: '申请单号',
     cardProduct: '信用卡产品',
     mailingAddress: '邮寄地址',
     defaultAddress: '北京市北京市朝阳区北京阳光上东双子座西塔*层北京当当科文电子商务有限公司',
     qrcodeTitle: '卡面信息二维码',
     qrcodeTip: '扫描二维码查看卡面信息',
-    return: '返回',
+    qrcodeFailed: '二维码生成失败',
+    returnHome: '返回首页',
     checkProgress: '查询申请进度',
     progressTip: '您可通过手机银行"信用卡-申请进度"查询办卡进度',
-    customerServiceTip: '客服功能开发中'
+    customerServiceTip: '客服功能开发中',
+    diyCardProduct: 'DIY定制信用卡',
+    presetCardProduct: '欧洲旅行信用卡'
   },
   applicationProgress: {
     title: '申请进度',
     applicationNumber: '申请单号',
     applicationSheet: '申请单号',
+    productName: '产品名称',
     applyDate: '申请日期',
     applyType: '申办类型',
     applicationNumberPlaceholder: '请输入申请单号',
@@ -84,6 +110,7 @@ export default {
     statusSubmitted: '审核中',
     defaultCardProduct: '欧洲旅行卡剪影系列',
     defaultApplyType: '主卡办卡',
+    mailingAddress: '邮寄地址',
     stepSubmitted: '已提交',
     stepSubmittedDesc: '已成功提交申请，请耐心等待审核。',
     stepReviewing: '审核中',

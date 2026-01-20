@@ -1,6 +1,20 @@
 export default {
+  languages: {
+    zhCN: 'Chinese',
+    enUS: 'English',
+    koKR: 'Korean',
+    esES: 'Spanish'
+  },
+  common: {
+    back: 'Back',
+    nextStep: 'Next Step',
+    submit: 'Submit',
+    submitting: 'Submitting...',
+    agree: 'Agree',
+    disagree: 'Disagree'
+  },
   home: {
-    title: 'Upload Color Photos to Keep Memories',
+    title: 'Upload Color Photos to Preserve Memories',
     title_2: 'DIY Personalized Card Customization',
     startCreating: 'Start Creating',
     language: 'Language'
@@ -39,7 +53,8 @@ export default {
       emailInvalid: 'Please enter a valid email address',
       phoneRequired: 'Please enter your phone number',
       phoneInvalid: 'Please enter a valid phone number',
-      idNumberRequired: 'Please enter your ID number'
+      idNumberRequired: 'Please enter your ID number',
+      addressRequired: 'Please enter your address'
     }
   },
   userApply: {
@@ -47,11 +62,18 @@ export default {
     idPhotoTip: 'Please upload clear ID photos (max 9)',
     clickToUpload: 'Click to upload ID photos',
     uploadFormat: 'Supports JPG, PNG format, max 5MB per photo',
+    job: 'Occupation',
+    jobPlaceholder: 'Please enter your occupation',
+    company: 'Company',
+    companyPlaceholder: 'Please enter your company',
+    mailingAddress: 'Mailing Address',
     errors: {
       idPhotoRequired: 'Please upload at least one ID photo',
       invalidFormat: 'Image format not supported, please upload JPG or PNG format',
       fileTooLarge: 'Image size exceeds 5MB, please select another file',
-      tooManyPhotos: 'Maximum {max} photos allowed. You have {current} photo(s), can upload {remaining} more'
+      tooManyPhotos: 'Maximum {max} photos allowed. You have {current} photo(s), can upload {remaining} more',
+      jobRequired: 'Please enter your occupation',
+      companyRequired: 'Please enter your company'
     }
   },
   applicationComplete: {
@@ -64,15 +86,19 @@ export default {
     defaultAddress: 'Beijing City, Beijing City, Chaoyang District, Beijing Sunshine Upper East Gemini Tower * Floor, Beijing Dangdang Culture and Education E-commerce Co., Ltd.',
     qrcodeTitle: 'Card Information QR Code',
     qrcodeTip: 'Scan QR code to view card information',
-    return: 'Return',
+    qrcodeFailed: 'QR code generation failed',
+    returnHome: 'Return Home',
     checkProgress: 'Check Application Progress',
     progressTip: 'You can check the application progress through "Credit Card - Application Progress" in mobile banking',
-    customerServiceTip: 'Customer service feature under development'
+    customerServiceTip: 'Customer service feature under development',
+    diyCardProduct: 'DIY Custom Credit Card',
+    presetCardProduct: 'Europe Travel Credit Card'
   },
   applicationProgress: {
     title: 'Application Progress',
     applicationNumber: 'Application Number',
-    applicationSheet: 'Application',
+    applicationSheet: 'Application Number',
+    productName: 'Product Name',
     applyDate: 'Application Date',
     applyType: 'Application Type',
     applicationNumberPlaceholder: 'Please enter application number',
@@ -83,6 +109,7 @@ export default {
     statusSubmitted: 'Under Review',
     defaultCardProduct: 'Europe Travel Card Silhouette Series',
     defaultApplyType: 'Primary Card',
+    mailingAddress: 'Mailing Address',
     stepSubmitted: 'Submitted',
     stepSubmittedDesc: 'Application submitted successfully. Please wait for review.',
     stepReviewing: 'Reviewing',
@@ -92,11 +119,11 @@ export default {
     tip: 'Tip: This page shows demo progress. For real-time progress, please use Mobile Banking "Credit Card - Application Progress".',
     queryFailed: 'Query failed, please try again later'
   },
-  diy:{
-    clickUpload : 'Click to Upload',
+  diy: {
+    clickUpload: 'Click to Upload',
     imageSize: 'Image upload size: no larger than 20MB',
     imageDimensions: 'Image upload dimensions: greater than 1051*673',
-    contentGuidelines: 'Please ensure that the uploaded content does not infringe on portrait rights',
+    contentGuidelines: 'Please ensure the uploaded content does not infringe portrait rights, copyrights, and complies with laws and regulations',
     emojiSticker: 'Emoji Stickers',
     textSticker: 'Text Stickers',
     moodSticker: 'Mood Stickers',
@@ -120,7 +147,7 @@ export default {
     author: 'Author',
     enterAuthor: 'Please enter the author name',
     copyright: 'Copyright Notice',
-    copyrightTips:'Ensure uploaded images have proper IP authorization and permit legal use by this product.',
+    copyrightTips: 'Please ensure you hold intellectual property rights for the uploaded images and have valid authorization to use the content within this product.',
     uploadSubmit: 'Confirm Upload',
     clickReUpload: 'Click to Re-upload',
     imageFormatNotSupport: 'Image format not supported'

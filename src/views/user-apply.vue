@@ -457,18 +457,18 @@
     <div class="form-group" style="margin-top: 50px;">
         <label>
             <span class="required">*</span>
-            职业
+            {{ $t('userApply.job') }}
         </label>
-        <input type="email" v-model="formData.job" :placeholder="$t('presetCard.emailPlaceholder')"
+        <input type="text" v-model="formData.job" :placeholder="$t('userApply.jobPlaceholder')"
             @blur="validateField('job')">
         <div v-if="errors.job" class="error-message">{{ errors.job }}</div>
     </div>
     <div class="form-group">
         <label>
             <span class="required">*</span>
-            工作单位
+            {{ $t('userApply.company') }}
         </label>
-        <input type="email" v-model="formData.company" :placeholder="$t('presetCard.emailPlaceholder')"
+        <input type="text" v-model="formData.company" :placeholder="$t('userApply.companyPlaceholder')"
             @blur="validateField('company')">
         <div v-if="errors.company" class="error-message">{{ errors.company }}</div>
     </div>
@@ -486,7 +486,7 @@
     <div class="form-group">
         <label>
             <span class="required">*</span>
-            邮寄{{ $t('presetCard.address') }}
+            {{ $t('userApply.mailingAddress') }}
         </label>
         <textarea v-model="formData.address" :placeholder="$t('presetCard.addressPlaceholder')"></textarea>
         <div v-if="errors.address" class="error-message">{{ errors.address }}</div>
@@ -718,6 +718,16 @@ export default {
                         this.errors.fullName = this.$t('presetCard.errors.fullNameRequired');
                     }
                     break;
+                case 'job':
+                    if (!this.formData.job.trim()) {
+                        this.errors.job = this.$t('userApply.errors.jobRequired');
+                    }
+                    break;
+                case 'company':
+                    if (!this.formData.company.trim()) {
+                        this.errors.company = this.$t('userApply.errors.companyRequired');
+                    }
+                    break;
                 case 'email':
                     if (!this.formData.email.trim()) {
                         this.errors.email = this.$t('presetCard.errors.emailRequired');
@@ -747,7 +757,7 @@ export default {
         },
         async submitApplication() {
             // 验证所有字段
-            ['fullName', 'email', 'phone', 'idNumber', 'address'].forEach(field => {
+            ['fullName', 'job', 'company', 'email', 'phone', 'idNumber', 'address'].forEach(field => {
                 this.validateField(field);
             });
 

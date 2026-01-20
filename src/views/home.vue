@@ -106,13 +106,15 @@
       <img :src="logoImage" class="logo" alt="">
       <p class="title">{{ $t('home.title') }}</p>
       <p class="title_2">{{ $t('home.title_2') }}</p>
-      <!-- <div class="language-switch" ref="languageSwitch">
+      <div class="language-switch" ref="languageSwitch">
         <button @click="toggleDropdown" class="dropdown-btn">{{ currentLanguage }} ▼</button>
         <div v-show="dropdownOpen" class="dropdown-menu">
-          <div @click="switchLanguage('zh-CN')" :class="{ active: $i18n.locale === 'zh-CN' }">中文</div>
-          <div @click="switchLanguage('en-US')" :class="{ active: $i18n.locale === 'en-US' }">En</div>
+          <div @click="switchLanguage('zh-CN')" :class="{ active: $i18n.locale === 'zh-CN' }">{{ $t('languages.zhCN') }}</div>
+          <div @click="switchLanguage('en-US')" :class="{ active: $i18n.locale === 'en-US' }">{{ $t('languages.enUS') }}</div>
+          <div @click="switchLanguage('ko-KR')" :class="{ active: $i18n.locale === 'ko-KR' }">{{ $t('languages.koKR') }}</div>
+          <div @click="switchLanguage('es-ES')" :class="{ active: $i18n.locale === 'es-ES' }">{{ $t('languages.esES') }}</div>
         </div>
-      </div> -->
+      </div>
       <!-- <img src="../assets/images/img/banner3.png" class="banner" alt=""> -->
       <img src="../assets/images/img/photo.png" class="photo" alt="">
       <img @click="openpage()" :src="buttonImage" class="btn" alt="">
@@ -141,7 +143,14 @@ export default {
   },
   computed: {
     currentLanguage() {
-      return this.$i18n.locale === 'zh-CN' ? '中文' : 'En';
+      const languageMap = {
+        'zh-CN': 'languages.zhCN',
+        'en-US': 'languages.enUS',
+        'ko-KR': 'languages.koKR',
+        'es-ES': 'languages.esES'
+      };
+      const key = languageMap[this.$i18n.locale] || 'languages.enUS';
+      return this.$t(key);
     },
     logoImage() {
       return this.$i18n.locale === 'zh-CN' 

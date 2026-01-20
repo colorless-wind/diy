@@ -271,8 +271,10 @@
     <div class="language-switch" ref="languageSwitch">
       <button @click="toggleDropdown" class="dropdown-btn">{{ currentLanguage }} ▼</button>
       <div v-show="dropdownOpen" class="dropdown-menu">
-        <div @click="switchLanguage('zh-CN')" :class="{ active: $i18n.locale === 'zh-CN' }">中文</div>
-        <div @click="switchLanguage('en-US')" :class="{ active: $i18n.locale === 'en-US' }">English</div>
+        <div @click="switchLanguage('zh-CN')" :class="{ active: $i18n.locale === 'zh-CN' }">{{ $t('languages.zhCN') }}</div>
+        <div @click="switchLanguage('en-US')" :class="{ active: $i18n.locale === 'en-US' }">{{ $t('languages.enUS') }}</div>
+        <div @click="switchLanguage('ko-KR')" :class="{ active: $i18n.locale === 'ko-KR' }">{{ $t('languages.koKR') }}</div>
+        <div @click="switchLanguage('es-ES')" :class="{ active: $i18n.locale === 'es-ES' }">{{ $t('languages.esES') }}</div>
       </div>
     </div>
   </div>
@@ -327,7 +329,14 @@ export default {
   },
   computed: {
     currentLanguage() {
-      return this.$i18n.locale === 'zh-CN' ? '中文' : 'English';
+      const languageMap = {
+        'zh-CN': 'languages.zhCN',
+        'en-US': 'languages.enUS',
+        'ko-KR': 'languages.koKR',
+        'es-ES': 'languages.esES'
+      };
+      const key = languageMap[this.$i18n.locale] || 'languages.enUS';
+      return this.$t(key);
     },
     logoImage() {
       return this.$i18n.locale === 'zh-CN'

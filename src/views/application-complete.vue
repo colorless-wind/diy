@@ -286,7 +286,7 @@
     </div>
 
     <div class="action-buttons">
-      <button class="btn btn-primary" @click="goBack">{{ $t('applicationComplete.return') }}首页</button>
+      <button class="btn btn-primary" @click="goBack">{{ $t('applicationComplete.returnHome') }}</button>
       <button class="btn btn-secondary" @click="checkProgress">{{ $t('applicationComplete.checkProgress') }}</button>
     </div>
   </div>
