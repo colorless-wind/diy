@@ -31,6 +31,7 @@
     margin-top: 41px;
     text-align: center;
     color: #fff;
+    padding: 0 30px;
     span{
       display: inline-block;
       width: 15px;
@@ -106,7 +107,7 @@
       <img :src="logoImage" class="logo" alt="">
       <p class="title">{{ $t('home.title') }}</p>
       <p class="title_2">{{ $t('home.title_2') }}</p>
-      <div class="language-switch" ref="languageSwitch">
+      <!-- <div class="language-switch" ref="languageSwitch">
         <button @click="toggleDropdown" class="dropdown-btn">{{ currentLanguage }} ▼</button>
         <div v-show="dropdownOpen" class="dropdown-menu">
           <div @click="switchLanguage('zh-CN')" :class="{ active: $i18n.locale === 'zh-CN' }">{{ $t('languages.zhCN') }}</div>
@@ -114,7 +115,7 @@
           <div @click="switchLanguage('ko-KR')" :class="{ active: $i18n.locale === 'ko-KR' }">{{ $t('languages.koKR') }}</div>
           <div @click="switchLanguage('es-ES')" :class="{ active: $i18n.locale === 'es-ES' }">{{ $t('languages.esES') }}</div>
         </div>
-      </div>
+      </div> -->
       <!-- <img src="../assets/images/img/banner3.png" class="banner" alt=""> -->
       <img src="../assets/images/img/photo.png" class="photo" alt="">
       <img @click="openpage()" :src="buttonImage" class="btn" alt="">
