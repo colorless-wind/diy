@@ -119,6 +119,158 @@ export default {
     tip: '안내: 현재 페이지는 데모 진행 상태입니다. 실제 진행은 모바일뱅킹 "신용카드-신청 진행"을 확인하세요.',
     queryFailed: '조회 실패, 잠시 후 다시 시도하세요'
   },
+  cardProducts: {
+    travelEurope: {
+      category: '유럽 여행',
+      title: '유럽 여행 신용카드',
+      description: '유럽 이용 1.5% 캐시백, 한도 없음',
+      benefits: [
+        '유럽 이용 1.5% 캐시백(한도 없음)',
+        '공항 라운지 무료 이용',
+        '여행 보험 보장'
+      ]
+    },
+    zodiac: {
+      category: '십이지',
+      title: '띠 카드',
+      description: '문화를 새기고 자신감을 드러내다',
+      benefits: [
+        '독특한 띠 디자인',
+        '문화 기념 가치',
+        '전용 혜택'
+      ]
+    },
+    peonyDragon: {
+      category: '혜택 환원',
+      title: '모란 슈퍼 혜택 용 카드',
+      description: '강력한 혜택, 진정한 보답',
+      benefits: [
+        '풍성한 캐시백 혜택',
+        '소비 포인트 두 배 적립',
+        '전용 가맹점 할인'
+      ]
+    }
+  },
+  idUpload: {
+    title: '신용카드 신청',
+    uploadLabel: '신청자의 신분증 사진을 촬영해 주세요(앞/뒷면 총 2장)',
+    clickToUpload: '업로드하기',
+    uploadHint: 'JPG, PNG 형식 지원, 최대 5MB',
+    idPhotoAlt: '신분증 사진 {index}',
+    infoTitle: '신분 정보를 확인하세요. 오류가 있으면 직접 수정해 주세요',
+    fullName: '이름',
+    fullNamePlaceholder: '이름을 입력하세요',
+    idNumber: '신분증 번호',
+    idNumberPlaceholder: '신분증 번호를 입력하세요',
+    isLongTerm: '장기 유효 여부',
+    yes: '예',
+    no: '아니오',
+    idStartDate: '신분증 시작일',
+    idEndDate: '신분증 만료일',
+    phone: '휴대전화',
+    phonePlaceholder: '휴대전화 번호를 입력하세요',
+    faceModalTitle: '얼굴 인식 신원 확인 동의',
+    faceInstructions: {
+      light: '조명이 충분하도록 유지',
+      center: '얼굴을 화면 정면에',
+      frame: '얼굴이 프레임 안에 있도록'
+    },
+    faceDisclaimer: '본 신청은 얼굴 인식이 필요합니다. 수집된 얼굴 영상 정보는 본인 신청 여부 확인에만 사용됩니다. 동의하지 않으면 이후 전화 또는 지점 방문 등으로 신원을 확인합니다. 감사합니다.',
+    faceFailTip: '얼굴 인식에 실패하면 지점에서 신청해 주세요.',
+    errors: {
+      fullNameRequired: '이름을 입력하세요',
+      phoneRequired: '휴대전화 번호를 입력하세요',
+      phoneInvalid: '유효한 전화번호를 입력하세요',
+      idNumberRequired: '신분증 번호를 입력하세요',
+      idNumberInvalid: '신분증 번호 형식이 올바르지 않습니다',
+      idStartDateRequired: '신분증 시작일을 선택하세요',
+      idEndDateRequired: '신분증 만료일을 선택하세요',
+      idEndDateInvalid: '만료일은 시작일 이후여야 합니다',
+      verifyCodeRequired: '인증번호를 입력하세요',
+      verifyCodeInvalid: '6자리 숫자 인증번호를 입력하세요',
+      idPhotoRequired: '신분증 사진을 업로드하세요',
+      sendCodeFailed: '인증번호 전송에 실패했습니다. 잠시 후 다시 시도하세요'
+    }
+  },
+  faceRecognition: {
+    permissionTitle: '카메라 사용을 허용하시겠습니까?',
+    permissionDesc: '사진/영상 촬영, QR 코드 스캔 등에 사용됩니다',
+    allowCamera: '사용 중 허용',
+    allowCameraOnce: '이번만 허용',
+    denyCamera: '허용 안 함',
+    preparing: '준비 중...',
+    countdown: '{count}초',
+    verifying: '검증 중입니다. 자세를 유지해 주세요',
+    success: '얼굴 인식 성공',
+    failed: '얼굴 인식 실패',
+    similarity: '유사도: {value}',
+    retry: '다시 인식',
+    confirmExit: '얼굴 인식을 종료하시겠습니까?',
+    messages: {
+      permissionRequired: '카메라 권한을 허용해 주세요',
+      noCameraSimulated: '카메라가 감지되지 않아 시뮬레이션 흐름으로 전환했습니다',
+      simulationStarted: '시뮬레이션 흐름이 시작되었습니다',
+      simulatedRecognizing: '시뮬레이션 인식 중...',
+      moveToCenter: '얼굴을 중앙으로 이동해 주세요',
+      recognitionNetworkError: '얼굴 인식에 실패했습니다. 네트워크를 확인하거나 잠시 후 다시 시도해 주세요',
+      noFaceDetected: '얼굴이 감지되지 않았습니다',
+      faceDetectedKeepStill: '얼굴이 감지되었습니다. 움직이지 말아 주세요',
+      faceDetectedRegister: '얼굴이 감지되었습니다. 등록할 수 있습니다',
+      detectionFailedBrowser: '얼굴 감지 실패. Chrome/Edge에서 다시 시도해 주세요',
+      openingCamera: '카메라를 여는 중...',
+      loadingModel: '얼굴 인식 모델을 불러오는 중...',
+      modelUnavailableSimulated: '모델을 불러올 수 없거나 감지 능력이 부족하여 시뮬레이션 흐름으로 전환했습니다',
+      placeFaceInFrame: '얼굴을 원형 프레임 안에 맞춰 주세요',
+      placeFaceInFrameRegister: '얼굴을 원형 프레임 안에 맞춰 주세요. 등록할 수 있습니다',
+      noClearFaceRetry: '선명한 얼굴이 감지되지 않았습니다. 다시 맞춰 주세요',
+      registerSuccess: '얼굴 등록이 완료되었습니다. 지금 검증하거나 카운트다운 후 자동 검증됩니다',
+      verifyNoFace: '얼굴이 감지되지 않아 검증에 실패했습니다',
+      verifyFailedFacing: '검증 실패. 카메라를 정면으로 보고 다시 시도해 주세요',
+      verifyPassed: '검증 통과',
+      verifyFailedNetwork: '검증 실패. 네트워크를 확인하거나 잠시 후 다시 시도해 주세요',
+      moveCloser: '조금 더 가까이 와 주세요',
+      moveFarther: '조금 더 멀어져 주세요',
+      imageUploadFailed: '이미지 업로드에 실패했습니다. 다시 시도해 주세요',
+      verifyFailed: '얼굴 인식 실패',
+      apiFailed: 'API 호출에 실패했습니다. 다시 시도해 주세요'
+    },
+    errors: {
+      permissionRequired: '얼굴 인식을 위해 카메라 권한이 필요합니다',
+      cameraNotSupported: '현재 브라우저는 카메라 접근을 지원하지 않습니다',
+      cameraInitFailed: '카메라 미리보기 초기화에 실패했습니다',
+      cameraPreviewTimeout: '카메라 미리보기 시간이 초과되었습니다',
+      faceApiBrowserOnly: 'Face API는 브라우저 환경에서만 지원됩니다',
+      faceApiScriptLoadFailed: 'face-api 스크립트 로드에 실패했습니다',
+      faceApiNotInitialized: 'face-api가 초기화되지 않았습니다',
+      faceApiInitFailed: 'face-api 초기화에 실패했습니다',
+      modelNotReady: '얼굴 인식 모델이 준비되지 않았습니다',
+      registerNoFace: '얼굴이 감지되지 않아 등록에 실패했습니다',
+      registerFailed: '등록에 실패했습니다. 다시 시도해 주세요',
+      faceApiNotLoaded: 'face-api가 로드되지 않았습니다'
+    }
+  },
+  aiDraw: {
+    descriptionTitle: '상세 설명',
+    startGenerate: '생성 시작',
+    loading: '로딩 중...',
+    defaultDesc: '걸작, 최고 품질, 고품질, 고해상도, 초세밀, 사실적인, 달콤한 소녀 한 명, 긴 머리, 잎사귀 머리 장식, 뾰족한 귀, 요정, 녹색 눈, 창백한 피부, 드러난 어깨, 흰색 롱드레스',
+    generateFail: '이미지 생성에 실패했습니다. 설명을 다시 입력해 주세요',
+    sizeLandscape: '가로형',
+    sizePortrait: '세로형',
+    styles: {
+      picas: '피카소',
+      animeEra: '애니메이션 시대',
+      colorfulIllustration: '컬러풀 일러스트',
+      colorfulAnime: '컬러풀 애니메',
+      monetGarden: '모네 정원',
+      delicateMarvel: '정교한 미 만화',
+      romanticLight: '로맨틱 라이트',
+      cyberpunk: '사이버펑크',
+      japanAnime: '일본 만화풍',
+      animeStyle: '애니메이션 풍',
+      game3dEra: '3D 게임 Z 시대'
+    }
+  },
   diy: {
     clickUpload: '업로드하기',
     imageSize: '이미지 업로드 크기: 20MB 이하',

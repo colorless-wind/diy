@@ -391,7 +391,7 @@ export default {
           } catch (error) {
             console.error('生成二维码失败:', error);
             // 如果生成失败，显示错误提示
-            qrcodeElement.innerHTML = '<div style="padding: 20px; color: #999;">二维码生成失败</div>';
+            qrcodeElement.innerHTML = `<div style="padding: 20px; color: #999;">${this.$t('applicationComplete.qrcodeFailed')}</div>`;
           }
         }
       });
@@ -424,16 +424,13 @@ export default {
     },
     loadCardInfo(cardId, isDIY) {
       const presetCardsData = this.getPresetCardsData();
-      const locale = this.$i18n.locale;
-      const isZh = locale === 'zh-CN';
-      
       if (isDIY) {
         const baseCard = presetCardsData.find(card => card.id === parseInt(cardId));
         if (baseCard) {
           this.cardProduct = baseCard.title;
           this.cardImageUrl = localStorage.getItem('imgResult') || baseCard.image;
         } else {
-          this.cardProduct = isZh ? 'DIY定制信用卡' : 'DIY Custom Credit Card';
+          this.cardProduct = this.$t('applicationComplete.diyCardProduct');
           this.cardImageUrl = localStorage.getItem('imgResult') || '';
         }
       } else {
@@ -442,28 +439,25 @@ export default {
           this.cardProduct = card.title;
           this.cardImageUrl = card.image;
         } else {
-          this.cardProduct = isZh ? '欧洲旅行信用卡' : 'Europe Travel Credit Card';
+          this.cardProduct = this.$t('applicationComplete.presetCardProduct');
         }
       }
     },
     getPresetCardsData() {
-      const locale = this.$i18n.locale;
-      const isZh = locale === 'zh-CN';
-      
       return [
         {
           id: 1,
-          title: isZh ? '欧洲旅行信用卡' : 'Europe Travel Credit Card',
+          title: this.$t('cardProducts.travelEurope.title'),
           image: require('../assets/images/img/banner.png')
         },
         {
           id: 2,
-          title: isZh ? '生肖卡' : 'Zodiac Card',
+          title: this.$t('cardProducts.zodiac.title'),
           image: require('../assets/images/img/banner1.png')
         },
         {
           id: 3,
-          title: isZh ? '牡丹超惠龙' : 'Peony Super Benefit Dragon Card',
+          title: this.$t('cardProducts.peonyDragon.title'),
           image: require('../assets/images/img/banner2.png')
         }
       ];

@@ -566,62 +566,35 @@ export default {
             // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":null,"datas":null}
         },
         getPresetCardsData() {
-            const locale = this.$i18n.locale;
-            const isZh = locale === 'zh-CN';
-
             return [
                 {
                     id: 1,
-                    category: isZh ? '畅行欧洲' : 'Travel Europe',
-                    title: isZh ? '欧洲旅行信用卡' : 'Europe Travel Credit Card',
-                    description: isZh ? '欧洲消费1.5%返现无上限' : '1.5% cashback on European spending, no upper limit',
+                    category: this.$t('cardProducts.travelEurope.category'),
+                    title: this.$t('cardProducts.travelEurope.title'),
+                    description: this.$t('cardProducts.travelEurope.description'),
                     image: require('../assets/images/img/banner.png'),
                     details: {
-                        benefits: isZh ? [
-                            '欧洲消费1.5%返现，无上限',
-                            '机场贵宾厅免费使用',
-                            '旅行保险保障'
-                        ] : [
-                            '1.5% cashback on European spending, no limit',
-                            'Free airport lounge access',
-                            'Travel insurance coverage'
-                        ]
+                        benefits: this.$t('cardProducts.travelEurope.benefits')
                     }
                 },
                 {
                     id: 2,
-                    category: isZh ? '十二生肖' : 'Chinese Zodiac',
-                    title: isZh ? '生肖卡' : 'Zodiac Card',
-                    description: isZh ? '铭刻文化,彰显自信' : 'Engrave culture, show confidence',
+                    category: this.$t('cardProducts.zodiac.category'),
+                    title: this.$t('cardProducts.zodiac.title'),
+                    description: this.$t('cardProducts.zodiac.description'),
                     image: require('../assets/images/img/banner1.png'),
                     details: {
-                        benefits: isZh ? [
-                            '独特生肖设计',
-                            '文化纪念价值',
-                            '专属权益'
-                        ] : [
-                            'Unique zodiac design',
-                            'Cultural commemorative value',
-                            'Exclusive benefits'
-                        ]
+                        benefits: this.$t('cardProducts.zodiac.benefits')
                     }
                 },
                 {
                     id: 3,
-                    category: isZh ? '普惠让利' : 'Inclusive Benefits',
-                    title: isZh ? '牡丹超惠龙' : 'Peony Super Benefit Dragon Card',
-                    description: isZh ? '硬核超惠,真情回馈' : 'Hardcore super benefits, genuine rewards',
+                    category: this.$t('cardProducts.peonyDragon.category'),
+                    title: this.$t('cardProducts.peonyDragon.title'),
+                    description: this.$t('cardProducts.peonyDragon.description'),
                     image: require('../assets/images/img/banner2.png'),
                     details: {
-                        benefits: isZh ? [
-                            '超值返现优惠',
-                            '消费积分翻倍',
-                            '专属商户折扣'
-                        ] : [
-                            'Super value cashback',
-                            'Double points on spending',
-                            'Exclusive merchant discounts'
-                        ]
+                        benefits: this.$t('cardProducts.peonyDragon.benefits')
                     }
                 }
             ];

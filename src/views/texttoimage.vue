@@ -1,10 +1,10 @@
 <template>
   <!-- 图生图3 -->
   <view class="ai-draw">
-    <uni-nav-bar left-icon="back" left-text="返回" title="AIGC" backgroundColor="#f59a23" :border="false" color="#FFFFFF"
-      @clickLeft="goIndex"></uni-nav-bar>
+    <uni-nav-bar left-icon="back" :left-text="$t('common.back')" title="AIGC" backgroundColor="#f59a23" :border="false"
+      color="#FFFFFF" @clickLeft="goIndex"></uni-nav-bar>
     <!-- 画面描述 -->
-    <view class="sub-title">详细描述</view>
+    <view class="sub-title">{{ $t('aiDraw.descriptionTitle') }}</view>
     <view class="desc-wrap">
       <textarea :placeholder="defaultDesc"
         :value="scemetype" :maxlength="300" @input="textAreaInput" />
@@ -18,7 +18,7 @@
     </view>
     <!-- 开始生成 -->
     <view class="button" @click="submit" :class="{ disabled: isLoading }">
-      开始生成
+      {{ $t('aiDraw.startGenerate') }}
       <svg t="1724940965670" class="icon loading-icon" v-if="false" viewBox="0 0 1024 1024" version="1.1"
         xmlns="http://www.w3.org/2000/svg" p-id="4297" width="35" height="35">
         <path
@@ -61,7 +61,7 @@
     </view>
     <uni-toast data-duration="2000" v-if="isLoading"><!---->
       <div class="uni-toast"><i class="uni-icon_toast uni-loading"></i>
-        <p class="uni-toast__content"> 加载中 </p>
+        <p class="uni-toast__content">{{ $t('aiDraw.loading') }}</p>
       </div>
     </uni-toast>
   </view>
@@ -87,31 +87,16 @@ export default {
     return {
       textword: '',
       scemetype: '',
-      defaultDesc: '大师作品，最好的质量，高品质，高层，超详细，逼真，1个甜美的女孩，长发，叶发饰品，尖耳朵，精灵，绿色的眼睛，苍白的皮肤，裸露的肩膀，白色长裙',
+      defaultDesc: '',
       isLoading: false,
       referenceImage: '',
       referenceImageFiles: [],
       referenceImageFileObj: '',
       imgList: [],
       imgsrc: '',
-      styleListNew: [
-        // { url: type13b, id: 13, title: '平面插画' },
-        { url: type14b, id: 14, title: '皮卡斯' },
-        { url: type15b, id: 15, title: '动漫纪元' },
-        { url: xcch, id: 19, title: '幻彩插画' },
-        { url: xcdm, id: 18, title: '幻彩动漫' },
-      ], // 风格List
-      styleList1: [
-        { id: 1001, url: monhy, req_key: 'img2img_comic_style_usage', title: '莫奈花园', sub_req_key: 'img2img_comic_style_monet' }, // 平面插画
-        { id: 1002, url: jingzmm, req_key: 'img2img_comic_style_usage', title: '精致美漫', sub_req_key: 'img2img_comic_style_marvel' }, // 平面插画
-        { id: 1003, url: langmgy, req_key: 'img2img_pretty_style_usage', title: '浪漫光影', sub_req_key: 'img2img_pretty_style_light' }, // 平面插画
-        { id: 1004, url: saibpk, req_key: 'img2img_comic_style_usage', title: '赛博朋克', sub_req_key: 'img2img_comic_style_future' }, // 平面插画
-      ],
-      styleList2: [
-        { id: 1005, url: rimf, req_key: 'img2img_makoto_style_usage', title: '日漫风', sub_req_key: '' }, // 平面插画
-        { id: 1006, url: dongmf, req_key: 'img2img_cartoon_style_usage', title: '动漫风', sub_req_key: '' }, // 平面插画
-        { id: 1007, url: img3dz, req_key: 'img2img_3d_style_usage', title: '3D游戏Z时代', sub_req_key: 'img2img_3d_style_era' }, // 平面插画
-      ],
+      styleListNew: [],
+      styleList1: [],
+      styleList2: [],
       styleList3: [
       ],
       styleList4: [
@@ -120,14 +105,13 @@ export default {
       ], // 风格List
       styleIndex: 14, // 风格索引
       // 尺寸
-      sizeList: [
-        { title: '1:1', width: 48, height: 48, id: '' },
-        { title: '横版', width: 46, height: 30, id: '0' },
-        { title: '竖版', width: 30, height: 46, id: '1' },
-      ],
+      sizeList: [],
       sizeIndex: '',
 
     }
+  },
+  created() {
+    this.initLocalizationData();
   },
   onShow() {
     console.log('SCENE', 'AIGC');
@@ -135,7 +119,37 @@ export default {
       SCENE: 'DIY',
     })
   },
+  watch: {
+    '$i18n.locale'() {
+      this.initLocalizationData();
+    }
+  },
   methods: {
+    initLocalizationData() {
+      this.defaultDesc = this.$t('aiDraw.defaultDesc');
+      this.styleListNew = [
+        { url: type14b, id: 14, title: this.$t('aiDraw.styles.picas') },
+        { url: type15b, id: 15, title: this.$t('aiDraw.styles.animeEra') },
+        { url: xcch, id: 19, title: this.$t('aiDraw.styles.colorfulIllustration') },
+        { url: xcdm, id: 18, title: this.$t('aiDraw.styles.colorfulAnime') },
+      ];
+      this.styleList1 = [
+        { id: 1001, url: monhy, req_key: 'img2img_comic_style_usage', title: this.$t('aiDraw.styles.monetGarden'), sub_req_key: 'img2img_comic_style_monet' },
+        { id: 1002, url: jingzmm, req_key: 'img2img_comic_style_usage', title: this.$t('aiDraw.styles.delicateMarvel'), sub_req_key: 'img2img_comic_style_marvel' },
+        { id: 1003, url: langmgy, req_key: 'img2img_pretty_style_usage', title: this.$t('aiDraw.styles.romanticLight'), sub_req_key: 'img2img_pretty_style_light' },
+        { id: 1004, url: saibpk, req_key: 'img2img_comic_style_usage', title: this.$t('aiDraw.styles.cyberpunk'), sub_req_key: 'img2img_comic_style_future' },
+      ];
+      this.styleList2 = [
+        { id: 1005, url: rimf, req_key: 'img2img_makoto_style_usage', title: this.$t('aiDraw.styles.japanAnime'), sub_req_key: '' },
+        { id: 1006, url: dongmf, req_key: 'img2img_cartoon_style_usage', title: this.$t('aiDraw.styles.animeStyle'), sub_req_key: '' },
+        { id: 1007, url: img3dz, req_key: 'img2img_3d_style_usage', title: this.$t('aiDraw.styles.game3dEra'), sub_req_key: 'img2img_3d_style_era' },
+      ];
+      this.sizeList = [
+        { title: '1:1', width: 48, height: 48, id: '' },
+        { title: this.$t('aiDraw.sizeLandscape'), width: 46, height: 30, id: '0' },
+        { title: this.$t('aiDraw.sizePortrait'), width: 30, height: 46, id: '1' },
+      ];
+    },
     // 画面描述 textarea修改
     textAreaInput(e) {
       this.scemetype = e.detail.value
@@ -181,7 +195,7 @@ export default {
 
       uni.showLoading({
         duration: 2000,
-        title: '加载中...',
+        title: this.$t('aiDraw.loading'),
       })
       this.isLoading = true;
 
@@ -221,7 +235,7 @@ export default {
             uni.showToast({
               icon: 'none',
               duration: 2000,
-              title: '生成图片失败，请重新填写描述信息',
+              title: this.$t('aiDraw.generateFail'),
             })
             this.isLoading = false;
             resolve(false)

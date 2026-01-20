@@ -715,24 +715,24 @@
                 <path d="M631.7 256l-256 256 256 256-60.3 60.3-316.3-316.3 316.3-316.3z" />
             </svg>
         </div>
-        <div class="header-title">申请信用卡</div>
+        <div class="header-title">{{ $t('idUpload.title') }}</div>
     </div>
 
     <!-- 证件图片上传 -->
     <div class="id-upload-section">
         <label class="upload-label">
             <span class="required">*</span>
-            请拍摄申请人的证件照片（正反面共计2张）
+            {{ $t('idUpload.uploadLabel') }}
         </label>
         <div class="upload-area" :class="{ 'has-images': idPhotos.length > 0 }">
             <div v-if="idPhotos.length === 0" class="upload-placeholder" @click="triggerFileInput">
                 <div class="upload-icon">📷</div>
-                <div class="upload-text">点击上传</div>
-                <div class="upload-hint">支持 JPG、PNG 格式，最大 5MB</div>
+                <div class="upload-text">{{ $t('idUpload.clickToUpload') }}</div>
+                <div class="upload-hint">{{ $t('idUpload.uploadHint') }}</div>
             </div>
             <div v-else class="images-grid">
                 <div v-for="(photo, index) in idPhotos" :key="index" class="image-item">
-                    <img :src="photo.url" :alt="`ID Photo ${index + 1}`">
+                    <img :src="photo.url" :alt="$t('idUpload.idPhotoAlt', { index: index + 1 })">
                     <div class="remove-btn" @click.stop="removeIdPhoto(index)">
                         <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -758,42 +758,44 @@
 
     <!-- 身份信息表单（上传证件照后显示） -->
     <div v-if="idPhotos.length > 1" class="info-section">
-        <div class="info-title">请核对身份信息，若有误请手动修改</div>
+        <div class="info-title">{{ $t('idUpload.infoTitle') }}</div>
     </div>
 
     <div v-if="idPhotos.length > 1" class="form-group">
         <label>
             <span class="required">*</span>
-            姓名
+            {{ $t('idUpload.fullName') }}
         </label>
-        <input type="text" v-model="formData.fullName" placeholder="请输入姓名" @blur="validateField('fullName')">
+        <input type="text" v-model="formData.fullName" :placeholder="$t('idUpload.fullNamePlaceholder')"
+            @blur="validateField('fullName')">
         <div v-if="errors.fullName" class="error-message">{{ errors.fullName }}</div>
     </div>
 
     <div v-if="idPhotos.length > 1" class="form-group">
         <label>
             <span class="required">*</span>
-            证件号码
+            {{ $t('idUpload.idNumber') }}
         </label>
-        <input type="text" v-model="formData.idNumber" placeholder="请输入证件号码" @blur="validateField('idNumber')">
+        <input type="text" v-model="formData.idNumber" :placeholder="$t('idUpload.idNumberPlaceholder')"
+            @blur="validateField('idNumber')">
         <div v-if="errors.idNumber" class="error-message">{{ errors.idNumber }}</div>
     </div>
 
     <div v-if="idPhotos.length > 1" class="form-group">
         <label>
             <span class="required">*</span>
-            是否长期有效
+            {{ $t('idUpload.isLongTerm') }}
         </label>
         <select v-model="formData.isLongTerm" @change="handleLongTermChange">
-            <option :value="false">否</option>
-            <option :value="true">是</option>
+            <option :value="false">{{ $t('idUpload.no') }}</option>
+            <option :value="true">{{ $t('idUpload.yes') }}</option>
         </select>
     </div>
 
     <div v-if="idPhotos.length > 1 && !formData.isLongTerm" class="form-group">
         <label>
             <span class="required">*</span>
-            证件起始日期
+            {{ $t('idUpload.idStartDate') }}
         </label>
         <div class="date-input-wrapper">
             <input type="date" v-model="formData.idStartDate" @blur="validateField('idStartDate')">
@@ -807,7 +809,7 @@
     <div v-if="idPhotos.length > 1 && !formData.isLongTerm" class="form-group">
         <label>
             <span class="required">*</span>
-            证件截止日期
+            {{ $t('idUpload.idEndDate') }}
         </label>
         <div class="date-input-wrapper">
             <input type="date" v-model="formData.idEndDate" @blur="validateField('idEndDate')">
@@ -822,20 +824,21 @@
     <div v-if="idPhotos.length > 1" class="form-group">
         <label>
             <span class="required">*</span>
-            手机号
+            {{ $t('idUpload.phone') }}
         </label>
-        <input type="tel" v-model="formData.phone" placeholder="请输入手机号" @blur="validateField('phone')">
+        <input type="tel" v-model="formData.phone" :placeholder="$t('idUpload.phonePlaceholder')"
+            @blur="validateField('phone')">
         <div v-if="errors.phone" class="error-message">{{ errors.phone }}</div>
     </div>
     <button v-if="idPhotos.length > 1" class="submit-btn" @click="handleNextStep"
         :disabled="!isFormValid || isSubmitting">
-        {{ isSubmitting ? '提交中...' : '下一步' }}
+        {{ isSubmitting ? $t('common.submitting') : $t('common.nextStep') }}
     </button>
 
     <!-- 人脸识别授权弹窗 -->
     <div v-if="showFaceRecognitionModal" class="face-recognition-modal" @click.self="closeModal">
         <div class="modal-content">
-            <div class="modal-title">人脸识别身份验证授权</div>
+            <div class="modal-title">{{ $t('idUpload.faceModalTitle') }}</div>
 
             <div class="modal-illustration">
                 <div class="illustration-wrapper">
@@ -861,29 +864,29 @@
             <ul class="instructions-list">
                 <li>
                     <span class="bullet-point"></span>
-                    <span>保持光线充足</span>
+                    <span>{{ $t('idUpload.faceInstructions.light') }}</span>
                 </li>
                 <li>
                     <span class="bullet-point"></span>
-                    <span>人脸正对屏幕</span>
+                    <span>{{ $t('idUpload.faceInstructions.center') }}</span>
                 </li>
                 <li>
                     <span class="bullet-point"></span>
-                    <span>面部位于取景框内</span>
+                    <span>{{ $t('idUpload.faceInstructions.frame') }}</span>
                 </li>
             </ul>
 
             <div class="disclaimer-text">
-                本次申请需进行人脸识别,所收集的脸部影像信息仅用于核验是否您本人申请,如果您不同意,后续我行将采取电话或柜面等措施核验您的身份,谢谢!
+                {{ $t('idUpload.faceDisclaimer') }}
             </div>
 
             <div class="conditional-text">
-                如您人脸检测未通过,请前往网点申请办理。
+                {{ $t('idUpload.faceFailTip') }}
             </div>
 
             <div class="modal-buttons">
-                <button class="btn btn-disagree" @click="handleDisagree">不同意</button>
-                <button class="btn btn-agree" @click="handleAgree">同意</button>
+                <button class="btn btn-disagree" @click="handleDisagree">{{ $t('common.disagree') }}</button>
+                <button class="btn btn-agree" @click="handleAgree">{{ $t('common.agree') }}</button>
             </div>
         </div>
     </div>
@@ -1105,62 +1108,35 @@ export default {
             });
         },
         getPresetCardsData() {
-            const locale = this.$i18n.locale;
-            const isZh = locale === 'zh-CN';
-
             return [
                 {
                     id: 1,
-                    category: isZh ? '畅行欧洲' : 'Travel Europe',
-                    title: isZh ? '欧洲旅行信用卡' : 'Europe Travel Credit Card',
-                    description: isZh ? '欧洲消费1.5%返现无上限' : '1.5% cashback on European spending, no upper limit',
+                    category: this.$t('cardProducts.travelEurope.category'),
+                    title: this.$t('cardProducts.travelEurope.title'),
+                    description: this.$t('cardProducts.travelEurope.description'),
                     image: require('../assets/images/img/banner.png'),
                     details: {
-                        benefits: isZh ? [
-                            '欧洲消费1.5%返现，无上限',
-                            '机场贵宾厅免费使用',
-                            '旅行保险保障'
-                        ] : [
-                            '1.5% cashback on European spending, no limit',
-                            'Free airport lounge access',
-                            'Travel insurance coverage'
-                        ]
+                        benefits: this.$t('cardProducts.travelEurope.benefits')
                     }
                 },
                 {
                     id: 2,
-                    category: isZh ? '十二生肖' : 'Chinese Zodiac',
-                    title: isZh ? '生肖卡' : 'Zodiac Card',
-                    description: isZh ? '铭刻文化,彰显自信' : 'Engrave culture, show confidence',
+                    category: this.$t('cardProducts.zodiac.category'),
+                    title: this.$t('cardProducts.zodiac.title'),
+                    description: this.$t('cardProducts.zodiac.description'),
                     image: require('../assets/images/img/banner1.png'),
                     details: {
-                        benefits: isZh ? [
-                            '独特生肖设计',
-                            '文化纪念价值',
-                            '专属权益'
-                        ] : [
-                            'Unique zodiac design',
-                            'Cultural commemorative value',
-                            'Exclusive benefits'
-                        ]
+                        benefits: this.$t('cardProducts.zodiac.benefits')
                     }
                 },
                 {
                     id: 3,
-                    category: isZh ? '普惠让利' : 'Inclusive Benefits',
-                    title: isZh ? '牡丹超惠龙' : 'Peony Super Benefit Dragon Card',
-                    description: isZh ? '硬核超惠,真情回馈' : 'Hardcore super benefits, genuine rewards',
+                    category: this.$t('cardProducts.peonyDragon.category'),
+                    title: this.$t('cardProducts.peonyDragon.title'),
+                    description: this.$t('cardProducts.peonyDragon.description'),
                     image: require('../assets/images/img/banner2.png'),
                     details: {
-                        benefits: isZh ? [
-                            '超值返现优惠',
-                            '消费积分翻倍',
-                            '专属商户折扣'
-                        ] : [
-                            'Super value cashback',
-                            'Double points on spending',
-                            'Exclusive merchant discounts'
-                        ]
+                        benefits: this.$t('cardProducts.peonyDragon.benefits')
                     }
                 }
             ];
@@ -1228,7 +1204,7 @@ export default {
 
             // 验证手机号格式
             if (!/^1[3-9]\d{9}$/.test(this.formData.phone)) {
-                this.errors.phone = '请输入正确的手机号';
+                this.errors.phone = this.$t('idUpload.errors.phoneInvalid');
                 return;
             }
 
@@ -1256,7 +1232,7 @@ export default {
                 // alert('验证码已发送，请查收短信（demo模式：验证码为123456）');
             } catch (error) {
                 console.error('发送验证码失败:', error);
-                alert('发送验证码失败，请稍后重试');
+                alert(this.$t('idUpload.errors.sendCodeFailed'));
             }
         },
         validateField(fieldName) {
@@ -1265,45 +1241,45 @@ export default {
             switch (fieldName) {
                 case 'fullName':
                     if (!this.formData.fullName.trim()) {
-                        this.errors.fullName = '请输入姓名';
+                        this.errors.fullName = this.$t('idUpload.errors.fullNameRequired');
                     }
                     break;
                 case 'phone':
                     if (!this.formData.phone.trim()) {
-                        this.errors.phone = '请输入手机号';
+                        this.errors.phone = this.$t('idUpload.errors.phoneRequired');
                     } else if (!/^1[3-9]\d{9}$/.test(this.formData.phone)) {
-                        this.errors.phone = '请输入正确的手机号';
+                        this.errors.phone = this.$t('idUpload.errors.phoneInvalid');
                     }
                     break;
                 case 'idNumber':
                     if (!this.formData.idNumber.trim()) {
-                        this.errors.idNumber = '请输入证件号码';
+                        this.errors.idNumber = this.$t('idUpload.errors.idNumberRequired');
                     } else if (!/^[1-9]\d{5}(18|19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\d{3}[\dXx]$/.test(this.formData.idNumber)) {
                         // 简单的身份证号格式验证
                         if (this.formData.idNumber.length < 15) {
-                            this.errors.idNumber = '证件号码格式不正确';
+                            this.errors.idNumber = this.$t('idUpload.errors.idNumberInvalid');
                         }
                     }
                     break;
                 case 'idStartDate':
                     if (!this.formData.isLongTerm && !this.formData.idStartDate) {
-                        this.errors.idStartDate = '请选择证件起始日期';
+                        this.errors.idStartDate = this.$t('idUpload.errors.idStartDateRequired');
                     }
                     break;
                 case 'idEndDate':
                     if (!this.formData.isLongTerm && !this.formData.idEndDate) {
-                        this.errors.idEndDate = '请选择证件截止日期';
+                        this.errors.idEndDate = this.$t('idUpload.errors.idEndDateRequired');
                     } else if (this.formData.idStartDate && this.formData.idEndDate) {
                         if (new Date(this.formData.idEndDate) <= new Date(this.formData.idStartDate)) {
-                            this.errors.idEndDate = '截止日期必须晚于起始日期';
+                            this.errors.idEndDate = this.$t('idUpload.errors.idEndDateInvalid');
                         }
                     }
                     break;
                 case 'verifyCode':
                     if (!this.formData.verifyCode.trim()) {
-                        this.errors.verifyCode = '请输入验证码';
+                        this.errors.verifyCode = this.$t('idUpload.errors.verifyCodeRequired');
                     } else if (!/^\d{6}$/.test(this.formData.verifyCode)) {
-                        this.errors.verifyCode = '请输入6位数字验证码';
+                        this.errors.verifyCode = this.$t('idUpload.errors.verifyCodeInvalid');
                     }
                     break;
             }
@@ -1323,7 +1299,7 @@ export default {
 
             // 验证证件照片
             if (this.idPhotos.length === 0) {
-                this.errors.idPhoto = '请上传证件照片';
+                this.errors.idPhoto = this.$t('idUpload.errors.idPhotoRequired');
             } else {
                 this.errors.idPhoto = '';
             }
@@ -1343,7 +1319,7 @@ export default {
         handleDisagree() {
             this.closeModal();
             // 可以在这里添加不同意的处理逻辑
-            // alert('您已选择不同意，后续我们将通过电话或柜面等方式核验您的身份');
+            // alert(this.$t('idUpload.disagreeTip'));
             this.$router.push({
                 path: '/user-apply',
                 query: {

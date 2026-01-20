@@ -17,12 +17,12 @@
         <!-- 摄像头权限请求弹窗 -->
         <div v-if="showPermissionModal" class="permission-modal">
             <div class="permission-content">
-                <div class="permission-title">允许使用摄像头?</div>
-                <div class="permission-desc">用于拍照、拍视频、扫描二维码等</div>
+                <div class="permission-title">{{ $t('faceRecognition.permissionTitle') }}</div>
+                <div class="permission-desc">{{ $t('faceRecognition.permissionDesc') }}</div>
                 <div class="permission-buttons">
-                    <button class="permission-btn primary" @click="allowCamera">使用时允许</button>
-                    <button class="permission-btn text" @click="allowCameraOnce">仅本次使用时允许</button>
-                    <button class="permission-btn text" @click="denyCamera">不允许</button>
+                    <button class="permission-btn primary" @click="allowCamera">{{ $t('faceRecognition.allowCamera') }}</button>
+                    <button class="permission-btn text" @click="allowCameraOnce">{{ $t('faceRecognition.allowCameraOnce') }}</button>
+                    <button class="permission-btn text" @click="denyCamera">{{ $t('faceRecognition.denyCamera') }}</button>
                 </div>
             </div>
         </div>
@@ -33,7 +33,7 @@
                 <div class="camera-preview mirror">
                     <video ref="video" class="camera-video" autoplay playsinline muted></video>
                     <div class="camera-overlay">
-                        <div class="overlay-text preparing-text">准备中...</div>
+                        <div class="overlay-text preparing-text">{{ $t('faceRecognition.preparing') }}</div>
                     </div>
                 </div>
             </div>
@@ -43,7 +43,7 @@
         <div v-else-if="status === 'recognizing'" class="recognition-state">
             <div class="camera-frame" :class="frameClass">
                 <!-- 倒计时显示 -->
-                <div class="countdown">{{ countdown }}秒</div>
+                <div class="countdown">{{ $t('faceRecognition.countdown', { count: countdown }) }}</div>
                 
                 <!-- 状态提示 -->
                 <div class="status-message" :class="messageClass">{{ currentMessage }}</div>
@@ -93,7 +93,7 @@
                 <div class="camera-preview mirror">
                     <video ref="video" class="camera-video" autoplay playsinline muted></video>
                     <div class="camera-overlay">
-                        <div class="overlay-text verifying-text">验证中，请保持姿势不变</div>
+                        <div class="overlay-text verifying-text">{{ $t('faceRecognition.verifying') }}</div>
                     </div>
                 </div>
             </div>
@@ -103,7 +103,7 @@
         <div v-else-if="status === 'success'" class="success-state">
             <div class="success-content">
                 <div class="success-icon">✓</div>
-                <div class="success-text">人脸识别成功</div>
+                <div class="success-text">{{ $t('faceRecognition.success') }}</div>
             </div>
         </div>
 
@@ -111,13 +111,15 @@
         <div v-else-if="status === 'failed'" class="failed-state">
             <div class="failed-content">
                 <div class="failed-icon">✕</div>
-                <div class="failed-text">人脸识别失败</div>
+                <div class="failed-text">{{ $t('faceRecognition.failed') }}</div>
                 <div v-if="faceVerifyMessage" class="failed-desc">{{ faceVerifyMessage }}</div>
-                <div v-if="faceVerifySimilarity !== null" class="failed-desc">相似度：{{ faceVerifySimilarity }}</div>
+                <div v-if="faceVerifySimilarity !== null" class="failed-desc">
+                    {{ $t('faceRecognition.similarity', { value: faceVerifySimilarity }) }}
+                </div>
 
                 <div class="failed-actions">
-                    <button class="failed-btn primary" @click="retryRecognition">重新识别</button>
-                    <button class="failed-btn" @click="goBack">返回</button>
+                    <button class="failed-btn primary" @click="retryRecognition">{{ $t('faceRecognition.retry') }}</button>
+                    <button class="failed-btn" @click="goBack">{{ $t('common.back') }}</button>
                 </div>
             </div>
         </div>
@@ -139,7 +141,7 @@ export default {
             faceBox: null, // { left, top, width, height } percentage relative to video
             faceOk: false,
             lastFaceSeenAt: 0,
-            currentMessage: '请允许摄像头权限',
+            currentMessage: '',
             messageClass: 'warning',
             frameClass: 'warning',
             soundEnabled: true,
@@ -196,11 +198,12 @@ export default {
     mounted() {
         // 页面加载时显示权限请求
         this.loadRegisteredDescriptor();
+        this.currentMessage = this.$t('faceRecognition.messages.permissionRequired');
 
         // 没有摄像头：直接走模拟流程，避免卡在授权/打开环节
         this.hasCameraDevice().then(has => {
             if (!has) {
-                this.startSimulatedRecognitionFlow('未检测到摄像头，已进入模拟流程');
+                this.startSimulatedRecognitionFlow(this.$t('faceRecognition.messages.noCameraSimulated'));
                 return;
             }
 
@@ -373,7 +376,7 @@ export default {
 
                 if (!this.faceImageUrl) {
                     this.faceVerifyPassed = false;
-                    this.faceVerifyMessage = '图片上传失败，请重试';
+                    this.faceVerifyMessage = this.$t('faceRecognition.messages.imageUploadFailed');
                     this.status = 'failed';
                     return;
                 }
@@ -383,7 +386,11 @@ export default {
 
                 const passed = !!(data && data.passed === true);
                 this.faceVerifyPassed = passed;
-                this.faceVerifyMessage = (data && data.message) ? data.message : (passed ? '人脸识别通过' : '人脸识别失败');
+                this.faceVerifyMessage = (data && data.message)
+                    ? data.message
+                    : (passed
+                        ? this.$t('faceRecognition.messages.verifyPassed')
+                        : this.$t('faceRecognition.messages.verifyFailed'));
                 this.faceVerifySimilarity = (data && typeof data.similarity !== 'undefined') ? data.similarity : null;
 
                 if (passed) {
@@ -407,7 +414,7 @@ export default {
             } catch (e) {
                 // 接口异常：按失败处理，避免卡住流程
                 this.faceVerifyPassed = false;
-                this.faceVerifyMessage = '接口调用失败，请重试';
+                this.faceVerifyMessage = this.$t('faceRecognition.messages.apiFailed');
                 this.status = 'failed';
                 // eslint-disable-next-line no-console
                 console.error('faceRecognition: 接口对接失败', e);
@@ -428,7 +435,7 @@ export default {
 
             this.hasCameraDevice().then(has => {
                 if (!has) {
-                    this.startSimulatedRecognitionFlow('未检测到摄像头，已进入模拟流程');
+                    this.startSimulatedRecognitionFlow(this.$t('faceRecognition.messages.noCameraSimulated'));
                     return;
                 }
 
@@ -491,14 +498,14 @@ export default {
             this.lastFaceSeenAt = 0;
             this.lastVerifyDistance = null;
 
-            this.currentMessage = reasonMessage || '已进入模拟流程';
+            this.currentMessage = reasonMessage || this.$t('faceRecognition.messages.simulationStarted');
             this.messageClass = 'warning';
             this.frameClass = 'warning';
 
             this.status = 'preparing';
             this.recognitionTimer = setTimeout(() => {
                 this.status = 'recognizing';
-                this.currentMessage = '模拟识别中...';
+                this.currentMessage = this.$t('faceRecognition.messages.simulatedRecognizing');
                 this.messageClass = 'warning';
                 this.frameClass = 'warning';
                 this.startCountdown();
@@ -602,14 +609,14 @@ export default {
             this.faceApiError = '';
 
             try {
-                if (typeof window === 'undefined') throw new Error('Face API 仅支持浏览器环境');
+                if (typeof window === 'undefined') throw new Error(this.$t('faceRecognition.errors.faceApiBrowserOnly'));
 
                 if (!window.__faceApiScriptPromise) {
                     window.__faceApiScriptPromise = new Promise((resolve, reject) => {
                         const existing = document.querySelector(`script[data-faceapi="1"]`);
                         if (existing) {
                             existing.addEventListener('load', () => resolve());
-                            existing.addEventListener('error', () => reject(new Error('face-api 脚本加载失败')));
+                            existing.addEventListener('error', () => reject(new Error(this.$t('faceRecognition.errors.faceApiScriptLoadFailed'))));
                             return;
                         }
 
@@ -619,14 +626,14 @@ export default {
                         s.defer = true;
                         s.setAttribute('data-faceapi', '1');
                         s.onload = () => resolve();
-                        s.onerror = () => reject(new Error('face-api 脚本加载失败'));
+                        s.onerror = () => reject(new Error(this.$t('faceRecognition.errors.faceApiScriptLoadFailed')));
                         document.head.appendChild(s);
                     });
                 }
                 await window.__faceApiScriptPromise;
 
                 const faceapi = this.getFaceApi();
-                if (!faceapi) throw new Error('face-api 未初始化');
+                if (!faceapi) throw new Error(this.$t('faceRecognition.errors.faceApiNotInitialized'));
 
                 if (!window.__faceApiModelsPromise) {
                     window.__faceApiModelsPromise = (async () => {
@@ -641,7 +648,7 @@ export default {
                 return true;
             } catch (e) {
                 this.faceApiReady = false;
-                this.faceApiError = (e && e.message) ? e.message : 'face-api 初始化失败';
+                this.faceApiError = (e && e.message) ? e.message : this.$t('faceRecognition.errors.faceApiInitFailed');
                 return false;
             } finally {
                 this.faceApiLoading = false;
@@ -661,12 +668,12 @@ export default {
         },
         denyCamera() {
             this.setRememberCameraPermission(false);
-            alert('需要摄像头权限才能进行人脸识别');
+            alert(this.$t('faceRecognition.errors.permissionRequired'));
             this.handleClose();
         },
         async initCamera() {
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                throw new Error('当前浏览器不支持摄像头访问');
+                throw new Error(this.$t('faceRecognition.errors.cameraNotSupported'));
             }
 
             const constraints = {
@@ -687,7 +694,7 @@ export default {
 
             // 等待 video 元数据就绪（用于拿到 videoWidth / videoHeight）
             const video = this.$refs.video;
-            if (!video) throw new Error('摄像头预览初始化失败');
+            if (!video) throw new Error(this.$t('faceRecognition.errors.cameraInitFailed'));
 
             await new Promise((resolve, reject) => {
                 if (video.videoWidth && video.videoHeight) {
@@ -699,7 +706,7 @@ export default {
                     resolve();
                 };
                 video.addEventListener('loadedmetadata', onLoaded);
-                setTimeout(() => reject(new Error('摄像头预览超时')), 8000);
+                setTimeout(() => reject(new Error(this.$t('faceRecognition.errors.cameraPreviewTimeout'))), 8000);
             });
         },
         // face-api：检测单张人脸并返回 descriptor + box
@@ -758,7 +765,9 @@ export default {
                         this.faceDetected = false;
                         this.faceOk = false;
                         this.faceBox = null;
-                        this.currentMessage = this.faceApiLoading ? '正在加载人脸识别模型...' : '没有检测到人脸';
+                        this.currentMessage = this.faceApiLoading
+                            ? this.$t('faceRecognition.messages.loadingModel')
+                            : this.$t('faceRecognition.messages.noFaceDetected');
                         this.messageClass = 'error';
                         this.frameClass = 'error';
 
@@ -801,17 +810,21 @@ export default {
 
                         if (!sizeOk) {
                             this.faceOk = false;
-                            this.currentMessage = areaRatio <= 0.08 ? '请靠近一点' : '请远离一点';
+                            this.currentMessage = areaRatio <= 0.08
+                                ? this.$t('faceRecognition.messages.moveCloser')
+                                : this.$t('faceRecognition.messages.moveFarther');
                             this.messageClass = 'warning';
                             this.frameClass = 'warning';
                         } else if (!centered) {
                             this.faceOk = false;
-                            this.currentMessage = '请将人脸移到中心位置';
+                            this.currentMessage = this.$t('faceRecognition.messages.moveToCenter');
                             this.messageClass = 'warning';
                             this.frameClass = 'warning';
                         } else {
                             this.faceOk = true;
-                            this.currentMessage = this.hasRegisteredFace ? '检测到人脸，请保持不动' : '检测到人脸，可点击注册';
+                            this.currentMessage = this.hasRegisteredFace
+                                ? this.$t('faceRecognition.messages.faceDetectedKeepStill')
+                                : this.$t('faceRecognition.messages.faceDetectedRegister');
                             this.messageClass = 'info';
                             this.frameClass = 'info';
                         }
@@ -821,7 +834,7 @@ export default {
                     this.faceDetected = false;
                     this.faceOk = false;
                     this.faceBox = null;
-                    this.currentMessage = '人脸识别失败，请检查网络或稍后重试';
+                    this.currentMessage = this.$t('faceRecognition.messages.recognitionNetworkError');
                     this.messageClass = 'error';
                     this.frameClass = 'error';
                 } finally {
@@ -870,7 +883,7 @@ export default {
                         this.faceDetected = false;
                         this.faceOk = false;
                         this.faceBox = null;
-                        this.currentMessage = '没有检测到人脸';
+                        this.currentMessage = this.$t('faceRecognition.messages.noFaceDetected');
                         this.messageClass = 'error';
                         this.frameClass = 'error';
                     } else {
@@ -901,17 +914,19 @@ export default {
 
                         if (!sizeOk) {
                             this.faceOk = false;
-                            this.currentMessage = areaRatio <= 0.08 ? '请靠近一点' : '请远离一点';
+                            this.currentMessage = areaRatio <= 0.08
+                                ? this.$t('faceRecognition.messages.moveCloser')
+                                : this.$t('faceRecognition.messages.moveFarther');
                             this.messageClass = 'warning';
                             this.frameClass = 'warning';
                         } else if (!centered) {
                             this.faceOk = false;
-                            this.currentMessage = '请将人脸移到中心位置';
+                            this.currentMessage = this.$t('faceRecognition.messages.moveToCenter');
                             this.messageClass = 'warning';
                             this.frameClass = 'warning';
                         } else {
                             this.faceOk = true;
-                            this.currentMessage = '检测到人脸，请保持不动';
+                            this.currentMessage = this.$t('faceRecognition.messages.faceDetectedKeepStill');
                             this.messageClass = 'info';
                             this.frameClass = 'info';
                         }
@@ -920,7 +935,7 @@ export default {
                     this.faceDetected = false;
                     this.faceOk = false;
                     this.faceBox = null;
-                    this.currentMessage = '人脸检测失败，请换用 Chrome/Edge 重试';
+                    this.currentMessage = this.$t('faceRecognition.messages.detectionFailedBrowser');
                     this.messageClass = 'error';
                     this.frameClass = 'error';
                 }
@@ -937,7 +952,7 @@ export default {
             this.faceOk = false;
             this.faceBox = null;
             this.lastFaceSeenAt = 0;
-            this.currentMessage = '正在打开摄像头...';
+            this.currentMessage = this.$t('faceRecognition.messages.openingCamera');
             this.messageClass = 'warning';
             this.frameClass = 'warning';
 
@@ -951,7 +966,7 @@ export default {
 
                 // 无摄像头：直接进入模拟流程，不阻塞
                 if (this.isNoCameraError(e)) {
-                    this.startSimulatedRecognitionFlow('未检测到摄像头，已进入模拟流程');
+                    this.startSimulatedRecognitionFlow(this.$t('faceRecognition.messages.noCameraSimulated'));
                     return;
                 }
 
@@ -973,14 +988,16 @@ export default {
             this.loadRegisteredDescriptor();
             this.lastVerifyDistance = null;
 
-            this.currentMessage = '正在加载人脸识别模型...';
+            this.currentMessage = this.$t('faceRecognition.messages.loadingModel');
             this.messageClass = 'warning';
             this.frameClass = 'warning';
 
             const faceApiOk = await this.ensureFaceApiReady();
             if (faceApiOk) {
                 this.engine = 'faceapi';
-                this.currentMessage = this.hasRegisteredFace ? '请将人脸置于圆形取景框内' : '请将人脸置于圆形取景框内，可点击注册';
+                this.currentMessage = this.hasRegisteredFace
+                    ? this.$t('faceRecognition.messages.placeFaceInFrame')
+                    : this.$t('faceRecognition.messages.placeFaceInFrameRegister');
                 this.messageClass = 'warning';
                 this.frameClass = 'warning';
                 this.startCountdown();
@@ -994,7 +1011,7 @@ export default {
             const supported = this.setupDetector();
             if (!supported) {
                 this.engine = 'simulate';
-                this.currentMessage = '当前环境无法加载人脸识别模型/检测能力不足，已进入模拟流程';
+                this.currentMessage = this.$t('faceRecognition.messages.modelUnavailableSimulated');
                 this.messageClass = 'warning';
                 this.frameClass = 'warning';
                 this.startCountdown();
@@ -1003,7 +1020,7 @@ export default {
             }
 
             this.engine = 'facedetector';
-            this.currentMessage = '请将人脸置于圆形取景框内';
+            this.currentMessage = this.$t('faceRecognition.messages.placeFaceInFrame');
             this.messageClass = 'warning';
             this.frameClass = 'warning';
             this.startCountdown();
@@ -1033,7 +1050,7 @@ export default {
                 : this.faceDetected;
 
             if (!freshFace) {
-                this.currentMessage = '未检测到清晰人脸，请重新对准后再试';
+                this.currentMessage = this.$t('faceRecognition.messages.noClearFaceRetry');
                 this.messageClass = 'error';
                 this.frameClass = 'error';
                 setTimeout(() => {
@@ -1051,34 +1068,34 @@ export default {
         },
         async registerFace() {
             if (!this.faceApiReady) {
-                alert(this.faceApiError || '人脸识别模型尚未就绪');
+                alert(this.faceApiError || this.$t('faceRecognition.errors.modelNotReady'));
                 return;
             }
 
             try {
                 const result = await this.detectWithFaceApi();
                 if (!result || !result.descriptor) {
-                    alert('未检测到人脸，注册失败');
+                    alert(this.$t('faceRecognition.errors.registerNoFace'));
                     return;
                 }
                 this.registeredDescriptor = result.descriptor;
                 this.saveRegisteredDescriptor(result.descriptor);
-                this.currentMessage = '人脸注册成功，可点击验证或等待倒计时自动验证';
+                this.currentMessage = this.$t('faceRecognition.messages.registerSuccess');
                 this.messageClass = 'info';
                 this.frameClass = 'info';
             } catch (e) {
-                alert('注册失败，请重试');
+                alert(this.$t('faceRecognition.errors.registerFailed'));
             }
         },
         async verifyFaceAndProceed(shouldProceed) {
             if (!this.faceApiReady) {
-                if (!shouldProceed) alert(this.faceApiError || '人脸识别模型尚未就绪');
+                if (!shouldProceed) alert(this.faceApiError || this.$t('faceRecognition.errors.modelNotReady'));
                 return;
             }
 
             const faceapi = this.getFaceApi();
             if (!faceapi) {
-                if (!shouldProceed) alert('face-api 未加载');
+                if (!shouldProceed) alert(this.$t('faceRecognition.errors.faceApiNotLoaded'));
                 return;
             }
 
@@ -1094,7 +1111,7 @@ export default {
             try {
                 const result = await this.detectWithFaceApi();
                 if (!result || !result.descriptor) {
-                    this.currentMessage = '未检测到人脸，验证失败';
+                    this.currentMessage = this.$t('faceRecognition.messages.verifyNoFace');
                     this.messageClass = 'error';
                     this.frameClass = 'error';
                     if (shouldProceed) this.startCountdown();
@@ -1106,14 +1123,14 @@ export default {
 
                 const ok = distance < this.verifyThreshold;
                 if (!ok) {
-                    this.currentMessage = '验证失败，请正对摄像头重试';
+                    this.currentMessage = this.$t('faceRecognition.messages.verifyFailedFacing');
                     this.messageClass = 'error';
                     this.frameClass = 'error';
                     if (shouldProceed) this.startCountdown();
                     return;
                 }
 
-                this.currentMessage = '验证通过';
+                this.currentMessage = this.$t('faceRecognition.messages.verifyPassed');
                 this.messageClass = 'info';
                 this.frameClass = 'info';
 
@@ -1126,7 +1143,7 @@ export default {
                     await this.completeRecognition();
                 }
             } catch (e) {
-                this.currentMessage = '验证失败，请检查网络或稍后重试';
+                this.currentMessage = this.$t('faceRecognition.messages.verifyFailedNetwork');
                 this.messageClass = 'error';
                 this.frameClass = 'error';
                 if (shouldProceed) this.startCountdown();
@@ -1136,9 +1153,9 @@ export default {
             // 模拟人脸检测过程
             let step = 0;
             const steps = [
-                { message: '没有检测到人脸', class: 'error', frame: 'error', detected: false, delay: 2000 },
-                { message: '请靠近一点', class: 'warning', frame: 'warning', detected: false, delay: 2000 },
-                { message: '检测到人脸，请保持不动', class: 'info', frame: 'info', detected: true, delay: 2000 }
+                { message: this.$t('faceRecognition.messages.noFaceDetected'), class: 'error', frame: 'error', detected: false, delay: 2000 },
+                { message: this.$t('faceRecognition.messages.moveCloser'), class: 'warning', frame: 'warning', detected: false, delay: 2000 },
+                { message: this.$t('faceRecognition.messages.faceDetectedKeepStill'), class: 'info', frame: 'info', detected: true, delay: 2000 }
             ];
 
             const processStep = () => {
@@ -1165,7 +1182,7 @@ export default {
             processStep();
         },
         handleClose() {
-            if (confirm('确定要退出人脸识别吗？')) {
+            if (confirm(this.$t('faceRecognition.confirmExit'))) {
                 this.cleanupResources();
                 this.$router.back();
             }

@@ -119,6 +119,158 @@ export default {
     tip: 'Aviso: esta página muestra un progreso de demostración. Para el progreso real, consulte la banca móvil "Tarjeta de crédito - Progreso de solicitud".',
     queryFailed: 'La consulta falló, inténtalo más tarde'
   },
+  cardProducts: {
+    travelEurope: {
+      category: 'Viaje por Europa',
+      title: 'Tarjeta de crédito de viaje a Europa',
+      description: '1,5% de reembolso en gastos en Europa, sin límite',
+      benefits: [
+        '1,5% de reembolso en gastos en Europa, sin límite',
+        'Acceso gratuito a salas VIP en aeropuertos',
+        'Cobertura de seguro de viaje'
+      ]
+    },
+    zodiac: {
+      category: 'Zodiaco chino',
+      title: 'Tarjeta del zodiaco',
+      description: 'Graba la cultura, muestra confianza',
+      benefits: [
+        'Diseño único del zodiaco',
+        'Valor conmemorativo cultural',
+        'Beneficios exclusivos'
+      ]
+    },
+    peonyDragon: {
+      category: 'Beneficios inclusivos',
+      title: 'Tarjeta Peonía Súper Beneficio Dragón',
+      description: 'Beneficios potentes, recompensas sinceras',
+      benefits: [
+        'Reembolso atractivo',
+        'Puntos dobles en compras',
+        'Descuentos exclusivos en comercios'
+      ]
+    }
+  },
+  idUpload: {
+    title: 'Solicitud de tarjeta de crédito',
+    uploadLabel: 'Tome fotos del documento del solicitante (anverso y reverso, 2 en total)',
+    clickToUpload: 'Haz clic para subir',
+    uploadHint: 'Se admiten JPG y PNG, máx. 5MB',
+    idPhotoAlt: 'Foto del documento {index}',
+    infoTitle: 'Verifique la información de identidad; si hay errores, modifíquela',
+    fullName: 'Nombre',
+    fullNamePlaceholder: 'Introduce tu nombre',
+    idNumber: 'Número de identificación',
+    idNumberPlaceholder: 'Introduce tu número de identificación',
+    isLongTerm: '¿Vigencia indefinida?',
+    yes: 'Sí',
+    no: 'No',
+    idStartDate: 'Fecha de inicio del documento',
+    idEndDate: 'Fecha de vencimiento del documento',
+    phone: 'Teléfono móvil',
+    phonePlaceholder: 'Introduce tu número de teléfono',
+    faceModalTitle: 'Autorización de verificación facial',
+    faceInstructions: {
+      light: 'Mantén buena iluminación',
+      center: 'Mira directamente a la pantalla',
+      frame: 'Mantén el rostro dentro del marco'
+    },
+    faceDisclaimer: 'Esta solicitud requiere reconocimiento facial. La imagen facial recopilada se usa solo para verificar que la solicitud sea suya. Si no acepta, verificaremos su identidad por teléfono o en una sucursal. ¡Gracias!',
+    faceFailTip: 'Si la verificación facial falla, acuda a una sucursal para solicitar.',
+    errors: {
+      fullNameRequired: 'Introduce tu nombre',
+      phoneRequired: 'Introduce tu número de teléfono',
+      phoneInvalid: 'Introduce un número de teléfono válido',
+      idNumberRequired: 'Introduce tu número de identificación',
+      idNumberInvalid: 'Formato de número de identificación no válido',
+      idStartDateRequired: 'Selecciona la fecha de inicio del documento',
+      idEndDateRequired: 'Selecciona la fecha de vencimiento del documento',
+      idEndDateInvalid: 'La fecha de vencimiento debe ser posterior a la fecha de inicio',
+      verifyCodeRequired: 'Introduce el código de verificación',
+      verifyCodeInvalid: 'Introduce un código de verificación de 6 dígitos',
+      idPhotoRequired: 'Sube fotos del documento',
+      sendCodeFailed: 'No se pudo enviar el código, inténtalo más tarde'
+    }
+  },
+  faceRecognition: {
+    permissionTitle: '¿Permitir acceso a la cámara?',
+    permissionDesc: 'Se usa para tomar fotos, videos, escanear códigos QR, etc.',
+    allowCamera: 'Permitir mientras se usa',
+    allowCameraOnce: 'Permitir solo esta vez',
+    denyCamera: 'No permitir',
+    preparing: 'Preparando...',
+    countdown: '{count}s',
+    verifying: 'Verificando, mantén la postura',
+    success: 'Reconocimiento facial exitoso',
+    failed: 'Reconocimiento facial fallido',
+    similarity: 'Similitud: {value}',
+    retry: 'Reintentar',
+    confirmExit: '¿Seguro que deseas salir del reconocimiento facial?',
+    messages: {
+      permissionRequired: 'Por favor, permite el acceso a la cámara',
+      noCameraSimulated: 'No se detectó cámara, se cambió al flujo simulado',
+      simulationStarted: 'Se inició el flujo simulado',
+      simulatedRecognizing: 'Reconocimiento simulado...',
+      moveToCenter: 'Mueve tu rostro al centro',
+      recognitionNetworkError: 'El reconocimiento facial falló, revisa la red o inténtalo más tarde',
+      noFaceDetected: 'No se detectó ningún rostro',
+      faceDetectedKeepStill: 'Rostro detectado, mantente quieto',
+      faceDetectedRegister: 'Rostro detectado, puedes registrar',
+      detectionFailedBrowser: 'Fallo al detectar rostro, prueba con Chrome/Edge',
+      openingCamera: 'Abriendo cámara...',
+      loadingModel: 'Cargando modelo de reconocimiento facial...',
+      modelUnavailableSimulated: 'No se pudo cargar el modelo o la capacidad es insuficiente; se cambió al flujo simulado',
+      placeFaceInFrame: 'Coloca tu rostro dentro del marco circular',
+      placeFaceInFrameRegister: 'Coloca tu rostro dentro del marco circular, puedes registrar',
+      noClearFaceRetry: 'No se detectó un rostro claro, vuelve a alinear',
+      registerSuccess: 'Rostro registrado correctamente. Puedes verificar ahora o esperar la verificación automática',
+      verifyNoFace: 'No se detectó rostro, verificación fallida',
+      verifyFailedFacing: 'Verificación fallida, mira a la cámara y vuelve a intentarlo',
+      verifyPassed: 'Verificación aprobada',
+      verifyFailedNetwork: 'Verificación fallida, revisa la red o inténtalo más tarde',
+      moveCloser: 'Acércate un poco',
+      moveFarther: 'Aléjate un poco',
+      imageUploadFailed: 'Falló la subida de la imagen, inténtalo de nuevo',
+      verifyFailed: 'Reconocimiento facial fallido',
+      apiFailed: 'Fallo en la llamada a la API, inténtalo de nuevo'
+    },
+    errors: {
+      permissionRequired: 'Se requiere permiso de cámara para el reconocimiento facial',
+      cameraNotSupported: 'El navegador actual no admite el acceso a la cámara',
+      cameraInitFailed: 'La inicialización de la vista previa de la cámara falló',
+      cameraPreviewTimeout: 'Tiempo de espera de la vista previa de la cámara',
+      faceApiBrowserOnly: 'Face API solo es compatible con entornos de navegador',
+      faceApiScriptLoadFailed: 'No se pudo cargar el script de face-api',
+      faceApiNotInitialized: 'face-api no está inicializado',
+      faceApiInitFailed: 'Error al inicializar face-api',
+      modelNotReady: 'El modelo de reconocimiento facial no está listo',
+      registerNoFace: 'No se detectó rostro, registro fallido',
+      registerFailed: 'Registro fallido, inténtalo de nuevo',
+      faceApiNotLoaded: 'face-api no está cargado'
+    }
+  },
+  aiDraw: {
+    descriptionTitle: 'Descripción detallada',
+    startGenerate: 'Comenzar a generar',
+    loading: 'Cargando...',
+    defaultDesc: 'Obra maestra, mejor calidad, alta calidad, alta resolución, ultra detallado, realista, una chica dulce, cabello largo, accesorio de hoja, orejas puntiagudas, elfa, ojos verdes, piel pálida, hombros descubiertos, vestido largo blanco',
+    generateFail: 'Error al generar la imagen, vuelve a introducir la descripción',
+    sizeLandscape: 'Horizontal',
+    sizePortrait: 'Vertical',
+    styles: {
+      picas: 'Picasso',
+      animeEra: 'Era del anime',
+      colorfulIllustration: 'Ilustración colorida',
+      colorfulAnime: 'Anime colorido',
+      monetGarden: 'Jardín de Monet',
+      delicateMarvel: 'Cómic americano refinado',
+      romanticLight: 'Luz romántica',
+      cyberpunk: 'Ciberpunk',
+      japanAnime: 'Estilo anime japonés',
+      animeStyle: 'Estilo anime',
+      game3dEra: 'Era Z de juegos 3D'
+    }
+  },
   diy: {
     clickUpload: 'Haz clic para subir',
     imageSize: 'Tamaño de carga de imagen: no mayor de 20MB',

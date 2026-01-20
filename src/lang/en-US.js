@@ -119,6 +119,158 @@ export default {
     tip: 'Tip: This page shows demo progress. For real-time progress, please use Mobile Banking "Credit Card - Application Progress".',
     queryFailed: 'Query failed, please try again later'
   },
+  cardProducts: {
+    travelEurope: {
+      category: 'Travel Europe',
+      title: 'Europe Travel Credit Card',
+      description: '1.5% cashback on European spending, no upper limit',
+      benefits: [
+        '1.5% cashback on European spending, no limit',
+        'Free airport lounge access',
+        'Travel insurance coverage'
+      ]
+    },
+    zodiac: {
+      category: 'Chinese Zodiac',
+      title: 'Zodiac Card',
+      description: 'Engrave culture, show confidence',
+      benefits: [
+        'Unique zodiac design',
+        'Cultural commemorative value',
+        'Exclusive benefits'
+      ]
+    },
+    peonyDragon: {
+      category: 'Inclusive Benefits',
+      title: 'Peony Super Benefit Dragon Card',
+      description: 'Hardcore super benefits, genuine rewards',
+      benefits: [
+        'Super value cashback',
+        'Double points on spending',
+        'Exclusive merchant discounts'
+      ]
+    }
+  },
+  idUpload: {
+    title: 'Credit Card Application',
+    uploadLabel: 'Please take photos of the applicant\'s ID (front and back, 2 in total)',
+    clickToUpload: 'Click to Upload',
+    uploadHint: 'Supports JPG, PNG format, max 5MB',
+    idPhotoAlt: 'ID Photo {index}',
+    infoTitle: 'Please verify the identity information; edit if incorrect',
+    fullName: 'Full Name',
+    fullNamePlaceholder: 'Please enter your name',
+    idNumber: 'ID Number',
+    idNumberPlaceholder: 'Please enter your ID number',
+    isLongTerm: 'Long-term validity',
+    yes: 'Yes',
+    no: 'No',
+    idStartDate: 'ID Start Date',
+    idEndDate: 'ID End Date',
+    phone: 'Phone Number',
+    phonePlaceholder: 'Please enter your phone number',
+    faceModalTitle: 'Face Recognition Authorization',
+    faceInstructions: {
+      light: 'Ensure adequate lighting',
+      center: 'Face the screen directly',
+      frame: 'Keep your face within the frame'
+    },
+    faceDisclaimer: 'This application requires face recognition. The collected facial image is used only to verify your identity. If you do not agree, we will verify your identity by phone or at a branch. Thank you!',
+    faceFailTip: 'If face verification fails, please visit a branch to apply.',
+    errors: {
+      fullNameRequired: 'Please enter your name',
+      phoneRequired: 'Please enter your phone number',
+      phoneInvalid: 'Please enter a valid phone number',
+      idNumberRequired: 'Please enter your ID number',
+      idNumberInvalid: 'Invalid ID number format',
+      idStartDateRequired: 'Please select the ID start date',
+      idEndDateRequired: 'Please select the ID end date',
+      idEndDateInvalid: 'End date must be later than start date',
+      verifyCodeRequired: 'Please enter the verification code',
+      verifyCodeInvalid: 'Please enter a 6-digit verification code',
+      idPhotoRequired: 'Please upload ID photos',
+      sendCodeFailed: 'Failed to send verification code, please try again later'
+    }
+  },
+  faceRecognition: {
+    permissionTitle: 'Allow camera access?',
+    permissionDesc: 'Used for taking photos, videos, scanning QR codes, etc.',
+    allowCamera: 'Allow while using',
+    allowCameraOnce: 'Allow once',
+    denyCamera: 'Don\'t allow',
+    preparing: 'Preparing...',
+    countdown: '{count}s',
+    verifying: 'Verifying, please keep still',
+    success: 'Face recognition successful',
+    failed: 'Face recognition failed',
+    similarity: 'Similarity: {value}',
+    retry: 'Retry',
+    confirmExit: 'Are you sure you want to exit face recognition?',
+    messages: {
+      permissionRequired: 'Please allow camera access',
+      noCameraSimulated: 'No camera detected, switched to simulated flow',
+      simulationStarted: 'Simulated flow started',
+      simulatedRecognizing: 'Simulated recognition...',
+      moveToCenter: 'Move your face to the center',
+      recognitionNetworkError: 'Face recognition failed, please check the network or try again later',
+      noFaceDetected: 'No face detected',
+      faceDetectedKeepStill: 'Face detected, please keep still',
+      faceDetectedRegister: 'Face detected, you can register',
+      detectionFailedBrowser: 'Face detection failed, please try Chrome/Edge',
+      openingCamera: 'Opening camera...',
+      loadingModel: 'Loading face recognition model...',
+      modelUnavailableSimulated: 'Unable to load face recognition model or insufficient detection capability; switched to simulated flow',
+      placeFaceInFrame: 'Place your face within the circular frame',
+      placeFaceInFrameRegister: 'Place your face within the circular frame, you can register',
+      noClearFaceRetry: 'No clear face detected, please align again',
+      registerSuccess: 'Face registered successfully. You can verify now or wait for auto verification',
+      verifyNoFace: 'No face detected, verification failed',
+      verifyFailedFacing: 'Verification failed, face the camera and try again',
+      verifyPassed: 'Verification passed',
+      verifyFailedNetwork: 'Verification failed, please check the network or try again later',
+      moveCloser: 'Move closer',
+      moveFarther: 'Move farther',
+      imageUploadFailed: 'Image upload failed, please try again',
+      verifyFailed: 'Face recognition failed',
+      apiFailed: 'API call failed, please try again'
+    },
+    errors: {
+      permissionRequired: 'Camera permission is required for face recognition',
+      cameraNotSupported: 'Current browser does not support camera access',
+      cameraInitFailed: 'Camera preview initialization failed',
+      cameraPreviewTimeout: 'Camera preview timed out',
+      faceApiBrowserOnly: 'Face API is supported only in browsers',
+      faceApiScriptLoadFailed: 'Failed to load face-api script',
+      faceApiNotInitialized: 'face-api not initialized',
+      faceApiInitFailed: 'face-api initialization failed',
+      modelNotReady: 'Face recognition model is not ready',
+      registerNoFace: 'No face detected, registration failed',
+      registerFailed: 'Registration failed, please try again',
+      faceApiNotLoaded: 'face-api not loaded'
+    }
+  },
+  aiDraw: {
+    descriptionTitle: 'Detailed Description',
+    startGenerate: 'Start Generating',
+    loading: 'Loading...',
+    defaultDesc: 'Masterpiece, best quality, high quality, high resolution, ultra detailed, realistic, a sweet girl, long hair, leaf hair accessories, pointed ears, elf, green eyes, pale skin, bare shoulders, white long dress',
+    generateFail: 'Image generation failed, please re-enter the description',
+    sizeLandscape: 'Landscape',
+    sizePortrait: 'Portrait',
+    styles: {
+      picas: 'Picasso',
+      animeEra: 'Anime Era',
+      colorfulIllustration: 'Colorful Illustration',
+      colorfulAnime: 'Colorful Anime',
+      monetGarden: 'Monet Garden',
+      delicateMarvel: 'Refined Marvel',
+      romanticLight: 'Romantic Light',
+      cyberpunk: 'Cyberpunk',
+      japanAnime: 'Japanese Anime',
+      animeStyle: 'Anime Style',
+      game3dEra: '3D Game Z Era'
+    }
+  },
   diy: {
     clickUpload: 'Click to Upload',
     imageSize: 'Image upload size: no larger than 20MB',

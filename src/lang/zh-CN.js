@@ -120,6 +120,158 @@ export default {
     tip: '提示：当前为页面内演示进度；如需真实办卡进度，请以手机银行“信用卡-申请进度”为准。',
     queryFailed: '查询失败，请稍后重试'
   },
+  cardProducts: {
+    travelEurope: {
+      category: '畅行欧洲',
+      title: '欧洲旅行信用卡',
+      description: '欧洲消费1.5%返现无上限',
+      benefits: [
+        '欧洲消费1.5%返现，无上限',
+        '机场贵宾厅免费使用',
+        '旅行保险保障'
+      ]
+    },
+    zodiac: {
+      category: '十二生肖',
+      title: '生肖卡',
+      description: '铭刻文化,彰显自信',
+      benefits: [
+        '独特生肖设计',
+        '文化纪念价值',
+        '专属权益'
+      ]
+    },
+    peonyDragon: {
+      category: '普惠让利',
+      title: '牡丹超惠龙',
+      description: '硬核超惠,真情回馈',
+      benefits: [
+        '超值返现优惠',
+        '消费积分翻倍',
+        '专属商户折扣'
+      ]
+    }
+  },
+  idUpload: {
+    title: '申请信用卡',
+    uploadLabel: '请拍摄申请人的证件照片（正反面共计2张）',
+    clickToUpload: '点击上传',
+    uploadHint: '支持 JPG、PNG 格式，最大 5MB',
+    idPhotoAlt: '证件照片 {index}',
+    infoTitle: '请核对身份信息，若有误请手动修改',
+    fullName: '姓名',
+    fullNamePlaceholder: '请输入姓名',
+    idNumber: '证件号码',
+    idNumberPlaceholder: '请输入证件号码',
+    isLongTerm: '是否长期有效',
+    yes: '是',
+    no: '否',
+    idStartDate: '证件起始日期',
+    idEndDate: '证件截止日期',
+    phone: '手机号',
+    phonePlaceholder: '请输入手机号',
+    faceModalTitle: '人脸识别身份验证授权',
+    faceInstructions: {
+      light: '保持光线充足',
+      center: '人脸正对屏幕',
+      frame: '面部位于取景框内'
+    },
+    faceDisclaimer: '本次申请需进行人脸识别,所收集的脸部影像信息仅用于核验是否您本人申请,如果您不同意,后续我行将采取电话或柜面等措施核验您的身份,谢谢!',
+    faceFailTip: '如您人脸检测未通过,请前往网点申请办理。',
+    errors: {
+      fullNameRequired: '请输入姓名',
+      phoneRequired: '请输入手机号',
+      phoneInvalid: '请输入正确的手机号',
+      idNumberRequired: '请输入证件号码',
+      idNumberInvalid: '证件号码格式不正确',
+      idStartDateRequired: '请选择证件起始日期',
+      idEndDateRequired: '请选择证件截止日期',
+      idEndDateInvalid: '截止日期必须晚于起始日期',
+      verifyCodeRequired: '请输入验证码',
+      verifyCodeInvalid: '请输入6位数字验证码',
+      idPhotoRequired: '请上传证件照片',
+      sendCodeFailed: '发送验证码失败，请稍后重试'
+    }
+  },
+  faceRecognition: {
+    permissionTitle: '允许使用摄像头?',
+    permissionDesc: '用于拍照、拍视频、扫描二维码等',
+    allowCamera: '使用时允许',
+    allowCameraOnce: '仅本次使用时允许',
+    denyCamera: '不允许',
+    preparing: '准备中...',
+    countdown: '{count}秒',
+    verifying: '验证中，请保持姿势不变',
+    success: '人脸识别成功',
+    failed: '人脸识别失败',
+    similarity: '相似度：{value}',
+    retry: '重新识别',
+    confirmExit: '确定要退出人脸识别吗？',
+    messages: {
+      permissionRequired: '请允许摄像头权限',
+      noCameraSimulated: '未检测到摄像头，已进入模拟流程',
+      simulationStarted: '已进入模拟流程',
+      simulatedRecognizing: '模拟识别中...',
+      moveToCenter: '请将人脸移到中心位置',
+      recognitionNetworkError: '人脸识别失败，请检查网络或稍后重试',
+      noFaceDetected: '没有检测到人脸',
+      faceDetectedKeepStill: '检测到人脸，请保持不动',
+      faceDetectedRegister: '检测到人脸，可点击注册',
+      detectionFailedBrowser: '人脸检测失败，请换用 Chrome/Edge 重试',
+      openingCamera: '正在打开摄像头...',
+      loadingModel: '正在加载人脸识别模型...',
+      modelUnavailableSimulated: '当前环境无法加载人脸识别模型/检测能力不足，已进入模拟流程',
+      placeFaceInFrame: '请将人脸置于圆形取景框内',
+      placeFaceInFrameRegister: '请将人脸置于圆形取景框内，可点击注册',
+      noClearFaceRetry: '未检测到清晰人脸，请重新对准后再试',
+      registerSuccess: '人脸注册成功，可点击验证或等待倒计时自动验证',
+      verifyNoFace: '未检测到人脸，验证失败',
+      verifyFailedFacing: '验证失败，请正对摄像头重试',
+      verifyPassed: '验证通过',
+      verifyFailedNetwork: '验证失败，请检查网络或稍后重试',
+      moveCloser: '请靠近一点',
+      moveFarther: '请远离一点',
+      imageUploadFailed: '图片上传失败，请重试',
+      verifyFailed: '人脸识别失败',
+      apiFailed: '接口调用失败，请重试'
+    },
+    errors: {
+      permissionRequired: '需要摄像头权限才能进行人脸识别',
+      cameraNotSupported: '当前浏览器不支持摄像头访问',
+      cameraInitFailed: '摄像头预览初始化失败',
+      cameraPreviewTimeout: '摄像头预览超时',
+      faceApiBrowserOnly: 'Face API 仅支持浏览器环境',
+      faceApiScriptLoadFailed: 'face-api 脚本加载失败',
+      faceApiNotInitialized: 'face-api 未初始化',
+      faceApiInitFailed: 'face-api 初始化失败',
+      modelNotReady: '人脸识别模型尚未就绪',
+      registerNoFace: '未检测到人脸，注册失败',
+      registerFailed: '注册失败，请重试',
+      faceApiNotLoaded: 'face-api 未加载'
+    }
+  },
+  aiDraw: {
+    descriptionTitle: '详细描述',
+    startGenerate: '开始生成',
+    loading: '加载中...',
+    defaultDesc: '大师作品，最好的质量，高品质，高层，超详细，逼真，1个甜美的女孩，长发，叶发饰品，尖耳朵，精灵，绿色的眼睛，苍白的皮肤，裸露的肩膀，白色长裙',
+    generateFail: '生成图片失败，请重新填写描述信息',
+    sizeLandscape: '横版',
+    sizePortrait: '竖版',
+    styles: {
+      picas: '皮卡斯',
+      animeEra: '动漫纪元',
+      colorfulIllustration: '幻彩插画',
+      colorfulAnime: '幻彩动漫',
+      monetGarden: '莫奈花园',
+      delicateMarvel: '精致美漫',
+      romanticLight: '浪漫光影',
+      cyberpunk: '赛博朋克',
+      japanAnime: '日漫风',
+      animeStyle: '动漫风',
+      game3dEra: '3D游戏Z时代'
+    }
+  },
     diy:{
       clickUpload:'点击上传',
       imageSize:'图片上传大小：不大于20M',
