@@ -234,6 +234,7 @@ export default {
             })
             // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":"group1/M00/02/43/CqU8dGlp2PyAdqR7AAZRBV9237I672.png","datas":null}
         },
+        // 上传人脸图片，调用后端人脸核验接口
         uploadFaceReq(faceImageUrl){
             return diyCardApi.customer.faceRecognition({
                 orderId: this.$route.query.oid,
