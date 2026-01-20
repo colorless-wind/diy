@@ -271,6 +271,21 @@
                 }
             }
         }
+
+        .phone-input-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+
+            select {
+                width: 140px;
+                flex-shrink: 0;
+            }
+
+            input {
+                flex: 1;
+            }
+        }
     }
 
     .info-section {
@@ -840,8 +855,17 @@
             <span class="required">*</span>
             {{ $t('idUpload.phone') }}
         </label>
-        <input type="tel" v-model="formData.phone" :placeholder="$t('idUpload.phonePlaceholder')"
-            @blur="validateField('phone')">
+        <div class="phone-input-wrapper">
+            <select v-model="formData.countryCode" @change="handleCountryCodeChange">
+                <option value="" disabled>{{ $t('idUpload.phoneCountryPlaceholder') }}</option>
+                <option v-for="option in countryCodeOptions" :key="option.value" :value="option.value">
+                    {{ option.label }}
+                </option>
+            </select>
+            <input type="tel" v-model="formData.phone" :placeholder="$t('idUpload.phonePlaceholder')"
+                @blur="validateField('phone')">
+        </div>
+        <div v-if="errors.countryCode" class="error-message">{{ errors.countryCode }}</div>
         <div v-if="errors.phone" class="error-message">{{ errors.phone }}</div>
     </div>
     <button v-if="idPhotos.length > 1" class="submit-btn" @click="handleNextStep"
@@ -918,6 +942,7 @@ export default {
                 fullName: '',
                 email: '',
                 phone: '',
+                countryCode: '',
                 idType: '',
                 idNumber: '',
                 address: '',
@@ -927,6 +952,7 @@ export default {
                 verifyCode: ''
             },
             idTypeTouched: false,
+            countryCodeTouched: false,
             errors: {},
             isSubmitting: false,
             cardId: null,
@@ -965,6 +991,34 @@ export default {
         };
     },
     computed: {
+        countryCodeOptions() {
+            return [
+                { value: '+86', label: this.$t('idUpload.phoneCountryOptions.china') },
+                { value: '+1', label: this.$t('idUpload.phoneCountryOptions.us') },
+                { value: '+44', label: this.$t('idUpload.phoneCountryOptions.uk') },
+                { value: '+61', label: this.$t('idUpload.phoneCountryOptions.australia') },
+                { value: '+64', label: this.$t('idUpload.phoneCountryOptions.newZealand') },
+                { value: '+81', label: this.$t('idUpload.phoneCountryOptions.japan') },
+                { value: '+82', label: this.$t('idUpload.phoneCountryOptions.korea') },
+                { value: '+65', label: this.$t('idUpload.phoneCountryOptions.singapore') },
+                { value: '+852', label: this.$t('idUpload.phoneCountryOptions.hongKong') },
+                { value: '+853', label: this.$t('idUpload.phoneCountryOptions.macao') },
+                { value: '+886', label: this.$t('idUpload.phoneCountryOptions.taiwan') },
+                { value: '+49', label: this.$t('idUpload.phoneCountryOptions.germany') },
+                { value: '+33', label: this.$t('idUpload.phoneCountryOptions.france') },
+                { value: '+39', label: this.$t('idUpload.phoneCountryOptions.italy') },
+                { value: '+34', label: this.$t('idUpload.phoneCountryOptions.spain') },
+                { value: '+31', label: this.$t('idUpload.phoneCountryOptions.netherlands') },
+                { value: '+46', label: this.$t('idUpload.phoneCountryOptions.sweden') },
+                { value: '+7', label: this.$t('idUpload.phoneCountryOptions.russia') },
+                { value: '+91', label: this.$t('idUpload.phoneCountryOptions.india') },
+                { value: '+55', label: this.$t('idUpload.phoneCountryOptions.brazil') },
+                { value: '+52', label: this.$t('idUpload.phoneCountryOptions.mexico') },
+                { value: '+971', label: this.$t('idUpload.phoneCountryOptions.uae') },
+                { value: '+966', label: this.$t('idUpload.phoneCountryOptions.saudi') },
+                { value: '+27', label: this.$t('idUpload.phoneCountryOptions.southAfrica') }
+            ];
+        },
         idTypeOptions() {
             return [
                 { value: 'ID_CARD', label: this.$t('idUpload.idTypeOptions.idCard') },
@@ -1001,11 +1055,13 @@ export default {
         isFormValid() {
             const baseValid = this.formData.fullName &&
                 this.formData.phone &&
+                this.formData.countryCode &&
                 this.formData.idType &&
                 this.formData.idNumber &&
                 this.idPhotos.length > 1 &&
                 !this.errors.fullName &&
                 !this.errors.phone &&
+                !this.errors.countryCode &&
                 !this.errors.idType &&
                 !this.errors.idNumber &&
                 !this.errors.idPhoto;
@@ -1022,7 +1078,7 @@ export default {
             return baseValid && dateValid;
         },
         canGetCode() {
-            return this.formData.phone && /^1[3-9]\d{9}$/.test(this.formData.phone);
+            return this.formData.phone && this.formData.countryCode && this.isPhoneValid();
         }
     },
     watch: {
@@ -1032,6 +1088,9 @@ export default {
             }
             if (!this.idTypeTouched) {
                 this.formData.idType = this.getDefaultIdType();
+            }
+            if (!this.countryCodeTouched) {
+                this.formData.countryCode = this.getDefaultCountryCode();
             }
         },
         // 监听证件上传
@@ -1054,6 +1113,7 @@ export default {
     mounted() {
         this.cardId = this.$route.query.id;
         this.formData.idType = this.getDefaultIdType();
+        this.formData.countryCode = this.getDefaultCountryCode();
     },
     beforeDestroy() {
         // 清理验证码倒计时定时器
@@ -1066,7 +1126,7 @@ export default {
         // 点击下一步按钮
         handleNextStep() {
             // 验证所有字段
-            ['fullName', 'phone', 'idType', 'idNumber', 'verifyCode'].forEach(field => {
+            ['fullName', 'countryCode', 'phone', 'idType', 'idNumber', 'verifyCode'].forEach(field => {
                 this.validateField(field);
             });
 
@@ -1291,8 +1351,8 @@ export default {
             }
 
             // 验证手机号格式
-            if (!/^1[3-9]\d{9}$/.test(this.formData.phone)) {
-                this.errors.phone = this.$t('idUpload.errors.phoneInvalid');
+            if (!this.isPhoneValid()) {
+                this.validateField('phone');
                 return;
             }
 
@@ -1327,6 +1387,11 @@ export default {
             this.errors[fieldName] = '';
 
             switch (fieldName) {
+                case 'countryCode':
+                    if (!this.formData.countryCode) {
+                        this.errors.countryCode = this.$t('idUpload.errors.countryCodeRequired');
+                    }
+                    break;
                 case 'idType':
                     if (!this.formData.idType) {
                         this.errors.idType = this.$t('idUpload.errors.idTypeRequired');
@@ -1340,7 +1405,7 @@ export default {
                 case 'phone':
                     if (!this.formData.phone.trim()) {
                         this.errors.phone = this.$t('idUpload.errors.phoneRequired');
-                    } else if (!/^1[3-9]\d{9}$/.test(this.formData.phone)) {
+                    } else if (!this.isPhoneValid()) {
                         this.errors.phone = this.$t('idUpload.errors.phoneInvalid');
                     }
                     break;
@@ -1391,9 +1456,41 @@ export default {
             const locale = (this.$i18n && this.$i18n.locale) || '';
             return locale.toLowerCase().startsWith('zh') ? 'ID_CARD' : 'PASSPORT';
         },
+        getDefaultCountryCode() {
+            const locale = (this.$i18n && this.$i18n.locale) || '';
+            const normalized = locale.toLowerCase();
+            if (normalized.startsWith('zh')) {
+                return '+86';
+            }
+            if (normalized.startsWith('ko')) {
+                return '+82';
+            }
+            if (normalized.startsWith('es')) {
+                return '+34';
+            }
+            return '+1';
+        },
         handleIdTypeChange() {
             this.idTypeTouched = true;
             this.validateField('idType');
+        },
+        handleCountryCodeChange() {
+            this.countryCodeTouched = true;
+            this.validateField('countryCode');
+            if (this.formData.phone) {
+                this.validateField('phone');
+            }
+        },
+        isPhoneValid() {
+            const phoneValue = this.formData.phone.replace(/\s+/g, '');
+            const countryCode = this.formData.countryCode;
+            if (!phoneValue || !countryCode) {
+                return false;
+            }
+            if (countryCode === '+86') {
+                return /^1[3-9]\d{9}$/.test(phoneValue);
+            }
+            return /^[0-9]{6,15}$/.test(phoneValue);
         },
         
         // 关闭弹窗
