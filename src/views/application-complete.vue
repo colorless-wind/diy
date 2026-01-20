@@ -53,7 +53,7 @@
 }
 
 .success-section {
-  padding: 20px 16px 10px;
+  padding: 10px 16px 10px;
   text-align: center;
   
   .success-icon-wrapper {
@@ -110,7 +110,7 @@
   .success-message {
     font-size: 14px;
     color: #333;
-    line-height: 1.8;
+    line-height: 1.5;
     text-align: left;
     padding: 0 20px;
     // margin-bottom: 30px;
@@ -118,7 +118,7 @@
 }
 
 .application-details {
-  margin: 0 16px 10px;
+  margin: 0 16px 5px;
   background: #fff;
   border-radius: 12px;
   padding: 0 20px;
@@ -138,7 +138,7 @@
     .label {
       font-size: 14px;
       color: #666;
-      width: 80px;
+      width: 130px;
       flex-shrink: 0;
     }
     

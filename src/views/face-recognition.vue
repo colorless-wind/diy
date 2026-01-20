@@ -1586,7 +1586,7 @@ export default {
         &.verifying {
             .verifying-text {
                 position: absolute;
-                top: 30px;
+                top: 50px;
                 color: #4caf50;
                 font-size: 16px;
                 font-weight: 500;

@@ -294,7 +294,7 @@
 
       <div class="row">
         <div class="left strong">
-          产品名称：{{ cardProduct || '-' }}</div>
+          {{ $t('applicationComplete.cardProduct') }}：{{ cardProduct || '-' }}</div>
         <!-- <div class="right muted">{{ detail.city || '-' }}</div> -->
       </div>
 
@@ -311,7 +311,7 @@
       </div> -->
       <div class="row">
         <div class="left">
-          邮寄地址：{{ $route.query.address || '-' }}
+          {{ $t('userApply.mailingAddress') }}：{{ $route.query.address || '-' }}
         </div>
       </div>
     </div>
