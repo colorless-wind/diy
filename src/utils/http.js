@@ -4,6 +4,7 @@ import axios from 'axios'
 import Toasted from 'vue-toasted';
 import Vue from 'vue'
 import router from '../router.js'
+import { getDemoResponse } from '../mock/diycard'
 const config = require('./config.js')
 let Base64 = require('js-base64').Base64;
 import md5 from 'js-md5';
@@ -62,6 +63,23 @@ const appid = 'abc-management'; //appid 正式环境
 const secret = '12345678'; //秘钥 正式环境
 export default {
     post(url, data,that) {
+        if (config.apiMode === 'demo') {
+            const demoResponse = getDemoResponse(url, data);
+            if (demoResponse) {
+                return new Promise(resolve => {
+                    setTimeout(() => resolve(demoResponse), Math.max(config.demoDelayMs || 0, 0));
+                }).then((res) => {
+                    return checkCode(res)
+                })
+            }
+            return Promise.resolve({
+                status: -404,
+                msg: 'Demo接口未配置',
+                data: null
+            }).then((res) => {
+                return checkCode(res)
+            })
+        }
         const CancelToken = axios.CancelToken;
         const timestamp = Date.parse(new Date())
         const nonce = uuid.v1()
@@ -121,6 +139,23 @@ export default {
         )
     },
     get(url, params) {
+        if (config.apiMode === 'demo') {
+            const demoResponse = getDemoResponse(url, params);
+            if (demoResponse) {
+                return new Promise(resolve => {
+                    setTimeout(() => resolve(demoResponse), Math.max(config.demoDelayMs || 0, 0));
+                }).then((res) => {
+                    return checkCode(res)
+                })
+            }
+            return Promise.resolve({
+                status: -404,
+                msg: 'Demo接口未配置',
+                data: null
+            }).then((res) => {
+                return checkCode(res)
+            })
+        }
         const CancelToken = axios.CancelToken;
         const timestamp = Date.parse(new Date())
         const nonce = uuid.v1()

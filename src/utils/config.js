@@ -19,6 +19,12 @@
 const proxyUrl =  process.env.NODE_ENV === 'development' ? 'http://10.165.60.116:19903':'http://10.165.60.116:19903'; 
 const getUrl =  process.env.NODE_ENV === 'development' ? 'http://10.165.60.116:19903':'http://10.165.60.116:19903'; 
 
+const runtimeConfig = (typeof window !== 'undefined' && window.config) ? window.config : {};
+const apiMode = runtimeConfig.apiMode || 'real'; // real | demo
+const demoDelayMs = Number(runtimeConfig.demoDelayMs || 300);
+const demoImageBaseUrl = runtimeConfig.demoImageBaseUrl || '';
+const imageBaseUrl = apiMode === 'demo' ? demoImageBaseUrl : 'http://10.165.60.116:8443';
+
 /**@event 本地跨域  */
 const HOST = process.env.NODE_ENV === 'development' ? proxyUrl : proxyUrl
 const GET = process.env.NODE_ENV === 'development' ? getUrl : getUrl
@@ -29,4 +35,8 @@ module.exports.HOST = HOST
 module.exports.GET = GET
 module.exports.isDev = false  //vconsole 开关
 module.exports.edition = 'v1.0';  //版本号
-module.exports.imageBaseUrl = 'http://10.165.60.116:8443'
+module.exports.apiMode = apiMode
+module.exports.demoDelayMs = demoDelayMs
+module.exports.demoImageBaseUrl = demoImageBaseUrl
+module.exports.imageBaseUrl = imageBaseUrl
+module.exports.isDemo = apiMode === 'demo'
