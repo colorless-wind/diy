@@ -302,7 +302,11 @@ export default {
     copyrightTips: 'Asegúrate de tener los derechos de propiedad intelectual y la autorización legal válida para usar el contenido de las imágenes subidas en este producto.',
     uploadSubmit: 'Confirmar subida',
     clickReUpload: 'Haz clic para volver a subir',
-    imageFormatNotSupport: 'Formato de imagen no compatible'
+    imageFormatNotSupport: 'Formato de imagen no compatible',
+    aiReviewFailed: 'Revisión de imagen fallida, por favor vuelve a subir la imagen',
+    reviewDialogTitle: 'Aviso',
+    reviewDialogConfirm: 'Continuar usando',
+    reviewDialogCancel: 'Re-seleccionar'
   },
   terms: {
     title: 'Términos del servicio',

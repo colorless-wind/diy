@@ -302,7 +302,11 @@ export default {
     copyrightTips: 'Please ensure you hold intellectual property rights for the uploaded images and have valid authorization to use the content within this product.',
     uploadSubmit: 'Confirm Upload',
     clickReUpload: 'Click to Re-upload',
-    imageFormatNotSupport: 'Image format not supported'
+    imageFormatNotSupport: 'Image format not supported',
+    aiReviewFailed: 'Image review failed, please re-upload the image',
+    reviewDialogTitle: 'Notice',
+    reviewDialogConfirm: 'Continue to use',
+    reviewDialogCancel: 'Re-select'
   },
   terms: {
     title: 'Terms of Service',

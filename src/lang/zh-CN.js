@@ -303,7 +303,11 @@ export default {
       copyrightTips:'请确保您对上传的图片拥有知识产权，对于图片上的内容，已取得 其合法有效的授权，允许在本产品范围内使用。',
       uploadSubmit: '确认上传',
       clickReUpload: '点击重新上传',
-      imageFormatNotSupport:'图片格式不支持'
+      imageFormatNotSupport:'图片格式不支持',
+      aiReviewFailed: '图片审核不通过，请重新上传图片',
+      reviewDialogTitle: '提示',
+      reviewDialogConfirm: '继续使用',
+      reviewDialogCancel: '重新选择'
   },
   terms: {
     title: '服务条款',

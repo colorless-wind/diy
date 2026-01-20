@@ -1008,6 +1008,39 @@ export default {
         }
     },
     methods: {
+        // 点击下一步按钮
+        handleNextStep() {
+            // 验证所有字段
+            ['fullName', 'phone', 'idNumber', 'verifyCode'].forEach(field => {
+                this.validateField(field);
+            });
+
+            // 如果不是长期有效，验证日期字段
+            if (!this.formData.isLongTerm) {
+                this.validateField('idStartDate');
+                this.validateField('idEndDate');
+            }
+
+            // 验证证件照片
+            if (this.idPhotos.length === 0) {
+                this.errors.idPhoto = this.$t('idUpload.errors.idPhotoRequired');
+            } else {
+                this.errors.idPhoto = '';
+            }
+
+            if (!this.isFormValid) {
+                return;
+            }
+            this.saveCustomerInfo()
+            // TODO 暂时不启用这个判断，等待确认
+            // // 未启用人脸识别设置则直接跳过进入下一步
+            // if(this.$route.query.faceVerifyRequired == 'false'){
+            //     this.handleDisagree()
+            //     return
+            // }
+            // 显示人脸识别授权弹窗
+            this.showFaceRecognitionModal = true;
+        },
         // 上传图片文件 base64 ==> url
         uploadImageFile(imageBase64, fileObj){
             return diyCardApi.file.imageUpload({
@@ -1284,33 +1317,7 @@ export default {
                     break;
             }
         },
-        // 点击下一步按钮
-        handleNextStep() {
-            // 验证所有字段
-            ['fullName', 'phone', 'idNumber', 'verifyCode'].forEach(field => {
-                this.validateField(field);
-            });
-
-            // 如果不是长期有效，验证日期字段
-            if (!this.formData.isLongTerm) {
-                this.validateField('idStartDate');
-                this.validateField('idEndDate');
-            }
-
-            // 验证证件照片
-            if (this.idPhotos.length === 0) {
-                this.errors.idPhoto = this.$t('idUpload.errors.idPhotoRequired');
-            } else {
-                this.errors.idPhoto = '';
-            }
-
-            if (!this.isFormValid) {
-                return;
-            }
-            this.saveCustomerInfo()
-            // 显示人脸识别授权弹窗
-            this.showFaceRecognitionModal = true;
-        },
+        
         // 关闭弹窗
         closeModal() {
             this.showFaceRecognitionModal = false;

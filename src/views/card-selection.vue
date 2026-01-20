@@ -19,7 +19,8 @@
 
   .logo {
     width: 120px;
-    object-fit: cover;
+    height: 26.5px;
+    object-fit: contain;
     margin: 0 auto;
     display: block;
   }
@@ -271,10 +272,11 @@
     <div class="language-switch" ref="languageSwitch">
       <button @click="toggleDropdown" class="dropdown-btn">{{ currentLanguage }} ▼</button>
       <div v-show="dropdownOpen" class="dropdown-menu">
-        <div @click="switchLanguage('zh-CN')" :class="{ active: $i18n.locale === 'zh-CN' }">{{ $t('languages.zhCN') }}</div>
-        <div @click="switchLanguage('en-US')" :class="{ active: $i18n.locale === 'en-US' }">{{ $t('languages.enUS') }}</div>
-        <div @click="switchLanguage('ko-KR')" :class="{ active: $i18n.locale === 'ko-KR' }">{{ $t('languages.koKR') }}</div>
-        <div @click="switchLanguage('es-ES')" :class="{ active: $i18n.locale === 'es-ES' }">{{ $t('languages.esES') }}</div>
+        <!-- 此处的国际化应该固定 -->
+        <div @click="switchLanguage('zh-CN')" :class="{ active: $i18n.locale === 'zh-CN' }">{{ '中文' }}</div>
+        <div @click="switchLanguage('en-US')" :class="{ active: $i18n.locale === 'en-US' }">{{ 'English' }}</div>
+        <div @click="switchLanguage('ko-KR')" :class="{ active: $i18n.locale === 'ko-KR' }">{{ '한국어' }}</div>
+        <div @click="switchLanguage('es-ES')" :class="{ active: $i18n.locale === 'es-ES' }">{{ 'Español' }}</div>
       </div>
     </div>
   </div>
@@ -377,7 +379,7 @@ export default {
       return diyCardApi.order.create({
         productId,
       })
-      // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":{"orderId":"45bbd44c618341bbaf9c6abd10d1f6ff","orderNo":"DIY20260115000015","orderStatus":"DESIGNING","isDiy":true,"standardImageUrl":"/images/products/debit_standard_001_std.jpg","supportAiGenerate":true,"needAiReview":true,"needPay":false},"datas":null}
+      // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":{"orderId":"bfc3849dc51742c2a31eead083d98eea","orderNo":"2013499584858750976","orderStatus":"DESIGNING","isDiy":true,"standardImageUrl":"/group1/M00/02/45/CqU8dGlu7GeAV3-3AAdu1uyK06486.jpeg","supportAiGenerate":false,"needAiReview":true,"needPay":false,"needFaceVerify":false,"faceVerifyRequired":false},"datas":null}
     },
     // 跳转卡产品详情
     async goToCardDetail(card) {
@@ -392,6 +394,7 @@ export default {
             oid: orderRes.data.orderId,
             supportAiGenerate: card.supportAiGenerate,
             needAiReview: card.needAiReview,
+            faceVerifyRequired: orderRes.data.faceVerifyRequired,
           }
         });
       } else {

@@ -302,7 +302,11 @@ export default {
     copyrightTips: '업로드한 이미지에 대한 지적 재산권을 보유하고 있으며, 이미지 내 콘텐츠에 대해 합법적이고 유효한 사용 허가를 받았음을 확인하세요.',
     uploadSubmit: '업로드 확인',
     clickReUpload: '다시 업로드 클릭',
-    imageFormatNotSupport: '지원하지 않는 이미지 형식입니다'
+    imageFormatNotSupport: '지원하지 않는 이미지 형식입니다',
+    aiReviewFailed: '이미지 심사 실패, 다시 업로드해 주세요',
+    reviewDialogTitle: '알림',
+    reviewDialogConfirm: '계속 사용',
+    reviewDialogCancel: '다시 선택'
   },
   terms: {
     title: '서비스 약관',

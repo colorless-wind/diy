@@ -658,7 +658,6 @@ import AlloyFinger from "alloyfinger"; //手势插件
 import { MessageBox } from 'mint-ui';  //弹框
 import html2canvas from "../utils/html2canvas";
 import diyCardApi from "../api/diycard";
-import { resolve } from "core-js/fn/promise";
 export default {
   components: {
     Load,
@@ -859,10 +858,21 @@ export default {
       const designInfo = await this.userUploadCardFace(imageBase64Data)
       if (!designInfo.data) return console.error('上传卡面图片失败designInfo=', designInfo)
       // 3. 校验图审
-      if (!this.$route.query.needAiReview || this.$route.query.needAiReview == 'false') return console.log('跳过AI图审 this.$route.query.needAiReview=', this.$route.query.needAiReview)
-      // 4. 提交卡面进行图审
-      const reviewInfo = await this.submitAIReview()
-      console.debug('reviewInfo', reviewInfo)
+      if (this.$route.query.needAiReview == 'true'){
+        // 4. 提交卡面进行图审
+        const reviewInfo = await this.submitAIReview()
+        console.debug('reviewInfo', reviewInfo)
+        if(reviewInfo.data.reviewResult != 'PASS'){
+          this.$toasted.show(this.$t('diy.aiReviewFailed'), {
+            theme: "toasted-primary",
+            position: "center",
+            duration: 1000
+          });
+          return
+        }
+      } else {
+        console.log('跳过AI图审 this.$route.query.needAiReview=', this.$route.query.needAiReview)
+      }
       // 跳转下一页
       this.$router.push({
         path: '/card-detail',
@@ -1793,14 +1803,14 @@ export default {
     meximg(msg) {
       var that = this
       MessageBox({
-        title: '提示',
+        title: this.$t('diy.reviewDialogTitle'),
         message: msg,
         // message:msg,
         showCancelButton: true,
         closeOnClickModal: false,
         cancelButtonClass: 'mint-btn1',
-        confirmButtonText: "继续使用",
-        cancelButtonText: "重新选择"
+        confirmButtonText: this.$t('diy.reviewDialogConfirm'),
+        cancelButtonText: this.$t('diy.reviewDialogCancel')
       }).then(action => {
         if (action != "cancel") {
           that.$router.push({
