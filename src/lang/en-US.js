@@ -160,6 +160,12 @@ export default {
     infoTitle: 'Please verify the identity information; edit if incorrect',
     fullName: 'Full Name',
     fullNamePlaceholder: 'Please enter your name',
+    idType: 'Document Type',
+    idTypePlaceholder: 'Please select document type',
+    idTypeOptions: {
+      idCard: 'National ID Card',
+      passport: 'Passport'
+    },
     idNumber: 'ID Number',
     idNumberPlaceholder: 'Please enter your ID number',
     isLongTerm: 'Long-term validity',
@@ -181,6 +187,7 @@ export default {
       fullNameRequired: 'Please enter your name',
       phoneRequired: 'Please enter your phone number',
       phoneInvalid: 'Please enter a valid phone number',
+      idTypeRequired: 'Please select a document type',
       idNumberRequired: 'Please enter your ID number',
       idNumberInvalid: 'Invalid ID number format',
       idStartDateRequired: 'Please select the ID start date',

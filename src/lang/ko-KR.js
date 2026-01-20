@@ -160,6 +160,12 @@ export default {
     infoTitle: '신분 정보를 확인하세요. 오류가 있으면 직접 수정해 주세요',
     fullName: '이름',
     fullNamePlaceholder: '이름을 입력하세요',
+    idType: '신분증 종류',
+    idTypePlaceholder: '신분증 종류를 선택하세요',
+    idTypeOptions: {
+      idCard: '주민등록증',
+      passport: '여권'
+    },
     idNumber: '신분증 번호',
     idNumberPlaceholder: '신분증 번호를 입력하세요',
     isLongTerm: '장기 유효 여부',
@@ -181,6 +187,7 @@ export default {
       fullNameRequired: '이름을 입력하세요',
       phoneRequired: '휴대전화 번호를 입력하세요',
       phoneInvalid: '유효한 전화번호를 입력하세요',
+      idTypeRequired: '신분증 종류를 선택하세요',
       idNumberRequired: '신분증 번호를 입력하세요',
       idNumberInvalid: '신분증 번호 형식이 올바르지 않습니다',
       idStartDateRequired: '신분증 시작일을 선택하세요',

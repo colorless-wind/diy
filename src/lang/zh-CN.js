@@ -161,6 +161,12 @@ export default {
     infoTitle: '请核对身份信息，若有误请手动修改',
     fullName: '姓名',
     fullNamePlaceholder: '请输入姓名',
+    idType: '证件类型',
+    idTypePlaceholder: '请选择证件类型',
+    idTypeOptions: {
+      idCard: '身份证',
+      passport: '护照'
+    },
     idNumber: '证件号码',
     idNumberPlaceholder: '请输入证件号码',
     isLongTerm: '是否长期有效',
@@ -182,6 +188,7 @@ export default {
       fullNameRequired: '请输入姓名',
       phoneRequired: '请输入手机号',
       phoneInvalid: '请输入正确的手机号',
+      idTypeRequired: '请选择证件类型',
       idNumberRequired: '请输入证件号码',
       idNumberInvalid: '证件号码格式不正确',
       idStartDateRequired: '请选择证件起始日期',

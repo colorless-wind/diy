@@ -774,6 +774,20 @@
     <div v-if="idPhotos.length > 1" class="form-group">
         <label>
             <span class="required">*</span>
+            {{ $t('idUpload.idType') }}
+        </label>
+        <select v-model="formData.idType" @change="handleIdTypeChange">
+            <option value="" disabled>{{ $t('idUpload.idTypePlaceholder') }}</option>
+            <option v-for="option in idTypeOptions" :key="option.value" :value="option.value">
+                {{ option.label }}
+            </option>
+        </select>
+        <div v-if="errors.idType" class="error-message">{{ errors.idType }}</div>
+    </div>
+
+    <div v-if="idPhotos.length > 1" class="form-group">
+        <label>
+            <span class="required">*</span>
             {{ $t('idUpload.idNumber') }}
         </label>
         <input type="text" v-model="formData.idNumber" :placeholder="$t('idUpload.idNumberPlaceholder')"
@@ -904,6 +918,7 @@ export default {
                 fullName: '',
                 email: '',
                 phone: '',
+                idType: '',
                 idNumber: '',
                 address: '',
                 idStartDate: '',
@@ -911,6 +926,7 @@ export default {
                 isLongTerm: false,
                 verifyCode: ''
             },
+            idTypeTouched: false,
             errors: {},
             isSubmitting: false,
             cardId: null,
@@ -949,13 +965,21 @@ export default {
         };
     },
     computed: {
+        idTypeOptions() {
+            return [
+                { value: 'ID_CARD', label: this.$t('idUpload.idTypeOptions.idCard') },
+                { value: 'PASSPORT', label: this.$t('idUpload.idTypeOptions.passport') }
+            ];
+        },
         isFormValid() {
             const baseValid = this.formData.fullName &&
                 this.formData.phone &&
+                this.formData.idType &&
                 this.formData.idNumber &&
                 this.idPhotos.length > 1 &&
                 !this.errors.fullName &&
                 !this.errors.phone &&
+                !this.errors.idType &&
                 !this.errors.idNumber &&
                 !this.errors.idPhoto;
 
@@ -979,6 +1003,9 @@ export default {
             if (this.cardId) {
                 this.loadCardData();
             }
+            if (!this.idTypeTouched) {
+                this.formData.idType = this.getDefaultIdType();
+            }
         },
         // 监听证件上传
         idPhotos:{
@@ -999,6 +1026,7 @@ export default {
     },
     mounted() {
         this.cardId = this.$route.query.id;
+        this.formData.idType = this.getDefaultIdType();
     },
     beforeDestroy() {
         // 清理验证码倒计时定时器
@@ -1011,7 +1039,7 @@ export default {
         // 点击下一步按钮
         handleNextStep() {
             // 验证所有字段
-            ['fullName', 'phone', 'idNumber', 'verifyCode'].forEach(field => {
+            ['fullName', 'phone', 'idType', 'idNumber', 'verifyCode'].forEach(field => {
                 this.validateField(field);
             });
 
@@ -1065,7 +1093,7 @@ export default {
                 orderId: this.$route.query.oid,
                 name: this.formData.fullName,
                 idNumber: this.formData.idNumber,
-                idType: 'PASSPORT', // ID_CARD, PASSPORT 页面暂时没选择
+                idType: this.formData.idType, // ID_CARD, PASSPORT
                 gender: 'FEMALE', // MALE, FEMALE 页面暂时没选择
             })
             // {"status":null,"errorMsg":null,"subStatus":"0","subErrorMsg":"","data":null,"datas":null}
@@ -1272,6 +1300,11 @@ export default {
             this.errors[fieldName] = '';
 
             switch (fieldName) {
+                case 'idType':
+                    if (!this.formData.idType) {
+                        this.errors.idType = this.$t('idUpload.errors.idTypeRequired');
+                    }
+                    break;
                 case 'fullName':
                     if (!this.formData.fullName.trim()) {
                         this.errors.fullName = this.$t('idUpload.errors.fullNameRequired');
@@ -1287,9 +1320,15 @@ export default {
                 case 'idNumber':
                     if (!this.formData.idNumber.trim()) {
                         this.errors.idNumber = this.$t('idUpload.errors.idNumberRequired');
-                    } else if (!/^[1-9]\d{5}(18|19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\d{3}[\dXx]$/.test(this.formData.idNumber)) {
-                        // 简单的身份证号格式验证
-                        if (this.formData.idNumber.length < 15) {
+                    } else if (this.formData.idType === 'ID_CARD') {
+                        if (!/^[1-9]\d{5}(18|19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\d{3}[\dXx]$/.test(this.formData.idNumber)) {
+                            // 简单的身份证号格式验证
+                            if (this.formData.idNumber.length < 15) {
+                                this.errors.idNumber = this.$t('idUpload.errors.idNumberInvalid');
+                            }
+                        }
+                    } else if (this.formData.idType === 'PASSPORT') {
+                        if (!/^[A-Z0-9]{5,17}$/i.test(this.formData.idNumber)) {
                             this.errors.idNumber = this.$t('idUpload.errors.idNumberInvalid');
                         }
                     }
@@ -1316,6 +1355,14 @@ export default {
                     }
                     break;
             }
+        },
+        getDefaultIdType() {
+            const locale = (this.$i18n && this.$i18n.locale) || '';
+            return locale.toLowerCase().startsWith('zh') ? 'ID_CARD' : 'PASSPORT';
+        },
+        handleIdTypeChange() {
+            this.idTypeTouched = true;
+            this.validateField('idType');
         },
         
         // 关闭弹窗

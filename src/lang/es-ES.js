@@ -160,6 +160,12 @@ export default {
     infoTitle: 'Verifique la información de identidad; si hay errores, modifíquela',
     fullName: 'Nombre',
     fullNamePlaceholder: 'Introduce tu nombre',
+    idType: 'Tipo de documento',
+    idTypePlaceholder: 'Seleccione el tipo de documento',
+    idTypeOptions: {
+      idCard: 'Documento de identidad',
+      passport: 'Pasaporte'
+    },
     idNumber: 'Número de identificación',
     idNumberPlaceholder: 'Introduce tu número de identificación',
     isLongTerm: '¿Vigencia indefinida?',
@@ -181,6 +187,7 @@ export default {
       fullNameRequired: 'Introduce tu nombre',
       phoneRequired: 'Introduce tu número de teléfono',
       phoneInvalid: 'Introduce un número de teléfono válido',
+      idTypeRequired: 'Seleccione el tipo de documento',
       idNumberRequired: 'Introduce tu número de identificación',
       idNumberInvalid: 'Formato de número de identificación no válido',
       idStartDateRequired: 'Selecciona la fecha de inicio del documento',
