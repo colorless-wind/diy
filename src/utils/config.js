@@ -21,7 +21,7 @@ const getUrl =  process.env.NODE_ENV === 'development' ? 'http://10.165.60.116:1
 
 const runtimeConfig = (typeof window !== 'undefined' && window.config) ? window.config : {};
 const apiMode = runtimeConfig.apiMode || 'real'; // real | demo
-const demoDelayMs = Number(runtimeConfig.demoDelayMs || 300);
+const demoDelayMs = runtimeConfig.demoDelayMs || 300;
 const demoImageBaseUrl = runtimeConfig.demoImageBaseUrl || '';
 const imageBaseUrl = apiMode === 'demo' ? demoImageBaseUrl : 'http://10.165.60.116:8443';
 
