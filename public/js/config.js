@@ -2,5 +2,7 @@ window.config = {
   productId: "db1fbfe890884885ac61f83b5076460f",
   apiMode: "real", // real | demo
   demoDelayMs: 300,
-  demoImageBaseUrl: ""
+  demoImageBaseUrl: "",
+  baseUrl: 'https://cpc.goldpac.cn/cardGatewaybackend/gateway/api',
+  baseImageUrl: 'https://cpc.goldpac.cn',
 };
