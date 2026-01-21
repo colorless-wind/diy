@@ -277,13 +277,12 @@
       </div>
     </div>
 
-    <div class="qrcode-section">
-      <!-- <div class="qrcode-title">{{ $t('applicationComplete.qrcodeTitle') }}</div> -->
+    <!-- <div class="qrcode-section">
       <div class="qrcode-wrapper">
         <div id="qrcode"></div>
       </div>
       <div class="qrcode-tip">{{ $t('applicationComplete.qrcodeTip') }}</div>
-    </div>
+    </div> -->
 
     <div class="action-buttons">
       <button class="btn btn-primary" @click="goBack">{{ $t('applicationComplete.returnHome') }}</button>
@@ -314,7 +313,7 @@ export default {
     // 延迟生成二维码，确保数据已加载
     this.$nextTick(() => {
       setTimeout(() => {
-        this.generateQRCode();
+        // this.generateQRCode();
         this.queryOrderReq();
         this.queryProductDetailReq();
         this.mailingAddress = this.$route.query.address || this.$t('applicationComplete.defaultAddress');
