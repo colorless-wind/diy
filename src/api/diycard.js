@@ -62,7 +62,7 @@ const getSendDatas = (url, data, loginName = '') => {
 		...getParam(),
 		appId: CONST.APP_ID,
 		orgNo: CONST.APP_ID,
-		method: url.replace(/(\/)/g, '.').toLowerCase(),
+		method: url.replace(/(\/)/g, '.'),
 		format: 'JSON',
 		charset: 'UTF-8',
 		signType: 'MD5',
@@ -402,7 +402,7 @@ const uploadFile = (url, data = {}, options = {}) => {
 
 export const file = {
   /** diy.card.file.imageUpload - 上传图片 */
-  imageUpload: (data, that) => uploadFile(`/bal/fileUpload/img`, data, that),
+	imageUpload: (data, that) => unirequestPost('diy.card.bal.fileUpload.img', data, that),
 }
 
 /**
