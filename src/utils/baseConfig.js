@@ -1,10 +1,10 @@
-let BASE_URL = 'http://10.165.60.116:9504'
+let BASE_URL = 'http://10.165.60.116:19903'
 let COMJS = 'http://10.165.60.116:9504/' //测试地址
 let IMAGE_URL = 'http://10.165.60.116:9504'
 let MQTT_IP = '10.165.25.130:443'
 let MQTT_PORT = 443
 
-let SCENE = 'BusinessCard'
+let SCENE = 'DiyCard'
 let CHANNEL = 'UMV'
 
 let APP_ID = '202503280001'
@@ -21,7 +21,7 @@ if (process.env.VUE_APP_TITLE == 'prd') {
   MQTT_IP = 'client.umvcard.com/diy-gateway'
   MQTT_PORT = 443
 
-  SCENE = 'BusinessCard'
+  SCENE = 'DiyCard'
   CHANNEL = 'UMV'
   VERSION = VERSION
 
@@ -37,7 +37,7 @@ if (process.env.VUE_APP_TITLE == 'prd') {
   MQTT_IP = '10.165.25.130:443'
   MQTT_PORT = 443
 
-  SCENE = 'BusinessCard'
+  SCENE = 'DiyCard'
   CHANNEL = 'UMV'
   VERSION = VERSION
 

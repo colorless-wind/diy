@@ -45,7 +45,7 @@ if (process.env.VUE_APP_TITLE == 240) {
 }
 
 const BASE_URL = `${process.env.NODE_ENV == 'development'
-  ? '/api/gateway/api'
+  ? baseConfig.BASE_URL + '/gateway/api'
   : baseConfig.BASE_URL + '/gateway/api'
   }` //测试地址
 const COMJS = baseConfig.COMJS //测试地址

@@ -10,39 +10,13 @@
  *   diycardApi.order.create({ merchantId, channel, productId })
  */
 
+import axios from 'axios'
+import Vue from 'vue'
+import router from '@/router.js'
 import CONST from '@/utils/api.js'
 import md5 from 'js-md5'
 import errCode from '@/utils/errorcode'
 
-// 接口方法名到URL的映射关系
-const METHOD_URL_MAPPING = {
-	// 订单管理
-	'diy.card.order.create': '/diycard/bcl/order/create',
-	'diy.card.order.detail': '/diycard/bcl/order/detail',
-	'diy.card.order.queryByUcode': '/diycard/bcl/order/queryByUcode',
-	'diy.card.order.cancel': '/diycard/bcl/order/cancel',
-	'diy.card.order.submit': '/diycard/bcl/order/submit',
-
-	// 卡面设计
-	'diy.card.design.ai.generate': '/diycard/bcl/design/ai/generate',
-	'diy.card.design.ai.select': '/diycard/bcl/design/ai/select',
-	'diy.card.design.diy.upload': '/diycard/bcl/design/diy/upload',
-	'diy.card.design.review.submit': '/diycard/bcl/design/review/submit',
-	'diy.card.design.review.result': '/diycard/bcl/design/review/result',
-
-	// 客户信息
-	'diy.card.customer.uploadIdCard': '/diycard/bcl/customer/uploadIdCard',
-	'diy.card.customer.faceRecognition': '/diycard/bcl/customer/faceRecognition',
-	'diy.card.customer.save': '/diycard/bcl/customer/save',
-	'diy.card.customer.info': '/diycard/bcl/customer/info',
-
-	// U码管理
-	'diy.card.ucode.qrcode': '/diycard/bcl/ucode/qrcode',
-
-	// 产品管理
-	'diy.card.product.list': '/diycard/bcl/product/list',
-	'diy.card.product.detail': '/diycard/bcl/product/detail'
-}
 
 /**
  * 获取请求参数
@@ -119,11 +93,10 @@ const getSendDatas = (url, data, loginName = '') => {
  * 显示错误提示
  */
 const showErrToast = (title) => {
-	uni.showToast({
-		title: title,
+	Vue.toasted.show(title, {
+		theme: "toasted-primary",
+		position: "center",
 		duration: 2000,
-		mask: true,
-		icon: 'none'
 	})
 }
 
@@ -155,29 +128,26 @@ const showErrTip = (code) => {
  * 清除token
  */
 const cleanToken = () => {
-	uni.showToast({
-		icon: 'none',
+	Vue.toasted.show('账户信息已过期或已在别处登录，请重新登录', {
+		theme: "toasted-primary",
+		position: "center",
 		duration: 2000,
-		title: '账户信息已过期或已在别处登录，请重新登录'
 	})
 	setTimeout(() => {
-		uni.removeStorageSync('accessToken')
-		uni.removeStorageSync('userInfo')
-		uni.navigateTo({
-			url: '/pages/login/index'
-		})
+		localStorage.removeItem('accessToken')
+		localStorage.removeItem('userInfo')
+		router.push('/login')
 	}, 2000)
 }
 
 /**
- * 使用 unirequest 方式的请求函数
+ * 使用 unirequest 方式的请求函数 (基于axios)
  */
 const unirequestPost = (methodName, data = {}, callback = function () { }, options = {}) => {
 	return new Promise((resolve, reject) => {
 		// 获取URL
 		let url = methodName
 		if (methodName.startsWith('diy.card.')) {
-			url = METHOD_URL_MAPPING[methodName]
 			if (!url) {
 				console.error(`未找到方法名 "${methodName}" 对应的URL映射`)
 				reject(new Error(`未找到方法名 "${methodName}" 对应的URL映射`))
@@ -186,145 +156,123 @@ const unirequestPost = (methodName, data = {}, callback = function () { }, optio
 		}
 
 		// 准备请求数据
-		data = getSendDatas(url, {
+		const requestData = getSendDatas(url, {
 			...data,
-			'accessToken': 'Bearer ' + uni.getStorageSync('accessToken')
+			'accessToken': 'Bearer ' + (localStorage.getItem('accessToken') || '')
 		})
 
 		// 发送请求
-		uni.request({
+		axios({
 			url: CONST.BASE_URL,
-			data: data,
+			data: requestData,
 			method: 'POST',
-			header: {
-				'Content-Type': 'application/json'
+			headers: {
+				'Content-Type': 'application/json',
+				...options.headers
 			},
-			...options,
-			success: response => {
-				uni.hideLoading()
+			timeout: 20000,
+			...options
+		}).then(response => {
+			// 处理响应
+			const res = response.data
 
-				if ('0' != response.data.status && response.data.status) {
-					callback()
-					showErrTip(response.data.status)
+			if ('0' != res.status && res.status) {
+				if(typeof callback === 'function') callback()
+				// showErrTip(res.status)
+				return
+			}
+
+			if ('0' !== res.subStatus) {
+				// 处理各种错误状态
+				if (
+					res.subStatus.length >= 6 &&
+					res.subStatus.substring(res.subStatus.length - 6) == '050010'
+				) {
+					cleanToken()
+					return
+				}
+				if (
+					res.subStatus.length >= 6 &&
+					res.subStatus.substring(res.subStatus.length - 6) == '000004'
+				) {
+					resolve(res)
+					return
+				}
+				if (
+					res.subStatus.length >= 6 &&
+					res.subStatus.substring(res.subStatus.length - 6) == '000000'
+				) {
+					resolve(res)
+					return
+				}
+				if (
+					res.subStatus.length >= 6 &&
+					res.subStatus.substring(res.subStatus.length - 6) == '050119'
+				) {
+					resolve(res)
+					return
+				}
+				if (
+					res.subStatus.length >= 6 &&
+					res.subStatus.substring(res.subStatus.length - 6) == '050057'
+				) {
+					resolve(res)
+					return
+				}
+				if (
+					res.subStatus.length >= 6 &&
+					res.subStatus.substring(res.subStatus.length - 6) == '050044'
+				) {
+					callback(
+						res.subStatus.slice(-6),
+						res.subErrorMsg
+					)
+					return
+				}
+				if (
+					res.subStatus.length >= 6 &&
+					res.subStatus.substring(res.subStatus.length - 6) == '040002'
+				) {
+					resolve(res)
+					return
+				}
+				if (
+					res.subStatus.length >= 6 &&
+					res.subStatus.substring(res.subStatus.length - 6) == '050137'
+				) {
+					resolve(res)
+					return
+				}
+				if (
+					res.subStatus.length >= 6 &&
+					res.subStatus.substring(res.subStatus.length - 6) == '050095'
+				) {
+					resolve(res)
+					return
+				}
+				if (
+					res.subStatus.length >= 6 &&
+					res.subStatus.substring(res.subStatus.length - 6) == '050125'
+				) {
+					resolve(res)
+					return
+				}
+				if (
+					res.subStatus.length >= 6 &&
+					res.subStatus.substring(res.subStatus.length - 6) == '050135'
+				) {
+					resolve(res)
 					return
 				}
 
-				if ('0' !== response.data.subStatus) {
-					// 处理各种错误状态
-					if (
-						response.data.subStatus.length >= 6 &&
-						response.data.subStatus.substring(
-							response.data.subStatus.length - 6
-						) == '050010'
-					) {
-						cleanToken()
-						return
-					}
-					if (
-						response.data.subStatus.length >= 6 &&
-						response.data.subStatus.substring(
-							response.data.subStatus.length - 6
-						) == '000004'
-					) {
-						resolve(response.data)
-						return
-					}
-					if (
-						response.data.subStatus.length >= 6 &&
-						response.data.subStatus.substring(
-							response.data.subStatus.length - 6
-						) == '000000'
-					) {
-						resolve(response.data)
-						return
-					}
-					if (
-						response.data.subStatus.length >= 6 &&
-						response.data.subStatus.substring(
-							response.data.subStatus.length - 6
-						) == '050119'
-					) {
-						resolve(response.data)
-						return
-					}
-					if (
-						response.data.subStatus.length >= 6 &&
-						response.data.subStatus.substring(
-							response.data.subStatus.length - 6
-						) == '050057'
-					) {
-						resolve(response.data)
-						return
-					}
-					if (
-						response.data.subStatus.length >= 6 &&
-						response.data.subStatus.substring(
-							response.data.subStatus.length - 6
-						) == '050044'
-					) {
-						callback(
-							response.data.subStatus.slice(-6),
-							response.data.subErrorMsg
-						)
-						return
-					}
-					if (
-						response.data.subStatus.length >= 6 &&
-						response.data.subStatus.substring(
-							response.data.subStatus.length - 6
-						) == '040002'
-					) {
-						resolve(response.data)
-						return
-					}
-					if (
-						response.data.subStatus.length >= 6 &&
-						response.data.subStatus.substring(
-							response.data.subStatus.length - 6
-						) == '050137'
-					) {
-						resolve(response.data)
-						return
-					}
-					if (
-						response.data.subStatus.length >= 6 &&
-						response.data.subStatus.substring(
-							response.data.subStatus.length - 6
-						) == '050095'
-					) {
-						resolve(response.data)
-						return
-					}
-					if (
-						response.data.subStatus.length >= 6 &&
-						response.data.subStatus.substring(
-							response.data.subStatus.length - 6
-						) == '050125'
-					) {
-						resolve(response.data)
-						return
-					}
-					if (
-						response.data.subStatus.length >= 6 &&
-						response.data.subStatus.substring(
-							response.data.subStatus.length - 6
-						) == '050135'
-					) {
-						resolve(response.data)
-						return
-					}
-
-					showErrTip(response.data.subStatus)
-					return resolve(response.data)
-				}
-				resolve(response.data)
-			},
-			fail: res => {
-				console.log('失败', res)
-				showErrToast('请检查网络')
-				uni.hideLoading()
-				reject(res)
+				showErrTip(res.subStatus)
+				return resolve(res)
 			}
+			resolve(res)
+		}).catch(error => {
+			console.log('请求失败', error)
+			showErrToast('请检查网络')
+			reject(error)
 		})
 	})
 }
